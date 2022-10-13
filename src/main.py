@@ -1,6 +1,10 @@
 import torch
 
+from torch_geometric.utils import to_networkx
 from torch_geometric.data import Data
+
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 def main():
@@ -9,7 +13,11 @@ def main():
     x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
 
     data = Data(x=x, edge_index=edge_index)
-    print(data.num_nodes, data.num_edges, data.num_node_features, data.has_isolated_nodes())    
+
+    graph = to_networkx(data)
+    nx.draw(graph)
+    plt.savefig('test.png')
+
 
 if __name__=="__main__":
     main()
