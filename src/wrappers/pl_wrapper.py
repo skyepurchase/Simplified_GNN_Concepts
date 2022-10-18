@@ -34,7 +34,6 @@ class PLModel(pl.LightningModule):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         return {'optimizer': optimizer}
 
-
     def training_step(self, batch, batch_idx: int) -> BatchDict:
         z: Tensor = self.model(batch.x, batch.edge_index)[batch.train_mask]
         y: Tensor = batch.y[batch.train_mask]
@@ -61,10 +60,10 @@ class PLModel(pl.LightningModule):
         return batch_dictionary
 
     def train_epoch_end(self, outputs: list[BatchDict]) -> None:
-        avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
+        avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
-        correct = sum([x['correct'] for x in outputs])
-        total = sum([x['total'] for x in outputs])
+        correct: Number = sum([x['correct'] for x in outputs])
+        total: int = sum([x['total'] for x in outputs])
 
         if isinstance(self.logger, TensorBoardLogger):
             self.logger.experiment.add_scalar("Loss/Train",
@@ -76,42 +75,42 @@ class PLModel(pl.LightningModule):
                                               self.current_epoch)
 
     def validation_step(self, batch, batch_idx: int) -> BatchDict:
-        z = self.model(batch.x, batch.edge_index)[batch.val_mask]
-        y = batch.y[batch.val_mask]
+        z: Tensor = self.model(batch.x, batch.edge_index)[batch.val_mask]
+        y: Tensor = batch.y[batch.val_mask]
        
-        correct = z.argmax(dim=1).eq(y).sum().item()
-        total = len(y)
+        correct: Number = z.argmax(dim=1).eq(y).sum().item()
+        total: int = len(y)
 
-        train_loss = self.criterion(z, y)
-        train_acc = z.argmax(dim=1).eq(y).sum()/len(y)
+        val_loss: Tensor = self.criterion(z, y)
+        val_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
 
-        self.log("train_acc", train_acc*100, prog_bar=True)
+        self.log("val_acc", val_acc*100, prog_bar=True)
 
-        logs = {"train_loss": train_loss,
-                "train_acc": train_acc}
+        logs = {"val_loss": val_loss,
+                "val_acc": val_acc}
 
         batch_dictionary : BatchDict = {
-            "loss": train_loss,
-            "acc": train_acc,
-            "log": logs,
-            "correct": correct,
-            "total": total
+            'loss': val_loss,
+            'acc': val_acc,
+            'log': logs,
+            'correct': correct,
+            'total': total
         }
        
         return batch_dictionary
 
     def validation_epoch_end(self, outputs: list[BatchDict]) -> None:
-        avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
+        avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
-        correct = sum([x['correct'] for x in outputs])
-        total = sum([x['total'] for x in outputs])
+        correct: Number = sum([x['correct'] for x in outputs])
+        total: int = sum([x['total'] for x in outputs])
 
         if isinstance(self.logger, TensorBoardLogger):
-            self.logger.experiment.add_scalar("Loss/Train",
+            self.logger.experiment.add_scalar("Loss/Validation",
                                               avg_loss,
                                               self.current_epoch)
 
-            self.logger.experiment.add_scalar("Accuracy/Train",
+            self.logger.experiment.add_scalar("Accuracy/Validation",
                                               correct * 100/total,
                                               self.current_epoch)
 
