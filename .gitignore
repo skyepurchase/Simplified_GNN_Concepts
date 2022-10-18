@@ -1,5 +1,8 @@
-# Data
+# python
+__pycache__
+
+# data
 data/
 
-# Venv
+# venv
 pyg/
