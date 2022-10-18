@@ -6,28 +6,29 @@ from torch.nn import Module
 from typing import TypedDict
 from collections.abc import Callable
 from pytorch_lightning.loggers import TensorBoardLogger
+from torch.types import Number
+from torch.functional import Tensor
 
 
 class BatchDict(TypedDict):
-    loss: torch.Tensor 
-    acc: float
+    loss: Tensor 
+    acc: Tensor 
     log: dict
-    correct: int
+    correct: Number 
     total: int
 
 
 class PLModel(pl.LightningModule):
     def __init__(self,
                  model: Module,
-                 learning_rate: int) -> None:
+                 learning_rate: float) -> None:
         super().__init__()
-        self.save_hyperparameters()
         self.lr = learning_rate
         self.model = model
         self.criterion :  Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = torch.nn.CrossEntropyLoss()
 
-    def forward(self, x) -> torch.Tensor:
-        return self.model(x)
+    def forward(self, batch) -> torch.Tensor:
+        return self.model(batch.x, batch.edge_index)
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
@@ -35,14 +36,14 @@ class PLModel(pl.LightningModule):
 
 
     def training_step(self, batch, batch_idx: int) -> BatchDict:
-        z = self.model(batch)[batch.train_mask]
-        y = batch.y[batch.train_mask]
+        z: Tensor = self.model(batch.x, batch.edge_index)[batch.train_mask]
+        y: Tensor = batch.y[batch.train_mask]
        
-        correct = z.argmax(dim=1).eq(y).sum().item()
-        total = len(y)
+        correct: Number = z.argmax(dim=1).eq(y).sum().item()
+        total: int = len(y)
 
-        train_loss = self.criterion(z, y)
-        train_acc = z.argmax(dim=1).eq(y).sum()/len(y)
+        train_loss: Tensor = self.criterion(z, y)
+        train_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
 
         self.log("train_acc", train_acc*100, prog_bar=True)
 
@@ -75,7 +76,7 @@ class PLModel(pl.LightningModule):
                                               self.current_epoch)
 
     def validation_step(self, batch, batch_idx: int) -> BatchDict:
-        z = self.model(batch)[batch.val_mask]
+        z = self.model(batch.x, batch.edge_index)[batch.val_mask]
         y = batch.y[batch.val_mask]
        
         correct = z.argmax(dim=1).eq(y).sum().item()
