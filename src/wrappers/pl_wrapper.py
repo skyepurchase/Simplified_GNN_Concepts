@@ -25,7 +25,7 @@ class PLModel(pl.LightningModule):
         super().__init__()
         self.lr = learning_rate
         self.model = model
-        self.criterion :  Callable[[torch.Tensor, torch.Tensor], torch.Tensor] = torch.nn.CrossEntropyLoss()
+        self.criterion :  Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
 
     def forward(self, batch) -> torch.Tensor:
         return self.model(batch.x, batch.edge_index)
