@@ -1,11 +1,13 @@
-from collections import defaultdict
 import torch
+from collections import defaultdict
 from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.utils import barabasi_albert_graph
+from torch_geometric.utils.convert import from_networkx
+import networkx as nx
 
 # typing
 from typing import Callable, Optional
 from torch.functional import Tensor
-from torch_geometric.utils import barabasi_albert_graph
 
 
 def house_shape():
@@ -20,82 +22,132 @@ def house_size():
 
 # Dictionary of shapes to attach to basis graph
 SHAPES: dict[str, tuple[Tensor, Tensor]] = defaultdict(house_shape)
+SHAPES['grid'] = (torch.tensor([[0, 0, 1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7, 8, 8],
+                                [1, 3, 0, 4, 2, 1, 5, 0, 4, 6, 1, 3, 5, 7, 2, 4, 8, 3, 7, 4, 6, 8, 5, 7]]),
+                  torch.tensor([1, 1, 1, 1, 1, 1, 1, 1, 1]))
+SHAPES['cycle'] = (torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5],
+                                 [1, 5, 0, 2, 1, 3, 2, 4, 3, 5, 0, 4]]),
+                   torch.tensor([1, 1, 1, 1, 1, 1]))
+
 SIZES: dict[str, int] = defaultdict(house_size)
+SIZES['grid'] = 9
+SIZES['cycle'] = 6
+
+
+def tree(height: int = 8) -> Tensor:
+    """Builds a balanced binary-tree of height h
+    INPUT:
+    
+    height      :    int height of the tree 
+    
+    OUTPUT:
+    
+    graph       :    a tree shape graph
+    """
+    graph = nx.balanced_tree(2, height)
+    edge_index = from_networkx(graph).edge_index
+
+    return edge_index
+
 
 class SynGraph(InMemoryDataset):
-    """ 
+    """Builds a Pytorch Geometric dataset based on those outlined in the GNNExplainer and GCExplainer paper
+    INPUT:
+
+    root
+    basis
+    join
+    graph_size
+    shape
+    num_shapes
+    transform
+    pre_transform
+    pre_filter
     """ #TODO: add docstring
     def __init__(self,
                  root: str,
                  basis: str = "Barabasi-Albert",
-                 num_nodes: int = 300,
+                 join: bool = False,
+                 graph_size: int = 300,
                  shape: str = "house",
                  num_shapes: int = 80,
-                 connection_distribution: str = "random",
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform, pre_filter)
-        self.num_basis_nodes = num_nodes
+        self.basis = basis
         self.shape = shape
         self.num_shapes = num_shapes
-
-        # Generate the base BA graph
-        edge_index, edge_label, node_label = self._generate_basis(basis, num_nodes)
+        self.graph_size = graph_size
         
-        # Select nodes to connect shapes to
-        print("Selecting nodes to connect to")
-        if connection_distribution == "random":
-            connecting_nodes: Tensor = torch.randperm(num_nodes)[:num_shapes]
+        if basis == "Barabasi-Albert":
+            self.num_basis_nodes = graph_size
+        elif basis == "Tree":
+            self.num_basis_nodes = 2 ** graph_size
         else:
-            step = num_nodes // num_shapes
-            connecting_nodes = torch.arange(0, num_nodes, step)
+            raise ValueError(f'Implementation for {basis} does not exist, try Barabasi-Albert or Tree instead.')
 
-        # Connecting shapes to basis graph
-        edge_index, edge_label, node_label = self._attach_shapes(edge_index, edge_label, node_label, num_nodes, connecting_nodes)
+        # Generate graph
+        edge_index, node_label = self._gen_graph()
+        if join:
+            edge_index_B, node_label_B = self._gen_graph()
+            edge_index = torch.cat([edge_index, edge_index_B + len(node_label)], dim=1)
+            node_label = torch.cat([node_label, node_label_B], dim=0)
+            
 
-        print("Generating dataset")
-        x = torch.ones((num_nodes, 10), dtype=torch.float) # No feature data added
+        #print("Generating dataset")
+        x = torch.ones((graph_size, 10), dtype=torch.float) # No feature data added
         #TODO: Ask about what expl_mask could be
 
         data = Data(x=x,
                     y=node_label,
-                    edge_index=edge_index,
-                    edge_label=edge_label)
+                    edge_index=edge_index)
 
         self.data, self.slices = self.collate([data])
 
+    def _gen_graph(self) -> tuple[Tensor, Tensor]:
+        # Generate the base graph
+        edge_index, node_label = self._generate_basis(self.basis, self.graph_size)
+        
+        # Select nodes to connect shapes to
+        #print("Selecting nodes to connect to")
+        connecting_nodes: Tensor = torch.randperm(self.num_basis_nodes)[:self.num_shapes]
+
+        # Connecting shapes to basis graph
+        edge_index, node_label = self._attach_shapes(edge_index, node_label, self.num_basis_nodes, connecting_nodes)
+
+        return edge_index, node_label
+
     def _generate_basis(self,
                         basis: str,
-                        num_nodes: int) -> tuple[Tensor, Tensor, Tensor]:
+                        graph_size: int) -> tuple[Tensor, Tensor]:
         """
         """ #TODO: Add docstring
-        print(f"Generating {basis} Graph")
+        #print(f"Generating {basis} Graph")
         if basis == "Barabasi-Albert":
-            edge_index = barabasi_albert_graph(num_nodes, num_edges=5)
+            edge_index = barabasi_albert_graph(graph_size, num_edges=5)
+        elif basis == "Tree":
+            edge_index = tree(graph_size)
         else:
-            raise ValueError(f'Implementation for Barabasi-Albert only, received {basis} instead.')
+            raise ValueError(f'Implementation for {basis} does not exist, try Barabasi-Albert or Tree instead.')
         
         if isinstance(edge_index, Tensor):
-            edge_label = torch.zeros(edge_index.size(1), dtype=torch.int64)
-            node_label = torch.zeros(num_nodes, dtype=torch.int64)
+            node_label = torch.zeros(len(edge_index.unique()), dtype=torch.int64)
         else:
             raise ValueError(f'Expected edge_index to be type {Tensor} got {type(edge_index)} instead.')
 
-        return edge_index, edge_label, node_label
+        return edge_index, node_label
 
 
     def _attach_shapes(self,
                        edge_index: Tensor,
-                       edge_label: Tensor,
                        node_label: Tensor,
                        base_shape_node_id: int,
-                       connecting_nodes: Tensor) -> tuple[Tensor, Tensor, Tensor]:
+                       connecting_nodes: Tensor) -> tuple[Tensor, Tensor]:
         """
         """ #TODO: Add docstring
-        print("Connecting nodes")
+        #print("Connecting nodes")
         edge_indices = [edge_index]
-        edge_labels = [edge_label]
         node_labels = [node_label]
 
         shape_edge_index, shape_label = SHAPES[self.shape]
@@ -107,25 +159,20 @@ class SynGraph(InMemoryDataset):
                               [base_shape_node_id, int(connecting_nodes[i])]])
             ) # Adding connection between base shape node and connecting node
 
-            edge_labels.append(
-                torch.ones(shape_edge_index.size(1), dtype=torch.long) # Identifying edges in shape strcuture
-            )
-            edge_labels.append(torch.zeros(2, dtype=torch.long)) # Connections between shape and BA are not counted
-
             # Account for added nodes
             node_labels.append(shape_label)
             base_shape_node_id += shape_size 
         
         # Flatten indices
         edge_index = torch.cat(edge_indices, dim=1)
-        edge_label = torch.cat(edge_labels, dim=0)
         node_label = torch.cat(node_labels, dim=0)
 
-        return edge_index, edge_label, node_label
+        return edge_index, node_label
 
 
 if __name__=='__main__':
-    dataset = SynGraph("data/BAShapes")
+    dataset = SynGraph("data/BAGrid",
+                       shape="grid")
     data = dataset[0]
 
     print(len(dataset), dataset.num_classes, dataset.num_node_features)
