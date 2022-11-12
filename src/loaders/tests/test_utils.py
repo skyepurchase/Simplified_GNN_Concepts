@@ -6,7 +6,7 @@ import torch
 import numpy as np
 from torch.functional import Tensor
 
-from ..sgc import normalize_adjacency, precompute_features
+from ..utils import normalize_adjacency, precompute_features
 
 
 class TestSimplifiedGraphConvolution(unittest.TestCase):
