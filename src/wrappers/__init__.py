@@ -4,11 +4,11 @@ import torch.nn as nn
 
 def get_wrapper(name: str,
                 model: nn.Module,
-                learning_rate: int):
+                config: dict):
     if name == "Graph":
-        return GraphWrapper(model, learning_rate)
+        return GraphWrapper(model, **config)
     if name == "Linear":
-        return LinearWrapper(model, learning_rate)
+        return LinearWrapper(model, **config)
     else:
         raise ValueError(f'Unsupported model wrapper {name}')
 

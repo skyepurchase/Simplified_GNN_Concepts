@@ -1,3 +1,4 @@
+from os import WCOREDUMP
 import torch
 import pytorch_lightning as pl
 
@@ -21,17 +22,19 @@ class BatchDict(TypedDict):
 class GraphWrapper(pl.LightningModule):
     def __init__(self,
                  model: Module,
-                 learning_rate: float) -> None:
+                 learning_rate: float,
+                 weight_decay: float) -> None:
         super().__init__()
-        self.lr = learning_rate
-        self.model = model
-        self.criterion :  Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
+        self.lr: float = learning_rate
+        self.model: Module = model
+        self.criterion: Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
+        self.weight_decay: float = weight_decay
 
     def forward(self, batch) -> torch.Tensor:
         return self.model(batch.x, batch.edge_index)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         return {'optimizer': optimizer}
 
     def training_step(self, batch, batch_idx: int) -> BatchDict:
@@ -118,17 +121,19 @@ class GraphWrapper(pl.LightningModule):
 class LinearWrapper(pl.LightningModule):
     def __init__(self,
                  model: Module,
-                 learning_rate: float) -> None:
+                 learning_rate: float,
+                 weight_decay: float = 0.0) -> None:
         super().__init__()
-        self.lr = learning_rate
-        self.model = model
-        self.criterion :  Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
+        self.lr: float = learning_rate
+        self.model: Module = model
+        self.criterion: Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
+        self.weight_decay: float = weight_decay
 
     def forward(self, batch) -> torch.Tensor:
         return self.model(batch.x)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         return {'optimizer': optimizer}
 
     def training_step(self, batch, batch_idx: int) -> BatchDict:

@@ -1,6 +1,6 @@
+from argparse import Namespace
 from datetime import datetime
 
-from torch_geometric.datasets import Planetoid
 from torch_geometric.data import Data, InMemoryDataset
 
 from loaders import get_loaders
@@ -18,8 +18,8 @@ DIR = osp.dirname(__file__)
 
 
 def main(experiment: str,
-         config,
-         args) -> None:
+         config: dict,
+         args: Namespace) -> None:
     seed_everything(args.seed)
 
     dataset: InMemoryDataset = get_dataset(args.dataset,
@@ -30,7 +30,7 @@ def main(experiment: str,
     if isinstance(temp, Data):
         data: Data = temp
     else:
-        raise ValueError('Expected dataset at index zero to be type {Data} received type {type(temp)}')
+        raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
 
     model = get_model(config["model"]["name"],
                       dataset.num_features,
@@ -39,7 +39,7 @@ def main(experiment: str,
 
     pl_model = get_wrapper(config["wrapper"]["name"],
                            model,
-                           config["wrapper"]["learning_rate"])
+                           config["wrapper"]["kwargs"])
 
 
     train_loader, val_loader = get_loaders(config["sampler"]["name"],
