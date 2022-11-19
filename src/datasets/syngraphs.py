@@ -1,4 +1,5 @@
 import torch
+import random
 from collections import defaultdict
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.utils import barabasi_albert_graph
@@ -68,6 +69,7 @@ class SynGraph(InMemoryDataset):
                  root: str,
                  basis: str = "Barabasi-Albert",
                  join: bool = False,
+                 num_join_edges: int = 350,
                  graph_size: int = 300,
                  shape: str = "house",
                  num_shapes: int = 80,
@@ -91,13 +93,23 @@ class SynGraph(InMemoryDataset):
         edge_index, node_label = self._gen_graph()
         if join:
             edge_index_B, node_label_B = self._gen_graph()
-            edge_index = torch.cat([edge_index, edge_index_B + len(node_label)], dim=1)
+
+            num_A_nodes = len(node_label)
+            num_B_nodes = len(node_label_B)
+
+            edge_index = torch.cat([edge_index, edge_index_B + num_A_nodes], dim=1)
             node_label = torch.cat([node_label, node_label_B], dim=0)
+
+            edge_count = 0
+            while edge_count < num_join_edges:
+                node_1 = random.randint(0, num_A_nodes - 1)
+                node_2 = random.randint(num_A_nodes, num_B_nodes + num_A_nodes)
+                connections = torch.tensor([[node_1, node_2],
+                                            [node_2, node_1]])
+                edge_index = torch.cat([edge_index, connections])
             
 
-        #print("Generating dataset")
         x = torch.ones((graph_size, 10), dtype=torch.float) # No feature data added
-        #TODO: Ask about what expl_mask could be
 
         data = Data(x=x,
                     y=node_label,
@@ -110,7 +122,6 @@ class SynGraph(InMemoryDataset):
         edge_index, node_label = self._generate_basis(self.basis, self.graph_size)
         
         # Select nodes to connect shapes to
-        #print("Selecting nodes to connect to")
         connecting_nodes: Tensor = torch.randperm(self.num_basis_nodes)[:self.num_shapes]
 
         # Connecting shapes to basis graph
@@ -123,7 +134,6 @@ class SynGraph(InMemoryDataset):
                         graph_size: int) -> tuple[Tensor, Tensor]:
         """
         """ #TODO: Add docstring
-        #print(f"Generating {basis} Graph")
         if basis == "Barabasi-Albert":
             edge_index = barabasi_albert_graph(graph_size, num_edges=5)
         elif basis == "Tree":
@@ -146,7 +156,6 @@ class SynGraph(InMemoryDataset):
                        connecting_nodes: Tensor) -> tuple[Tensor, Tensor]:
         """
         """ #TODO: Add docstring
-        #print("Connecting nodes")
         edge_indices = [edge_index]
         node_labels = [node_label]
 
