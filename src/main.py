@@ -23,9 +23,9 @@ def main(experiment: str,
     seed_everything(args.seed)
 
     dataset: InMemoryDataset = get_dataset(args.dataset,
-                                           osp.join(DIR,
-                                                    args.root,
+                                           osp.join(args.root,
                                                     args.dataset))
+
     temp = dataset[0]
     if isinstance(temp, Data):
         data: Data = temp

@@ -13,9 +13,6 @@ from models import get_model
 import torch
 
 
-DIR = osp.dirname(__file__)
-
-
 def train_loop(args):
     model: nn.Module
     train_loader: DataLoader
@@ -50,8 +47,7 @@ def optimise(config: dict,
              args: Namespace) -> None:
     
     dataset: InMemoryDataset = get_dataset(args.dataset,
-                                           osp.join(DIR,
-                                                    args.root,
+                                           osp.join(args.root,
                                                     args.dataset))
 
     temp = dataset[0]
