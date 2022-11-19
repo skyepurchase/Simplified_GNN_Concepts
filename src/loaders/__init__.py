@@ -11,6 +11,8 @@ from .utils import normalize_adjacency, precompute_features
 def get_loaders(name: str,
                 data: Data,
                 config: dict) -> tuple[DataLoader,DataLoader]:
+    """
+    """ #TODO: Add a docstring
     if name == "RandomNodeSampler":
         return RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=False, **config["val"])
     elif name == "SGC":

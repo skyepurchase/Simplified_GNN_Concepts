@@ -7,6 +7,8 @@ def get_model(name: str,
               num_features: int,
               num_classes: int,
               config: dict) -> nn.Module:
+    """
+    """ #TODO: Add Docstring
     if name == "gcn":
         return GCN(num_features, num_classes, **config)
     elif name == "sgc":

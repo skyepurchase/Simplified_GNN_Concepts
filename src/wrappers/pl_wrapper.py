@@ -19,6 +19,7 @@ class BatchDict(TypedDict):
     total: int
 
 
+# TODO: Add Docstrings
 class GraphWrapper(pl.LightningModule):
     def __init__(self,
                  model: Module,

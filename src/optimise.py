@@ -1,18 +1,21 @@
 from argparse import Namespace
-from typing import Any, Union
+import os.path as osp
+
 from hyperopt import hp, fmin, tpe
 import hyperopt
-import os.path as osp
-from torch import Tensor, nn
+
+from torch import Tensor, nn, optim
 from torch.types import Number
 from torch.utils.data import DataLoader
 from torch_geometric.data import Data, InMemoryDataset
+
 from datasets import get_dataset
 from loaders import get_loaders
 from models import get_model
-import torch
 
 
+
+# TODO: Add docstrings
 def train_loop(args):
     model: nn.Module
     train_loader: DataLoader
@@ -20,8 +23,8 @@ def train_loop(args):
     weight_decay: float
     model, train_loader, lr, weight_decay = args
 
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
     running_loss: Number = 0. 
     iterations: int = 0

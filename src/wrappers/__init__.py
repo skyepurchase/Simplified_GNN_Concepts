@@ -5,6 +5,8 @@ import torch.nn as nn
 def get_wrapper(name: str,
                 model: nn.Module,
                 config: dict):
+    """
+    """ #TODO: Add Docstring
     if name == "Graph":
         return GraphWrapper(model, **config)
     if name == "Linear":
