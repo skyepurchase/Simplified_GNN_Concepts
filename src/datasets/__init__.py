@@ -1,22 +1,35 @@
 from torch_geometric.data import InMemoryDataset
 from .syngraphs import SynGraph 
-from torch_geometric.datasets import Planetoid, Reddit
+from torch_geometric.datasets import Planetoid, Reddit, TUDataset
 
-datasets = {
-    "BA-Shapes": SynGraph,
-    "BA-Grid": SynGraph,
-    "BA-Community": SynGraph,
-    "Tree-Shapes": SynGraph,
-    "Tree-Grid": SynGraph,
-}
 
 def get_dataset(name: str, root: str) -> InMemoryDataset:
+    """
+    """ #TODO: Add a Docstring
     if name in ["Cora", "PubMed", "CiteSeer"]:
         return Planetoid(root, name)
+    elif name in ["Mutagenicity", "Reddit-Binary"]:
+        return TUDataset(root, name)
     elif name == "Reddit":
         return Reddit(root)
     elif name == "BA-Shapes":
         return SynGraph(root)
+    elif name == "BA-Community":
+        return SynGraph(root,
+                        join=True)
+    elif name == "BA-Grid":
+        return SynGraph(root,
+                        shape="grid")
+    elif name == "Tree-Cycles":
+        return SynGraph(root,
+                        basis="Tree",
+                        graph_size=8,
+                        shape="cycle")
+    elif name == "Tree-Grid":
+        return SynGraph(root,
+                        basis="Tree",
+                        graph_size=8,
+                        shape="grid")
     else:
         raise ValueError(f'Unsupported dataset {name}')
 
