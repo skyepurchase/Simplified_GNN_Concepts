@@ -13,8 +13,6 @@ from datasets import get_dataset
 from loaders import get_loaders
 from models import get_model
 
-
-
 # TODO: Add docstrings
 def train_loop(args):
     model: nn.Module
@@ -64,7 +62,7 @@ def optimise(config: dict,
                                  dataset.num_classes,
                                  config["model"]["kwargs"])
 
-    train_loader, _ = get_loaders(config["sampler"]["name"],
+    train_loader, _, _ = get_loaders(config["sampler"]["name"],
                                   data,
                                   config["sampler"])
 
