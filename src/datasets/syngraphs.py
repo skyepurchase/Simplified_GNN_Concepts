@@ -5,8 +5,10 @@ from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.utils import barabasi_albert_graph
 from torch_geometric.utils.convert import from_networkx
 import networkx as nx
+import numpy as np
 
 # typing
+from numpy.typing import NDArray
 from typing import Callable, Optional
 from torch.functional import Tensor
 
@@ -98,8 +100,17 @@ class SynGraph(InMemoryDataset):
 
         x = torch.ones((len(node_label), 10), dtype=torch.float) # No feature data added
 
+        # Generating random split
+        # TODO: Test that these masks work correctly
+        train_mask: NDArray = np.ones(len(node_label), dtype=int)
+        train_mask[:int(0.2 * len(node_label))] = 0
+        np.random.shuffle(train_mask)
+        test_mask: NDArray = 1 - train_mask
+
         data = Data(x=x,
                     y=node_label,
+                    train_mask=train_mask,
+                    test_mask=test_mask,
                     edge_index=edge_index)
 
         self.data, self.slices = self.collate([data])
