@@ -9,6 +9,7 @@ from models import get_model
 from wrappers import get_wrapper 
 
 from pytorch_lightning import loggers, seed_everything
+from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
 import os.path as osp
@@ -43,9 +44,9 @@ def main(experiment: str,
                            config["wrapper"]["kwargs"])
 
 
-    train_loader, val_loader = get_loaders(config["sampler"]["name"],
-                                           data,
-                                           config["sampler"])
+    train_loader, val_loader, test_loader = get_loaders(config["sampler"]["name"],
+                                                        data,
+                                                        config["sampler"])
 
     time = datetime.now()
     version = f'{time.strftime("%Y%m%d-%H%M%S")}_{args.seed}'
@@ -54,7 +55,17 @@ def main(experiment: str,
                                           name=experiment,
                                           version=version)
 
+    checkpoint_name = experiment + f'_{str(args.seed)}-{time.strftime("%Y%m%d-%H%M%S")}'
     trainer = pl.Trainer(
+        callbacks=[
+            ModelCheckpoint(
+                monitor="val_acc",
+                dirpath=osp.join(DIR, "../checkpoints", checkpoint_name),
+                filename="{epoch:02d}-{val_acc:.3f}-{val_loss:.2f}",
+                save_last=True,
+                mode="max",
+            ),
+        ],
         accelerator=config["trainer"]["accelerator"],
         devices=config["trainer"]["devices"],
         logger=tb_logger,
@@ -63,7 +74,14 @@ def main(experiment: str,
         max_epochs=config["trainer"]["max_epochs"],
         enable_progress_bar=True)
 
+    print(f'Running {experiment} with seed value {args.seed}')
+    print(f'Saving models to {osp.join(DIR, "../checkpoints", checkpoint_name)}')
     trainer.fit(pl_model, train_loader, val_loader)
+
+    best_model = pl_model.load_from_checkpoint(
+        osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
+    )
+    trainer.test(best_model, dataloaders=test_loader)
 
 #     graph = to_networkx(data)
 #     nx.draw(graph)
