@@ -23,19 +23,17 @@ class BatchDict(TypedDict):
 class GraphWrapper(pl.LightningModule):
     def __init__(self,
                  model: Module,
-                 learning_rate: float,
-                 weight_decay: float) -> None:
+                 learning_rate: float) -> None:
         super().__init__()
         self.lr: float = learning_rate
         self.model: Module = model
         self.criterion: Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
-        self.weight_decay: float = weight_decay
 
     def forward(self, batch) -> torch.Tensor:
         return self.model(batch.x, batch.edge_index)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         return {'optimizer': optimizer}
 
     def training_step(self, batch, batch_idx: int) -> BatchDict:
