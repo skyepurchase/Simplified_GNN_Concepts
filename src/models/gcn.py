@@ -48,9 +48,11 @@ class GCN(nn.Module):
 
     def forward(self, x : Tensor, edge_index: Adj) -> Tensor:
         for i, layer in enumerate(self.layers):
-            x = layer(x, edge_index)
             if i < self.num_conv_layers:
+                x = layer(x, edge_index)
                 x = F.relu(x)
+            else:
+                x = layer(x)
 
         return F.log_softmax(x, dim=-1)
 
