@@ -1,7 +1,10 @@
 import unittest
+from numpy.typing import NDArray
 import torch
+import numpy as np
 from torch import tensor
 from torch.functional import Tensor
+from torch_geometric.data import InMemoryDataset
 from .. import syngraphs
 
 
@@ -297,6 +300,23 @@ class TestSyntheticGraphs(unittest.TestCase):
         # Assert
         self.assertEqual(unique_labels, 8)
         self.assertEqual(len(new_node_label), unique_nodes)
+
+    def test_masks_cover_set(self):
+        """Test whether the masks that the generated dataset provide perfectly covers the number of nodes present"""
+        # Arrange
+        syngraph: InMemoryDataset = syngraphs.SynGraph("data",
+                                                        basis="Barabasi-Albert",
+                                                        join=True,
+                                                        graph_size=300,
+                                                        shape="house",
+                                                        num_shapes=80)
+
+        # Act
+        train_mask: NDArray = syngraph.data.train_mask
+        test_mask: NDArray = syngraph.data.test_mask
+
+        # Assert
+        self.assertTrue(np.all(train_mask + test_mask == np.ones(len(train_mask))))
 
 
 if __name__=='__main__':
