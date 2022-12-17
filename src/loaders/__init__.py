@@ -7,14 +7,19 @@ from torch import Tensor
 from torch_sparse import SparseTensor
 from .utils import normalize_adjacency, precompute_features
 
+from typing import Union
+
 
 def get_loaders(name: str,
                 data: Data,
-                config: dict) -> tuple[DataLoader,DataLoader,DataLoader]:
+                config: dict) -> list[DataLoader]:
     """
     """ #TODO: Add a docstring
     if name == "RandomNodeSampler":
-        return RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=False, **config["val"]), RandomNodeSampler(data, shuffle=True, **config["test"])
+        if "val" in config.keys():
+            return [RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=False, **config["val"]), RandomNodeSampler(data, shuffle=True, **config["test"])]
+        else:
+            return [RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=True, **config["test"])]
     elif name == "SGC":
         adjacency: Tensor  = SparseTensor(row=data.edge_index[0], col=data.edge_index[1]).to_dense()
         norm_adj: Tensor = normalize_adjacency(adjacency)
@@ -25,7 +30,10 @@ def get_loaders(name: str,
 
         data.__setitem__("x", features)
         assert torch.all(features.eq(data.x))
-        return RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=True, **config["val"]), RandomNodeSampler(data, shuffle=True, **config["test"])
+        if "val" in config.keys():
+            return [RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=False, **config["val"]), RandomNodeSampler(data, shuffle=True, **config["test"])]
+        else:
+            return [RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=True, **config["test"])]
     else:
         raise ValueError(f"Unsupported data loader {name}")
 

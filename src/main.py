@@ -44,9 +44,9 @@ def main(experiment: str,
                            config["wrapper"]["kwargs"])
 
 
-    train_loader, val_loader, test_loader = get_loaders(config["sampler"]["name"],
-                                                        data,
-                                                        config["sampler"])
+    loaders = get_loaders(config["sampler"]["name"],
+                          data,
+                          config["sampler"])
 
     time = datetime.now()
     version = f'{time.strftime("%Y%m%d-%H%M%S")}_{args.seed}'
@@ -76,12 +76,23 @@ def main(experiment: str,
 
     print(f'Running {experiment} with seed value {args.seed}')
     print(f'Saving models to {osp.join(DIR, "../checkpoints", checkpoint_name)}')
-    trainer.fit(pl_model, train_loader, val_loader)
+    
+    if len(loaders) == 3:
+        trainer.fit(pl_model, loaders[0], loaders[1])
 
-    best_model = pl_model.load_from_checkpoint(
-        osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
-    )
-    trainer.test(best_model, dataloaders=test_loader)
+        best_model = pl_model.load_from_checkpoint(
+            osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
+        )
+        trainer.test(best_model, dataloaders=loaders[2])
+    elif len(loaders) == 2:
+        trainer.fit(pl_model, loaders[0])
+
+        best_model = pl_model.load_from_checkpoint(
+            osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
+        )
+        trainer.test(best_model, dataloaders=loaders[1])
+    else:
+        raise Exception(f"Not enough data loaders provided. Expected 2 or 3 received {len(loaders)}")
 
 #     graph = to_networkx(data)
 #     nx.draw(graph)

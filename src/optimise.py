@@ -62,9 +62,9 @@ def optimise(config: dict,
                                  dataset.num_classes,
                                  config["model"]["kwargs"])
 
-    train_loader, _, _ = get_loaders(config["sampler"]["name"],
-                                  data,
-                                  config["sampler"])
+    train_loader = get_loaders(config["sampler"]["name"],
+                               data,
+                               config["sampler"])[0]
 
     space = hp.choice('hyperparameters',
                       [
