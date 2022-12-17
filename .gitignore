@@ -4,9 +4,10 @@ __pycache__
 # data
 data/
 logs/
+checkpoints/
 
-# defunct config files
-src/configs/old
+# configs
+src/configs/
 
 # venv
 pyg/
