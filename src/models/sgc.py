@@ -70,6 +70,11 @@ class SGC(torch.nn.Module):
 
         self.lin = torch.nn.Linear(num_features, num_classes)
 
+
+    def reset_parameters(self):
+        self.lin.reset_parameters()
+
+
     def forward(self, x):
         return self.lin(x)
 
