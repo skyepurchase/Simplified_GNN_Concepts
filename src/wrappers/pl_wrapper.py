@@ -118,6 +118,46 @@ class GraphWrapper(pl.LightningModule):
                                               correct * 100/total,
                                               self.current_epoch)
 
+    def test_step(self, batch, batch_idx: int) -> BatchDict:
+        z: Tensor = self.model(batch.x, batch.edge_index)[batch.test_mask]
+        y: Tensor = batch.y[batch.test_mask]
+
+        correct: Number = z.argmax(dim=1).eq(y).sum().item()
+        total: int = len(y)
+
+        test_loss: Tensor = self.criterion(z, y)
+        test_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
+
+        self.log("test_acc", test_acc*100, prog_bar=True)
+
+        logs = {"test_loss": test_loss,
+                "test_acc": test_acc}
+
+        batch_dictionary : BatchDict = {
+            'loss': test_loss,
+            'acc': test_acc,
+            'log': logs,
+            'correct': correct,
+            'total': total
+        }
+
+        return batch_dictionary
+
+    def test_epoch_end(self, outputs: list[BatchDict]) -> None:
+        avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
+
+        correct: Number = sum([x['correct'] for x in outputs])
+        total: int = sum([x['total'] for x in outputs])
+
+        if isinstance(self.logger, TensorBoardLogger):
+            self.logger.experiment.add_scalar("Loss/Test",
+                                              avg_loss,
+                                              self.current_epoch)
+
+            self.logger.experiment.add_scalar("Accuracy/Test",
+                                              correct * 100/total,
+                                              self.current_epoch)
+
 
 class LinearWrapper(pl.LightningModule):
     def __init__(self,
@@ -129,6 +169,7 @@ class LinearWrapper(pl.LightningModule):
         self.model: Module = model
         self.criterion: Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
         self.weight_decay: float = weight_decay
+        self.save_hyperparameters()
 
     def forward(self, batch) -> torch.Tensor:
         return self.model(batch.x)
@@ -214,6 +255,46 @@ class LinearWrapper(pl.LightningModule):
                                               self.current_epoch)
 
             self.logger.experiment.add_scalar("Accuracy/Validation",
+                                              correct * 100/total,
+                                              self.current_epoch)
+
+    def test_step(self, batch, batch_idx: int) -> BatchDict:
+        z: Tensor = self.model(batch.x)[batch.test_mask]
+        y: Tensor = batch.y[batch.test_mask]
+
+        correct: Number = z.argmax(dim=1).eq(y).sum().item()
+        total: int = len(y)
+
+        test_loss: Tensor = self.criterion(z, y)
+        test_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
+
+        self.log("test_acc", test_acc*100, prog_bar=True)
+
+        logs = {"test_loss": test_loss,
+                "test_acc": test_acc}
+
+        batch_dictionary : BatchDict = {
+            'loss': test_loss,
+            'acc': test_acc,
+            'log': logs,
+            'correct': correct,
+            'total': total
+        }
+
+        return batch_dictionary
+
+    def test_epoch_end(self, outputs: list[BatchDict]) -> None:
+        avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
+
+        correct: Number = sum([x['correct'] for x in outputs])
+        total: int = sum([x['total'] for x in outputs])
+
+        if isinstance(self.logger, TensorBoardLogger):
+            self.logger.experiment.add_scalar("Loss/Test",
+                                              avg_loss,
+                                              self.current_epoch)
+
+            self.logger.experiment.add_scalar("Accuracy/Test",
                                               correct * 100/total,
                                               self.current_epoch)
 
