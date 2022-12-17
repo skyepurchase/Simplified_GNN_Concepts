@@ -81,35 +81,22 @@ class SynGraph(InMemoryDataset):
         self.shape = shape
         self.num_shapes = num_shapes
         self.graph_size = graph_size
+        self.num_join_edges = num_join_edges
         
         if basis == "Barabasi-Albert":
             self.num_basis_nodes = graph_size
         elif basis == "Tree":
-            self.num_basis_nodes = 2 ** graph_size
+            self.num_basis_nodes = 2 ** (graph_size + 1) - 1
         else:
             raise ValueError(f'Implementation for {basis} does not exist, try Barabasi-Albert or Tree instead.')
 
         # Generate graph
         edge_index, node_label = self._gen_graph()
         if join:
-            edge_index_B, node_label_B = self._gen_graph()
+            edge_index, node_label = self._join(edge_index,
+                                                node_label)
 
-            num_A_nodes = len(node_label)
-            num_B_nodes = len(node_label_B)
-
-            edge_index = torch.cat([edge_index, edge_index_B + num_A_nodes], dim=1)
-            node_label = torch.cat([node_label, node_label_B], dim=0)
-
-            edge_count = 0
-            while edge_count < num_join_edges:
-                node_1 = random.randint(0, num_A_nodes - 1)
-                node_2 = random.randint(num_A_nodes, num_B_nodes + num_A_nodes)
-                connections = torch.tensor([[node_1, node_2],
-                                            [node_2, node_1]])
-                edge_index = torch.cat([edge_index, connections])
-            
-
-        x = torch.ones((graph_size, 10), dtype=torch.float) # No feature data added
+        x = torch.ones((len(node_label), 10), dtype=torch.float) # No feature data added
 
         data = Data(x=x,
                     y=node_label,
@@ -177,6 +164,29 @@ class SynGraph(InMemoryDataset):
         node_label = torch.cat(node_labels, dim=0)
 
         return edge_index, node_label
+
+    def _join(self,
+              edge_index: Tensor,
+              node_label: Tensor) -> tuple[Tensor, Tensor]:
+
+        num_A_labels = torch.max(node_label)
+
+        edge_index_B, node_label_B = self._gen_graph()
+
+        num_A_nodes = len(node_label)
+        num_B_nodes = len(node_label_B)
+
+        edge_count = 0
+        edge_indices = [edge_index, edge_index_B + num_A_nodes]
+        while edge_count < self.num_join_edges:
+            node_1 = random.randint(0, num_A_nodes - 1)
+            node_2 = random.randint(num_A_nodes, num_B_nodes + num_A_nodes - 1)
+            connections = torch.tensor([[node_1, node_2],
+                                        [node_2, node_1]])
+            edge_indices.append(connections)
+            edge_count += 1
+
+        return torch.cat(edge_indices, dim=1), torch.cat([node_label, node_label_B + num_A_labels + 1], dim=0)
 
 
 if __name__=='__main__':
