@@ -152,6 +152,7 @@ class TestSyntheticGraphs(unittest.TestCase):
 
     def test_attach_shapes_80_houses_to_height_8_tree(self):
         """Test whether the correct number of nodes are attached when attaching 80 houses to a tree"""
+        # Arrange
         syngraph: syngraphs.SynGraph = syngraphs.SynGraph("data",
                                                           basis="Tree",
                                                           join=False,
@@ -178,6 +179,7 @@ class TestSyntheticGraphs(unittest.TestCase):
 
     def test_attach_shapes_80_houses_to_300_node_BA(self):
         """Test whether the correct number of nodes are attached when attaching 80 houses to a Barabasi-Albert graph"""
+        # Arrange
         syngraph: syngraphs.SynGraph = syngraphs.SynGraph("data",
                                                           basis="Barabasi-Albert",
                                                           join=False,
@@ -201,6 +203,100 @@ class TestSyntheticGraphs(unittest.TestCase):
         self.assertEqual(torch.max(edge_index), 699)
         self.assertEqual(num_nodes, 700)
         self.assertEqual(num_nodes, unique_nodes)
+
+
+    def test_gen_graph_tree_correct(self):
+        """Test whether the generate graph function correctly joins previous parts together"""
+        # Arrange
+        syngraph: syngraphs.SynGraph = syngraphs.SynGraph("data",
+                                                          basis="Tree",
+                                                          join=False,
+                                                          graph_size=8,
+                                                          shape="house",
+                                                          num_shapes=80)
+
+        # Act
+        edge_index, node_label = syngraph._gen_graph()
+
+        num_nodes = len(node_label)
+        unique_nodes = len(edge_index.unique())
+
+        # Assert
+        self.assertEqual(torch.max(edge_index), 910)
+        self.assertEqual(num_nodes, 911)
+        self.assertEqual(num_nodes, unique_nodes)
+
+    def test_gen_graph_BA_correct(self):
+        """Test whether the generate graph function correctly joins previous parts together"""
+        # Arrange
+        syngraph: syngraphs.SynGraph = syngraphs.SynGraph("data",
+                                                          basis="Barabasi-Albert",
+                                                          join=False,
+                                                          graph_size=300,
+                                                          shape="house",
+                                                          num_shapes=80)
+        basis_edges, basis_labels = syngraph._generate_basis(basis="Barabasi-Albert",
+                                                              graph_size=300)
+        connecting_nodes: Tensor = torch.randperm(300)[:80]
+
+        # Act
+        edge_index, node_label = syngraph._attach_shapes(basis_edges,
+                                                         basis_labels,
+                                                         base_shape_node_id=300,
+                                                         connecting_nodes=connecting_nodes)
+
+        num_nodes = len(node_label)
+        unique_nodes = len(edge_index.unique())
+
+        # Assert
+        self.assertEqual(torch.max(edge_index), 699)
+        self.assertEqual(num_nodes, 700)
+        self.assertEqual(num_nodes, unique_nodes)
+
+    def test_join_correct_num_nodes(self):
+        """Test whether join produces the correct number of nodes"""
+        # Arrange
+        num_join_edges = 350
+        syngraph: syngraphs.SynGraph = syngraphs.SynGraph("data",
+                                                          basis="Tree",
+                                                          join=True,
+                                                          num_join_edges=num_join_edges,
+                                                          graph_size=8,
+                                                          shape="house",
+                                                          num_shapes=80)
+
+        # Act
+        edge_index, node_label = syngraph._gen_graph()
+        new_edge_index, new_node_label = syngraph._join(edge_index,
+                                                        node_label)
+
+        # Assert
+        self.assertEqual(new_edge_index.shape[1], (2 * edge_index.shape[1]) + (2 * num_join_edges))
+        self.assertEqual(len(new_node_label), 2 * len(node_label))
+
+    def test_join_correct_node_labels(self):
+        """Test whether join produces the correct node labels to create distinct graphs"""
+        # Arrange
+        num_join_edges = 350
+        syngraph: syngraphs.SynGraph = syngraphs.SynGraph("data",
+                                                          basis="Tree",
+                                                          join=True,
+                                                          num_join_edges=num_join_edges,
+                                                          graph_size=8,
+                                                          shape="house",
+                                                          num_shapes=80)
+
+        # Act
+        edge_index, node_label = syngraph._gen_graph()
+        new_edge_index, new_node_label = syngraph._join(edge_index,
+                                                        node_label)
+
+        unique_nodes = len(new_edge_index.unique())
+        unique_labels = len(new_node_label.unique())
+
+        # Assert
+        self.assertEqual(unique_labels, 8)
+        self.assertEqual(len(new_node_label), unique_nodes)
 
 
 if __name__=='__main__':
