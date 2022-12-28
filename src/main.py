@@ -28,12 +28,6 @@ def main(experiment: str,
                                            osp.join(args.root,
                                                     args.dataset))
 
-    temp = dataset[0]
-    if isinstance(temp, Data):
-        data: Data = temp
-    else:
-        raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
-
     model = get_model(config["model"]["name"],
                       dataset.num_features,
                       dataset.num_classes,
@@ -45,7 +39,7 @@ def main(experiment: str,
 
 
     loaders = get_loaders(config["sampler"]["name"],
-                          data,
+                          dataset,
                           config["sampler"])
 
     time = datetime.now()
