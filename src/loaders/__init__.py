@@ -48,6 +48,15 @@ def get_loaders(name: str,
         else:
             return [RandomNodeSampler(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeSampler(data, shuffle=True, num_workers=16, **config["test"])]
 
+    elif name == "DataLoader":
+        if "val" in config.keys():
+            raise Exception("ATTENTION: DataLoader should be for GCExplainer comparison. No known reason for validation set")
+        else:
+            train_loader = DataLoader(dataset, num_workers=16)
+            test_loader = DataLoader(dataset, num_workers=16)
+
+            return [train_loader, test_loader]
+
     else:
         raise ValueError(f"Unsupported data loader {name}")
 
