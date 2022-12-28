@@ -107,13 +107,13 @@ class SynGraph(InMemoryDataset):
         np.random.shuffle(train_mask)
         test_mask: NDArray = 1 - train_mask
 
-        data = Data(x=x,
+        self.data = Data(x=x,
                     y=node_label,
-                    train_mask=train_mask,
-                    test_mask=test_mask,
+                    train_mask=torch.tensor(train_mask, dtype=torch.bool),
+                    test_mask=torch.tensor(test_mask, dtype=torch.bool),
                     edge_index=edge_index)
 
-        self.data, self.slices = self.collate([data])
+#         self.data, self.slices = self.collate([data])
 
     def _gen_graph(self) -> tuple[Tensor, Tensor]:
         # Generate the base graph
@@ -201,11 +201,13 @@ class SynGraph(InMemoryDataset):
 
 
 if __name__=='__main__':
-    dataset = SynGraph("data/BAGrid",
-                       shape="grid")
+    dataset = SynGraph("data/BAShape")
     data = dataset[0]
+    
+    if isinstance(data, Data):
+        print(data.y)
 
     print(len(dataset), dataset.num_classes, dataset.num_node_features)
-    
+
     if isinstance(data, Data):
         print(data.num_nodes, data.num_edges)
