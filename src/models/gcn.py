@@ -1,7 +1,10 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F 
 from torch_geometric.nn import GCNConv
+from torch_geometric.nn.pool import global_max_pool
 from torch.nn import Linear
+from .layers import Pool
 
 # typing
 from torch import Tensor
@@ -25,6 +28,7 @@ class GCN(nn.Module):
         self.pooling = pooling
 
         self.layers = nn.ModuleList() 
+#        self.pools = nn.ModuleList()
         in_features: int = in_channels
         for i in range(num_conv_layers):
             conv = GCNConv(in_features,
@@ -33,6 +37,12 @@ class GCN(nn.Module):
 
             self.layers.append(conv)
             in_features = hid_features[i]
+
+#            if pooling:
+#                self.pools.append(global_max_pool)
+
+        if pooling:
+            in_features = in_features * num_conv_layers
 
         for i in range(num_lin_layers - 1):
             lin = Linear(in_features,
@@ -46,19 +56,30 @@ class GCN(nn.Module):
                               out_channels)
         self.layers.append(output_layer)
 
-    def forward(self, x : Tensor, edge_index: Adj) -> Tensor:
+    def forward(self, x : Tensor, edge_index: Adj, batch: Tensor) -> Tensor:
+        out_all = []
+#         breakpoint()
+
         for i, layer in enumerate(self.layers):
             if i < self.num_conv_layers:
                 x = layer(x, edge_index)
                 x = F.relu(x)
+
+                if self.pooling:
+#                     out = self.pools[i]
+                    out = global_max_pool(x, batch)
+                    out_all.append(out)
             else:
+                if self.pooling:
+                    x = torch.cat(out_all, dim=-1)
+
                 x = layer(x)
 
         return F.log_softmax(x, dim=-1)
 
     def __repr__(self) -> str:
-        pooling = ' global max. pooling,' if self.pooling else ''
+        pooling = 'global max. pooling, ' if self.pooling else ''
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, '
-                f'num_layers=[{self.num_conv_layers},{pooling} {self.num_lin_layers})')
+                f'num_layers=[{self.num_conv_layers}, {pooling}{self.num_lin_layers})')
 
