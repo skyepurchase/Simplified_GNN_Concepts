@@ -25,8 +25,7 @@ def main(experiment: str,
     seed_everything(args.seed)
 
     dataset: InMemoryDataset = get_dataset(args.dataset,
-                                           osp.join(args.root,
-                                                    args.dataset))
+                                           args.root)
 
     model = get_model(config["model"]["name"],
                       dataset.num_features,
