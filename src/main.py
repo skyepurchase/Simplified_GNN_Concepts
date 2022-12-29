@@ -1,7 +1,7 @@
 from argparse import Namespace
 from datetime import datetime
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import InMemoryDataset
 
 from loaders import get_loaders
 from datasets import get_dataset 
@@ -62,8 +62,8 @@ def main(experiment: str,
         accelerator=config["trainer"]["accelerator"],
         devices=config["trainer"]["devices"],
         logger=tb_logger,
-        replace_sampler_ddp=False,
-        strategy='ddp',
+#        replace_sampler_ddp=False,
+#        strategy='ddp',
         max_epochs=config["trainer"]["max_epochs"],
         enable_progress_bar=True)
 
