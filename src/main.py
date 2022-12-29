@@ -20,11 +20,12 @@ DIR = osp.dirname(__file__)
 
 # TODO: Add Docstrings
 def main(experiment: str,
+         dataset_name: str,
          config: dict,
          args: Namespace) -> None:
     seed_everything(args.seed)
 
-    dataset: InMemoryDataset = get_dataset(args.dataset,
+    dataset: InMemoryDataset = get_dataset(dataset_name,
                                            args.root)
 
     model = get_model(config["model"]["name"],
@@ -99,14 +100,14 @@ if __name__=="__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True, help="Config file")
-    parser.add_argument('--dataset', required=True, help="Dataset to run on")
-    parser.add_argument('--root', required=True, help="Root directory for dataset")
-    parser.add_argument('--seed', required=True, type=int, help="Seed for randomisation")
+    parser.add_argument('--root', help="Root directory for dataset", default='data/')
+    parser.add_argument('--seed', type=int, help="Seed for randomisation", default=1337)
     args = parser.parse_args()
 
     with open(osp.abspath(args.config), 'r') as config_file:
         config = yaml.safe_load(config_file)
         filename = args.config.split('/')[-1]
-        expr_name = args.dataset + "." + '.'.join(filename.split('.')[:-1])
-        main(expr_name, config, args)
+        dataset_name = filename.split('.')[2]
+        expr_name = dataset_name + "." + '.'.join(filename.split('.')[:-1])
+        main(expr_name, dataset_name, config, args)
 
