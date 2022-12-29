@@ -36,7 +36,8 @@ class GraphWrapper(pl.LightningModule):
         return {'optimizer': optimizer}
 
     def training_step(self, batch, batch_idx: int) -> BatchDict:
-        z: Tensor = self.model(batch.x, batch.edge_index)[batch.train_mask]
+        print(batch)
+        z: Tensor = self.model(batch.x, batch.edge_index, batch.batch)[batch.train_mask]
         y: Tensor = batch.y[batch.train_mask]
        
         correct: Number = z.argmax(dim=1).eq(y).sum().item()
