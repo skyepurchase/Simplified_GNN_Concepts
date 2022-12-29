@@ -57,6 +57,23 @@ def get_loaders(name: str,
 
             return [train_loader, test_loader]
 
+    elif name == "GraphLoader":
+        graphs = dataset.shuffle()
+
+        train_idx = int(len(graphs) * 0.8) # TODO: Potentially make this a user defined value
+        train_set = graphs[:train_idx]
+        test_set = graphs[train_idx:]
+
+        if isinstance(train_set, Dataset) and isinstance(test_set, Dataset):
+            if "val" in config.keys():
+                raise ValueError(f"Validation set not available for {name}")
+            else:
+                train_loader = DataLoader(train_set, shuffle=True, num_workers=16, **config["train"])
+                test_loader = DataLoader(test_set, shuffle=False, num_workers=16, **config["train"])
+            return [train_loader, test_loader]
+        else:
+            raise ValueError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
+
     else:
         raise ValueError(f"Unsupported data loader {name}")
 
