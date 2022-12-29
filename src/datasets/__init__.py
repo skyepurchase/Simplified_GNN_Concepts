@@ -1,4 +1,5 @@
 from torch_geometric.data import InMemoryDataset
+from torch_geometric.transforms import Constant
 from .syngraphs import SynGraph 
 from torch_geometric.datasets import Planetoid, Reddit, TUDataset
 
@@ -8,7 +9,9 @@ def get_dataset(name: str, root: str) -> InMemoryDataset:
     """ #TODO: Add a Docstring
     if name in ["Cora", "PubMed", "CiteSeer"]:
         return Planetoid(root, name)
-    elif name in ["Mutagenicity", "Reddit-Binary"]:
+    elif name == "REDDIT-BINARY":
+        return TUDataset(root, name, transform=Constant())
+    elif name == "MUTAGENICITY":
         return TUDataset(root, name)
     elif name == "Reddit":
         return Reddit(root)
