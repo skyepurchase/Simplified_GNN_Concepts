@@ -51,15 +51,15 @@ def main(experiment: str,
 
     checkpoint_name = experiment + f'_{str(args.seed)}-{time.strftime("%Y%m%d-%H%M%S")}'
     trainer = pl.Trainer(
-        callbacks=[
-            ModelCheckpoint(
-                monitor="val_acc",
-                dirpath=osp.join(DIR, "../checkpoints", checkpoint_name),
-                filename="{epoch:02d}-{val_acc:.3f}-{val_loss:.2f}",
-                save_last=True,
-                mode="max",
-            ),
-        ],
+#         callbacks=[
+#             ModelCheckpoint(
+#                 monitor="val_acc",
+#                 dirpath=osp.join(DIR, "../checkpoints", checkpoint_name),
+#                 filename="{epoch:02d}-{val_acc:.3f}-{val_loss:.2f}",
+#                 save_last=True,
+#                 mode="max",
+#             ),
+#         ],
         accelerator=config["trainer"]["accelerator"],
         devices=config["trainer"]["devices"],
         logger=tb_logger,
