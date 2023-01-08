@@ -49,41 +49,63 @@ def main(experiment: str,
                                           name=experiment,
                                           version=version)
 
-    checkpoint_name = experiment + f'_{str(args.seed)}-{time.strftime("%Y%m%d-%H%M%S")}'
+    checkpoint_name = None
+    callbacks = []
+#     if experiment.split('.')[0] == "GCN":
+#         callbacks.append(
+#             EarlyStopping(
+#                 monitor="train_monitor",
+#                 stopping_threshold=0.05,
+#                 patience=100000,
+#                 check_on_train_epoch_end=True,
+#                 verbose=True,
+#             )
+#         )
+    if experiment.split('.')[0] == "SGC":
+        checkpoint_name = experiment + f'_{str(args.seed)}-{time.strftime("%Y%m%d-%H%M%S")}'
+        callbacks.append(
+            ModelCheckpoint(
+                monitor="val_acc",
+                dirpath=osp.join(DIR, "../checkpoints", checkpoint_name),
+                filename="{epoch:02d}-{val_acc:.3f}-{val_loss:.2f}",
+                save_last=True,
+                mode="max",
+            )
+        )
+
     trainer = pl.Trainer(
-#         callbacks=[
-#             ModelCheckpoint(
-#                 monitor="val_acc",
-#                 dirpath=osp.join(DIR, "../checkpoints", checkpoint_name),
-#                 filename="{epoch:02d}-{val_acc:.3f}-{val_loss:.2f}",
-#                 save_last=True,
-#                 mode="max",
-#             ),
-#         ],
+        callbacks=callbacks,
         accelerator=config["trainer"]["accelerator"],
         devices=config["trainer"]["devices"],
         logger=tb_logger,
-#        replace_sampler_ddp=False,
-#        strategy='ddp',
         max_epochs=config["trainer"]["max_epochs"],
         enable_progress_bar=True)
 
     print(f'Running {experiment} with seed value {args.seed}')
-    print(f'Saving models to {osp.join(DIR, "../checkpoints", checkpoint_name)}')
+    if checkpoint_name:
+        print(f'Saving models to {osp.join(DIR, "../checkpoints", checkpoint_name)}')
     
     if len(loaders) == 3:
         trainer.fit(pl_model, loaders[0], loaders[1])
 
-        best_model = pl_model.load_from_checkpoint(
-            osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
-        )
+        if checkpoint_name:
+            best_model = pl_model.load_from_checkpoint(
+                osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
+            )
+        else:
+            best_model = pl_model
+
         trainer.test(best_model, dataloaders=loaders[2])
     elif len(loaders) == 2:
         trainer.fit(pl_model, loaders[0])
 
-        best_model = pl_model.load_from_checkpoint(
-            osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
-        )
+        if checkpoint_name:
+            best_model = pl_model.load_from_checkpoint(
+                osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
+            )
+        else:
+            best_model = pl_model
+
         trainer.test(best_model, dataloaders=loaders[1])
     else:
         raise Exception(f"Not enough data loaders provided. Expected 2 or 3 received {len(loaders)}")
@@ -108,6 +130,5 @@ if __name__=="__main__":
         config = yaml.safe_load(config_file)
         filename = args.config.split('/')[-1]
         dataset_name = filename.split('.')[2]
-        expr_name = dataset_name + "." + '.'.join(filename.split('.')[:-1])
-        main(expr_name, dataset_name, config, args)
+        main(filename, dataset_name, config, args)
 
