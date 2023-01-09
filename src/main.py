@@ -15,8 +15,6 @@ from pytorch_lightning import loggers, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
-from typing import Callable
-
 
 DIR = osp.dirname(__file__)
 
@@ -83,7 +81,7 @@ def main(experiment: str,
         devices=config["trainer"]["devices"],
         logger=tb_logger,
         max_epochs=config["trainer"]["max_epochs"],
-        enable_progress_bar=True)
+        enable_progress_bar=args.verbose)
 
     print(f'Running {experiment} with seed value {args.seed}')
     if checkpoint_name:
@@ -128,6 +126,7 @@ if __name__=="__main__":
     parser.add_argument('--config', required=True, help="Config file")
     parser.add_argument('--root', help="Root directory for dataset", default='data/')
     parser.add_argument('--seed', type=int, help="Seed for randomisation", default=1337)
+    parser.add_argument('-v','--verbose', action="store_true", help="Whether to display progress bar during training", default=False)
     args = parser.parse_args()
 
     with open(osp.abspath(args.config), 'r') as config_file:
