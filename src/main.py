@@ -1,6 +1,7 @@
 from argparse import Namespace
 from datetime import datetime
 import os.path as osp
+import logging
 
 from torch_geometric.data import InMemoryDataset
 
@@ -127,6 +128,9 @@ if __name__=="__main__":
     parser.add_argument('--seed', type=int, help="Seed for randomisation", default=1337)
     parser.add_argument('-v','--verbose', action="store_true", help="Whether to display progress bar during training", default=False)
     args = parser.parse_args()
+
+    if not args.verbose:
+        logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 
     with open(osp.abspath(args.config), 'r') as config_file:
         config = yaml.safe_load(config_file)
