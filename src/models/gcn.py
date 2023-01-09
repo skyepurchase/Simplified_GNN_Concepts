@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F 
 from torch_geometric.nn import GCNConv
-from torch_geometric.nn.pool import global_max_pool
 from torch.nn import Linear
 from .layers import Pool
 
@@ -27,6 +26,7 @@ class GCN(nn.Module):
         self.num_lin_layers = num_lin_layers
         self.pooling = pooling
 
+        self.pool_layer = Pool()
         self.layers = nn.ModuleList() 
 #        self.pools = nn.ModuleList()
         in_features: int = in_channels
@@ -67,7 +67,7 @@ class GCN(nn.Module):
 
                 if self.pooling:
 #                     out = self.pools[i]
-                    out = global_max_pool(x, batch)
+                    out = self.pool_layer(x, batch)
                     out_all.append(out)
             else:
                 if self.pooling:
