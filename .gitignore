@@ -6,6 +6,7 @@ data/
 logs/
 checkpoints/
 output/
+activations/
 
 # configs
 src/configs/
