@@ -1,18 +1,21 @@
 from argparse import Namespace
 from datetime import datetime
+import os.path as osp
+
+from torch import nn
 
 from torch_geometric.data import InMemoryDataset
 
 from loaders import get_loaders
 from datasets import get_dataset 
-from models import get_model
+from models import get_activation_dict, get_model, register_hooks
 from wrappers import get_wrapper 
 
 from pytorch_lightning import loggers, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
-import os.path as osp
+from typing import Callable
 
 
 DIR = osp.dirname(__file__)
@@ -32,6 +35,7 @@ def main(experiment: str,
                       dataset.num_features,
                       dataset.num_classes,
                       config["model"]["kwargs"])
+    model = register_hooks(model)
 
     pl_model = get_wrapper(config["wrapper"]["name"],
                            model,

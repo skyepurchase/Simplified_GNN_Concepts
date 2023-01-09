@@ -18,9 +18,7 @@ def _get_activation(idx: str) -> Callable:
 
 def register_hooks(model: nn.Module) -> nn.Module:
     for name, m in model.named_modules():
-        print(name, type(m))
         if isinstance(m, (GCNConv, nn.Linear, Pool)):
-            print("yes")
             m.register_forward_hook(_get_activation(f'{name}'))
 
     return model
