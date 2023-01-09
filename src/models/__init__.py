@@ -2,6 +2,8 @@ from .gcn import GCN
 from .sgc import SGC
 from .layers import Pool
 
+import pickle
+
 # Typing
 from typing import Callable
 from torch import nn
@@ -24,8 +26,9 @@ def register_hooks(model: nn.Module) -> nn.Module:
     return model
 
 
-def get_activation_dict() -> dict:
-    return ACTIVATION_DICT
+def save_activation(path: str) -> None:
+    with open(path, 'wb') as file:
+        pickle.dump(ACTIVATION_DICT, file)
 
 
 def get_model(name: str,
