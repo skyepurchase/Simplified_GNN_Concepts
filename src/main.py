@@ -7,7 +7,7 @@ from torch_geometric.data import InMemoryDataset
 
 from loaders import get_loaders
 from datasets import get_dataset 
-from models import get_activation_dict, get_model, register_hooks
+from models import save_activation, get_model, register_hooks
 from wrappers import get_wrapper 
 
 from pytorch_lightning import loggers, seed_everything
@@ -80,7 +80,7 @@ def main(experiment: str,
         devices=config["trainer"]["devices"],
         logger=tb_logger,
         max_epochs=config["trainer"]["max_epochs"],
-        log_every_n_steps=1,
+        log_every_n_steps=50,
         enable_progress_bar=args.verbose)
 
     print(f'Running {experiment} with seed value {args.seed}')
@@ -88,6 +88,7 @@ def main(experiment: str,
         print(f'Saving models to {osp.join(DIR, "../checkpoints", checkpoint_name)}')
     
     if len(loaders) == 3:
+        print("ASSUMED TO BE SGC")
         trainer.fit(pl_model, loaders[0], loaders[1])
 
         if checkpoint_name:
@@ -98,6 +99,7 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[2])
+        # TODO: No activation saving because this is should just be SGC
     elif len(loaders) == 2:
         trainer.fit(pl_model, loaders[0])
 
@@ -109,6 +111,7 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[1])
+        save_activation(osp.join(DIR, "../activations", f'{checkpoint_name}.pkl'))
     else:
         raise Exception(f"Not enough data loaders provided. Expected 2 or 3 received {len(loaders)}")
 
