@@ -9,6 +9,9 @@ checkpoints/
 # configs
 src/configs/
 
+# run scripts
+run/
+
 # venv
 pyg/
 
