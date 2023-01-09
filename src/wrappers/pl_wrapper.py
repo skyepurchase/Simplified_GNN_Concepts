@@ -85,7 +85,7 @@ class GraphWrapper(pl.LightningModule):
         test_loss: Tensor = self.criterion(z, y)
         test_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
 
-        self.log("test_acc", test_acc*100, prog_bar=True)
+        self.log("test_acc", test_acc*100, prog_bar=True, batch_size=1)
 
         logs = {"test_loss": test_loss,
                 "test_acc": test_acc}
@@ -182,7 +182,7 @@ class GraphPoolWrapper(pl.LightningModule):
         test_loss: Tensor = self.criterion(z, one_hot)
         test_acc: Tensor = z.argmax(dim=1).eq(batch.y).sum()/len(batch.y)
 
-        self.log("test_acc", test_acc*100, prog_bar=True)
+        self.log("test_acc", test_acc*100, prog_bar=True, batch_size=1)
 
         logs = {"test_loss": test_loss,
                 "test_acc": test_acc}
@@ -322,7 +322,7 @@ class LinearWrapper(pl.LightningModule):
         test_loss: Tensor = self.criterion(z, y)
         test_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
 
-        self.log("test_acc", test_acc*100, prog_bar=True)
+        self.log("test_acc", test_acc*100, prog_bar=True, batch_size=1)
 
         logs = {"test_loss": test_loss,
                 "test_acc": test_acc}
