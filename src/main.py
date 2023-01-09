@@ -2,8 +2,6 @@ from argparse import Namespace
 from datetime import datetime
 import os.path as osp
 
-from torch import nn
-
 from torch_geometric.data import InMemoryDataset
 
 from loaders import get_loaders
@@ -81,6 +79,7 @@ def main(experiment: str,
         devices=config["trainer"]["devices"],
         logger=tb_logger,
         max_epochs=config["trainer"]["max_epochs"],
+        log_every_n_steps=1,
         enable_progress_bar=args.verbose)
 
     print(f'Running {experiment} with seed value {args.seed}')
