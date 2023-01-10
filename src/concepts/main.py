@@ -6,6 +6,7 @@ from cluster import kmeans_cluster
 
 # Typing
 from numpy.typing import NDArray
+from sklearn.cluster import KMeans
 
 
 DIR = osp.dirname(__file__)
@@ -24,7 +25,9 @@ def main(args: Namespace) -> None:
 
     # TODO: Potentially implement the dimensionality reduction for SGC
     
-    prediction_list: list[NDArray] = kmeans_cluster(activation_list, args.clusters)
+    prediction_list: list[NDArray]
+    model_list: list[KMeans]
+    prediction_list, model_list = kmeans_cluster(activation_list, args.clusters)
     print(prediction_list)
 
 
