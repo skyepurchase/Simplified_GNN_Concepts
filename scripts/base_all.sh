@@ -11,16 +11,15 @@ fi
 touch $out_path                 # initialise empty output file
 echo "Saving runs to $out_path"
 
+# array of random seeds
+declare -a seeds=(510223 873616 557633 633554 493164 374916 80712 863742 374967 179277)
+
 # Run a set of 10 runs with the prechosen seeds
 # Using grep and sed extract just the test accuracy
 
-./run/EXPR_NAME.sh 510223 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" > $out_path &
-./run/EXPR_NAME.sh 873616 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 557633 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 633554 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 493164 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 374916 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 80712  | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 863742 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 374967 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
-./run/EXPR_NAME.sh 179277 | grep "test_acc" | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/" >> $out_path &
+for seed in "${seeds[@]}"; do
+    ./run/EXPR_NAME.sh $seed                        \
+        | grep "test_acc"                           \
+        | sed -r "s/[ ]*test_acc[ ]*([0-9.]*)/\1/"  \
+        >> $out_path
+done
