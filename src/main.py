@@ -50,7 +50,8 @@ def main(experiment: str,
                                           name=experiment,
                                           version=version)
 
-    checkpoint_name = None
+    save_filename = experiment + f'_{str(args.seed)}-{time.strftime("%Y%m%d-%H%M%S")}'
+    checkpoint = False 
     callbacks = []
 #     if experiment.split('.')[0] == "GCN":
 #         callbacks.append(
@@ -63,11 +64,12 @@ def main(experiment: str,
 #             )
 #         )
     if experiment.split('.')[0] == "SGC":
-        checkpoint_name = experiment + f'_{str(args.seed)}-{time.strftime("%Y%m%d-%H%M%S")}'
+        checkpoint = True
+        print(f'Saving models to {osp.join(DIR, "../checkpoints", save_filename)}')
         callbacks.append(
             ModelCheckpoint(
                 monitor="val_acc",
-                dirpath=osp.join(DIR, "../checkpoints", checkpoint_name),
+                dirpath=osp.join(DIR, "../checkpoints", save_filename),
                 filename="{epoch:02d}-{val_acc:.3f}-{val_loss:.2f}",
                 save_last=True,
                 mode="max",
@@ -84,16 +86,14 @@ def main(experiment: str,
         enable_progress_bar=args.verbose)
 
     print(f'Running {experiment} with seed value {args.seed}')
-    if checkpoint_name:
-        print(f'Saving models to {osp.join(DIR, "../checkpoints", checkpoint_name)}')
     
     if len(loaders) == 3:
         print("ASSUMED TO BE SGC")
         trainer.fit(pl_model, loaders[0], loaders[1])
 
-        if checkpoint_name:
+        if checkpoint:
             best_model = pl_model.load_from_checkpoint(
-                osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
+                osp.join(DIR, "../checkpoints", save_filename, "last.ckpt")
             )
         else:
             best_model = pl_model
@@ -103,15 +103,15 @@ def main(experiment: str,
     elif len(loaders) == 2:
         trainer.fit(pl_model, loaders[0])
 
-        if checkpoint_name:
+        if checkpoint:
             best_model = pl_model.load_from_checkpoint(
-                osp.join(DIR, "../checkpoints", checkpoint_name, "last.ckpt")
+                osp.join(DIR, "../checkpoints", save_filename, "last.ckpt")
             )
         else:
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[1])
-        save_activation(osp.join(DIR, "../activations", f'{checkpoint_name}.pkl'))
+        save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
     else:
         raise Exception(f"Not enough data loaders provided. Expected 2 or 3 received {len(loaders)}")
 
