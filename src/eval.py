@@ -10,6 +10,7 @@ from datasets import get_dataset
 
 # Typing
 from sklearn.cluster import KMeans
+from torch import Tensor
 
 
 DIR = osp.dirname(__file__)
@@ -29,21 +30,20 @@ def main(args: Namespace,
 
     save_path: str = osp.join(DIR, "../output", dataset_name)
 
-    activation_list: dict    
+    activation_list: dict[str, Tensor]
     with open(osp.join(DIR, "..", args.activation), 'rb') as file:
         activation_list = pickle.loads(file.read())
 
-    print(activation_list.keys())
     # TODO: Probably a better way to do this -> could ignore later on
-    activation_list = {'layers.3': activation_list['layers.3']} # Just want the final layer
+#     activation_list = {'layers.3': activation_list['layers.3']} # Just want the final layer
 
     # TODO: Potentially implement the dimensionality reduction for SGC
     
-    model_list: list[KMeans]
+    model_list: dict[str, KMeans]
     _, model_list = kmeans_cluster(activation_list, args.clusters)
-
-    _ = plot_samples(model_list[0],
-                     activation_list['layers.3'],
+    print(model_list)
+    _ = plot_samples(model_list['layers.0'],
+                     activation_list['layers.0'],
                      data.y,
                      3,
                      args.clusters,

@@ -66,7 +66,7 @@ def get_top_subgraphs(top_indices: NDArray,
 
 
 def plot_samples(clustering_model: KMeans,
-                 activation: NDArray,
+                 activation: Tensor,
                  y: Tensor,
                  layer_num: int,
                  clusters: int,
