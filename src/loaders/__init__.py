@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
 from torch_geometric.data import Data, Dataset
-from torch_geometric.loader import RandomNodeSampler, DataLoader
+from torch_geometric.loader import RandomNodeLoader, DataLoader
 from torch.utils.data import DataLoader as Loader
 
 from torch import Tensor
@@ -22,9 +22,9 @@ def get_loaders(name: str,
             raise ValueError(f'Expected item at index zero to be type {Data} received type {type(temp)}')
 
         if "val" in config.keys():
-            return [RandomNodeSampler(data, shuffle=True, **config["train"]), RandomNodeSampler(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeSampler(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, **config["train"]), RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
         else:
-            return [RandomNodeSampler(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeSampler(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
 
     elif name == "SGC":
         temp = dataset[0]
@@ -44,9 +44,9 @@ def get_loaders(name: str,
         assert torch.all(features.eq(data.x))
 
         if "val" in config.keys():
-            return [RandomNodeSampler(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeSampler(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeSampler(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
         else:
-            return [RandomNodeSampler(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeSampler(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
 
     elif name == "DataLoader":
         if "val" in config.keys():
