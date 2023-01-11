@@ -41,17 +41,19 @@ def main(args: Namespace,
     
     model_list: dict[str, KMeans]
     _, model_list = kmeans_cluster(activation_list, args.clusters)
-    print(model_list)
-    _ = plot_samples(model_list['layers.0'],
-                     activation_list['layers.0'],
-                     data.y,
-                     3,
-                     args.clusters,
-                     "KMeans-Raw",
-                     args.num_graphs,
-                     data.edge_index.detach().numpy().T,
-                     args.hops,
-                     save_path)
+
+    for layer, model in model_list.items():
+        layer_num = int(layer.split('.')[-1])
+        _ = plot_samples(model,
+                         activation_list[layer],
+                         data.y,
+                         layer_num,
+                         args.clusters,
+                         "KMeans-Raw",
+                         args.num_graphs,
+                         data.edge_index.detach().numpy().T,
+                         args.hops,
+                         save_path)
 
 
 if __name__=='__main__':
