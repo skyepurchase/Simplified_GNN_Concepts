@@ -93,7 +93,8 @@ def main(experiment: str,
 
         if checkpoint:
             best_model = pl_model.load_from_checkpoint(
-                osp.join(DIR, "../checkpoints", save_filename, "last.ckpt")
+                osp.join(DIR, "../checkpoints", save_filename, "last.ckpt"),
+                model=model
             )
         else:
             best_model = pl_model
@@ -105,7 +106,8 @@ def main(experiment: str,
 
         if checkpoint:
             best_model = pl_model.load_from_checkpoint(
-                osp.join(DIR, "../checkpoints", save_filename, "last.ckpt")
+                osp.join(DIR, "../checkpoints", save_filename, "last.ckpt"),
+                model=model
             )
         else:
             best_model = pl_model

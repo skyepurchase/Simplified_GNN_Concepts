@@ -225,7 +225,7 @@ class LinearWrapper(pl.LightningModule):
         self.model: Module = model
         self.criterion: Callable[[Tensor, Tensor], Tensor] = torch.nn.CrossEntropyLoss()
         self.weight_decay: float = weight_decay
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=['model'])
 
     def forward(self, batch) -> torch.Tensor:
         return self.model(batch.x)
