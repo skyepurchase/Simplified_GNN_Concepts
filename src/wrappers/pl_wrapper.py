@@ -60,7 +60,7 @@ class GraphWrapper(pl.LightningModule):
        
         return batch_dictionary
 
-    def train_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def training_epoch_end(self, outputs: list[BatchDict]) -> None:
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
@@ -157,7 +157,8 @@ class GraphPoolWrapper(pl.LightningModule):
 
         return batch_dictionary
 
-    def train_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def training_epoch_end(self, outputs: list[BatchDict]) -> None:
+        print("WHY?")
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
@@ -198,6 +199,7 @@ class GraphPoolWrapper(pl.LightningModule):
         return batch_dictionary
 
     def test_epoch_end(self, outputs: list[BatchDict]) -> None:
+        print("Goodbye")
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
@@ -257,7 +259,7 @@ class LinearWrapper(pl.LightningModule):
        
         return batch_dictionary
 
-    def train_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def training_epoch_end(self, outputs: list[BatchDict]) -> None:
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
