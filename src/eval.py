@@ -36,9 +36,6 @@ def main(args: Namespace,
     with open(osp.join(DIR, "..", args.activation), 'rb') as file:
         activation_list = pickle.loads(file.read())
 
-    # TODO: Probably a better way to do this -> could ignore later on
-#     activation_list = {'layers.3': activation_list['layers.3']} # Just want the final layer
-
     # TODO: Potentially implement the dimensionality reduction for SGC
     
     model_list: dict[str, KMeans]
@@ -60,10 +57,11 @@ def main(args: Namespace,
 
         layer_graphs[layer] = sample_graphs
 
-    layer = input("Which layer to calculate the score on? ")
-    concept = int(input("Which concept to calculate the score on? "))
-    avg_best_score = purity(layer_graphs[layer][concept][:-1])
-    print(f'Layer {layer} Concept {concept}\navg_score: {avg_best_score}')
+    if args.purity:
+        layer = input("Which layer to calculate the score on? ")
+        concept = int(input("Which concept to calculate the score on? "))
+        avg_best_score = purity(layer_graphs[layer][concept][:-1])
+        print(f'Layer {layer} Concept {concept}\navg_score: {avg_best_score}')
 
 
 if __name__=='__main__':
@@ -75,6 +73,7 @@ if __name__=='__main__':
     parser.add_argument('--clusters', type=int, required=True, help="Number of clusters, k in GCExplainer")
     parser.add_argument('--num_graphs', type=int, required=True, help="Number of graphs that are displayed per concept")
     parser.add_argument('--hops', type=int, required=True, help="Number of hops from the node of interest, n in GCExplainer")
+    parser.add_argument('--purity', action='store_true', help="Whether to calculate purity as this is costly")
     args = parser.parse_args()
 
     expr_name = args.activation.split('/')[-1]
