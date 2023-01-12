@@ -13,12 +13,12 @@ from torch import Tensor
 from typing import Tuple
 
 
-def get_top_subgraphs(top_indices: NDArray,
-                      y: Tensor,
-                      edges: NDArray,
-                      hops: int) -> Tuple[list[nx.Graph],
-                                                    list[list[str]],
-                                                    list[Tensor]]:
+def _get_subgraphs(top_indices: NDArray,
+                   y: Tensor,
+                   edges: NDArray,
+                   hops: int) -> Tuple[list[nx.Graph],
+                                       list[list[str]],
+                                       list[Tensor]]:
     """Based on https://github.com/CharlotteMagister/GCExplainer/blob/a6057a9960da94e5261d8c49b7e1df588a7df9ef/src/k_clustering/utilities.py#L180"""
     graphs: list[nx.Graph] = []
     color_maps: list[list[str]] = []
@@ -71,51 +71,52 @@ def plot_samples(clustering_model: KMeans,
                  layer_num: int,
                  clusters: int,
                  clustering_type: str,
-                 num_nodes_viewable: int,
+                 num_graphs_viewable: int,
                  edges: NDArray,
                  hops: int,
-                 save_path: str) -> Tuple[list[Tuple[nx.Graph, int]], list[list[str]]]:
+                 save_path: str) -> dict[int, list[nx.Graph]]:
     """Based on https://github.com/CharlotteMagister/GCExplainer/blob/a6057a9960da94e5261d8c49b7e1df588a7df9ef/src/k_clustering/utilities.py#L274"""
-    activation_distances: NDArray = clustering_model.transform(activation) 
     # distance to each centre for each node in the graph
+    activation_distances: NDArray = clustering_model.transform(activation)
     
     fig: FigureBase
-    fig, axes = plt.subplots(clusters, num_nodes_viewable, figsize=(18, 3 * clusters + 2))
+    fig, axes = plt.subplots(clusters, num_graphs_viewable, figsize=(18, 3 * clusters + 2))
     fig.suptitle(f'Nearest Instances to {clustering_type} Cluster Centroid for Raw Activations of Layer {layer_num}', y=1.005)
 
     l: list[int] = list(range(0, clusters))
-    sample_graphs: list[Tuple[nx.Graph, int]] = []
-    sample_feat: list[list[str]] = []
+    sample_graphs: dict[int, list[nx.Graph]] = {}
 
     for cluster_id, ax_list in zip(l, axes):
-        distances: NDArray = activation_distances[:,cluster_id] 
         # distances to centres for this centre
-
-        # Note can have multiple nodes viewable in future
+        distances: NDArray = activation_distances[:,cluster_id]
 
         # Sort the distances and choose the top nodes (by index) to view
         # This samples the quintessential examples of the concept
         # The index is important to locate within the coo adjacency matrix
-        top_indices: NDArray = np.argsort(distances)[::][:num_nodes_viewable]
+        top_indices: NDArray = np.argsort(distances)[::][:num_graphs_viewable]
+        bot_index: NDArray = np.argsort(distances)[::][-1:]
 
         top_graphs: list[nx.Graph]
         color_maps: list[list[str]]
         labels: list[Tensor]
-        top_graphs, color_maps, labels = get_top_subgraphs(top_indices,
+        top_graphs, color_maps, labels = _get_subgraphs(top_indices,
                                                            y,
                                                            edges,
                                                            hops)
+        bot_graph, _, _ = _get_subgraphs(bot_index,
+                                        y,
+                                        edges,
+                                        hops)
 
         # Draw each quintessential graph for the concept 
         for ax, new_G, color_map, g_label in zip(ax_list, top_graphs, color_maps, labels):
             nx.draw(new_G, node_color=color_map, with_labels=True, ax=ax)
             ax.set_title(f'label {g_label}', fontsize=14)
 
-        # select the "ideal" graph and it's distance to the cluster (as well as colour map)
-        sample_graphs.append((top_graphs[0], top_indices[0]))
-        sample_feat.append(color_maps[0])
+        # select the "ideal" graphs and it's distance to the cluster
+        sample_graphs[cluster_id] = top_graphs[:3] + bot_graph
 
-    plt.savefig(osp.join(save_path, f'{layer_num}layer_{clustering_type}_{num_nodes_viewable}_view.png'))
+    plt.savefig(osp.join(save_path, f'{layer_num}layer_{clustering_type}_{num_graphs_viewable}_view.png'))
 
-    return sample_graphs, sample_feat
+    return sample_graphs
 
