@@ -6,6 +6,7 @@ from networkx import Graph
 from torch_geometric.data import Data, InMemoryDataset
 
 from concepts.cluster import kmeans_cluster
+from concepts.metrics import purity
 from concepts.plotting import plot_samples
 from datasets import get_dataset
 
@@ -58,6 +59,11 @@ def main(args: Namespace,
                                                              save_path)
 
         layer_graphs[layer] = sample_graphs
+
+    layer = input("Which layer to calculate the score on? ")
+    concept = int(input("Which concept to calculate the score on? "))
+    avg_best_score = purity(layer_graphs[layer][concept][:-1])
+    print(f'Layer {layer} Concept {concept}\navg_score: {avg_best_score}')
 
 
 if __name__=='__main__':
