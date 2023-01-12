@@ -12,7 +12,9 @@ from datasets import get_dataset
 
 # Typing
 from sklearn.cluster import KMeans
-from torch import Tensor
+from torch import Tensor, ge
+
+from models.activation_classifier import Activation_Classifier
 
 
 DIR = osp.dirname(__file__)
@@ -63,6 +65,11 @@ def main(args: Namespace,
         avg_best_score = purity(layer_graphs[layer][concept][:-1])
         print(f'Layer {layer} Concept {concept}\navg_score: {avg_best_score}')
 
+    classifier = Activation_Classifier(model_list['layers.3'],
+                                       activation_list['layers.3'],
+                                       data)
+    print(f'Layer layers.3 completeness: {classifier.get_accuracy()}')
+
 
 if __name__=='__main__':
     
@@ -73,7 +80,7 @@ if __name__=='__main__':
     parser.add_argument('--clusters', type=int, required=True, help="Number of clusters, k in GCExplainer")
     parser.add_argument('--num_graphs', type=int, required=True, help="Number of graphs that are displayed per concept")
     parser.add_argument('--hops', type=int, required=True, help="Number of hops from the node of interest, n in GCExplainer")
-    parser.add_argument('--purity', action='store_true', help="Whether to calculate purity as this is costly")
+    parser.add_argument('--purity', action='store_true', help="Whether to calculate purity as this is costly", default=False)
     args = parser.parse_args()
 
     expr_name = args.activation.split('/')[-1]
