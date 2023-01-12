@@ -20,7 +20,7 @@ DIR = osp.dirname(__file__)
 
 def main(args: Namespace,
          dataset_name: str) -> None:
-    print("ONLY TESTED FOR BA-SHAPES ACTIVATIONS")
+    print("ONLY TESTED FOR SYNTHETIC ACTIVATIONS")
 
     dataset: InMemoryDataset = get_dataset(dataset_name,
                                            "data/")
