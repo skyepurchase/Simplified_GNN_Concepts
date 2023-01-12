@@ -1,3 +1,4 @@
+from .activation_classifier import Activation_Classifier
 from .gcn import GCN
 from .sgc import SGC
 from .layers import Pool
