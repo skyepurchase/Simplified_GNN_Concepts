@@ -45,6 +45,7 @@ def main(args: Namespace,
 
     layer_graphs: dict[str, dict[int, list[Graph]]] = {}
     for layer, model in model_list.items():
+        print(f"Layer {layer}")
         layer_num = int(layer.split('.')[-1])
         sample_graphs: dict[int, list[Graph]] = plot_samples(model,
                                                              activation_list[layer],
@@ -65,8 +66,8 @@ def main(args: Namespace,
         avg_best_score = purity(layer_graphs[layer][concept][:-1])
         print(f'Layer {layer} Concept {concept}\navg_score: {avg_best_score}')
 
-    classifier = Activation_Classifier(model_list['layers.3'],
-                                       activation_list['layers.3'],
+    classifier = Activation_Classifier(model_list['layers.2'],
+                                       activation_list['layers.2'],
                                        data)
     print(f'Layer layers.3 completeness: {classifier.get_accuracy()}')
 
