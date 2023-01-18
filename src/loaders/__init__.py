@@ -6,7 +6,13 @@ from torch.utils.data import DataLoader as Loader
 
 from torch import Tensor
 from torch_sparse import SparseTensor
-from .utils import normalize_adjacency, precompute_features
+from .utils import normalize_adjacency, precompute_features, save_activation
+
+
+def save_precomputation(path: str):
+    """Wrapper for save_activation"""
+    save_activation(path)
+
 
 def get_loaders(name: str,
                 dataset: Dataset,
