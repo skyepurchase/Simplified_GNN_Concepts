@@ -233,46 +233,6 @@ class LinearWrapper(pl.LightningModule):
                                               correct * 100/total,
                                               self.current_epoch)
 
-    def validation_step(self, batch, batch_idx: int) -> BatchDict:
-        z: Tensor = self.model(batch.x)[batch.val_mask]
-        y: Tensor = batch.y[batch.val_mask]
-       
-        correct: Number = z.argmax(dim=1).eq(y).sum().item()
-        total: int = len(y)
-
-        val_loss: Tensor = self.criterion(z, y)
-        val_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
-
-        self.log("val_acc", val_acc*100, prog_bar=True)
-
-        logs = {"val_loss": val_loss,
-                "val_acc": val_acc}
-
-        batch_dictionary : BatchDict = {
-            'loss': val_loss,
-            'acc': val_acc,
-            'log': logs,
-            'correct': correct,
-            'total': total
-        }
-       
-        return batch_dictionary
-
-    def validation_epoch_end(self, outputs: list[BatchDict]) -> None:
-        avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
-
-        correct: Number = sum([x['correct'] for x in outputs])
-        total: int = sum([x['total'] for x in outputs])
-
-        if isinstance(self.logger, TensorBoardLogger):
-            self.logger.experiment.add_scalar("Loss/Validation",
-                                              avg_loss,
-                                              self.current_epoch)
-
-            self.logger.experiment.add_scalar("Accuracy/Validation",
-                                              correct * 100/total,
-                                              self.current_epoch)
-
     def test_step(self, batch, batch_idx: int) -> BatchDict:
         z: Tensor = self.model(batch.x)[batch.test_mask]
         y: Tensor = batch.y[batch.test_mask]
@@ -310,6 +270,54 @@ class LinearWrapper(pl.LightningModule):
                                               self.current_epoch)
 
             self.logger.experiment.add_scalar("Accuracy/Test",
+                                              correct * 100/total,
+                                              self.current_epoch)
+
+
+class LinearValWrapper(LinearWrapper):
+    def __init__(self,
+                 model: Module,
+                 learning_rate: float,
+                 weight_decay: float = 0) -> None:
+        super().__init__(model, learning_rate, weight_decay)
+
+    def validation_step(self, batch, batch_idx: int) -> BatchDict:
+        z: Tensor = self.model(batch.x)[batch.val_mask]
+        y: Tensor = batch.y[batch.val_mask]
+
+        correct: Number = z.argmax(dim=1).eq(y).sum().item()
+        total: int = len(y)
+
+        val_loss: Tensor = self.criterion(z, y)
+        val_acc: Tensor = z.argmax(dim=1).eq(y).sum()/len(y)
+
+        self.log("val_acc", val_acc*100, prog_bar=True)
+
+        logs = {"val_loss": val_loss,
+                "val_acc": val_acc}
+
+        batch_dictionary : BatchDict = {
+            'loss': val_loss,
+            'acc': val_acc,
+            'log': logs,
+            'correct': correct,
+            'total': total
+        }
+
+        return batch_dictionary
+
+    def validation_epoch_end(self, outputs: list[BatchDict]) -> None:
+        avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
+
+        correct: Number = sum([x['correct'] for x in outputs])
+        total: int = sum([x['total'] for x in outputs])
+
+        if isinstance(self.logger, TensorBoardLogger):
+            self.logger.experiment.add_scalar("Loss/Validation",
+                                              avg_loss,
+                                              self.current_epoch)
+
+            self.logger.experiment.add_scalar("Accuracy/Validation",
                                               correct * 100/total,
                                               self.current_epoch)
 
