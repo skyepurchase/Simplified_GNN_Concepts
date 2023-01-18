@@ -10,10 +10,11 @@ do
     # reverse the string to get the normal config_file
     # remove the .yml extension
     config_name=$(echo $config_path | rev | cut -d "/" -f 1 | rev | sed 's/\.yml//')
-    expr_name=$(echo $config_name | cut -d "." -f 3)    # based on naming convention
-    echo $expr_name
+    dataset=$(echo $config_name | cut -d "." -f 3)    # based on naming convention
+    model=$(echo $config_name | cut -d "." -f 1)
+    echo $model-$dataset
     
-    script_path="run/$expr_name.sh"
+    script_path="run/$model-$dataset.sh"
     cp "scripts/base_expr.sh" "$script_path"
     
     # check whether path was absolute or relative to home

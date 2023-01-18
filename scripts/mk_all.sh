@@ -10,12 +10,13 @@ do
     # reverse the string to get the normal config_file
     # remove the .yml extension
     config_name=$(echo $config_path | rev | cut -d "/" -f 1 | rev | sed 's/\.yml//')
-    expr_name=$(echo $config_name | cut -d "." -f 3)    # based on naming convention
-    echo $expr_name
+    dataset=$(echo $config_name | cut -d "." -f 3)    # based on naming convention
+    model=$(echo $config_name | cut -d "." -f 1)
+    echo $model-$dataset
     
-    script_path="run/all_$expr_name.sh"
+    script_path="run/all_$model-$dataset.sh"
     cp "scripts/base_all.sh" "$script_path"
     
-    sed -i "s|EXPR_NAME|$expr_name|" "$script_path"
+    sed -i "s|EXPR_NAME|$model-$dataset|" "$script_path"
 done
 
