@@ -5,7 +5,7 @@ import logging
 
 from torch_geometric.data import InMemoryDataset
 
-from loaders import get_loaders
+from loaders import get_loaders, save_precomputation
 from datasets import get_dataset 
 from models import save_activation, get_model, register_hooks
 from wrappers import get_wrapper 
@@ -37,7 +37,6 @@ def main(experiment: str,
     pl_model = get_wrapper(config["wrapper"]["name"],
                            model,
                            config["wrapper"]["kwargs"])
-
 
     loaders = get_loaders(config["sampler"]["name"],
                           dataset,
@@ -100,7 +99,7 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[2])
-        # TODO: No activation saving because this is should just be SGC
+        save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
     elif len(loaders) == 2:
         trainer.fit(pl_model, loaders[0])
 
