@@ -88,6 +88,7 @@ def main(experiment: str,
     
     if len(loaders) == 3:
         print("ASSUMED TO BE SGC")
+        save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
         trainer.fit(pl_model, loaders[0], loaders[1])
 
         if checkpoint:
@@ -99,7 +100,6 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[2])
-        save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
     elif len(loaders) == 2:
         trainer.fit(pl_model, loaders[0])
 
