@@ -51,19 +51,13 @@ def optimise(config: dict,
                                            osp.join(args.root,
                                                     args.dataset))
 
-    temp = dataset[0]
-    if isinstance(temp, Data):
-        data: Data = temp
-    else:
-        raise ValueError(f'Expected dataset at index zero to be type {Data} recevied type {type(temp)}')
-  
     model: nn.Module = get_model(config["model"]["name"],
                                  dataset.num_features,
                                  dataset.num_classes,
                                  config["model"]["kwargs"])
 
     train_loader = get_loaders(config["sampler"]["name"],
-                               data,
+                               dataset,
                                config["sampler"])[0]
 
     space = hp.choice('hyperparameters',
