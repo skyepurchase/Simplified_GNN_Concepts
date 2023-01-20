@@ -19,10 +19,18 @@ def kmeans_cluster(activation_list: dict[str, torch.Tensor],
         activation: NDArray = torch.squeeze(activations).detach().numpy()
         kmeans = KMeans(n_clusters=clusters, random_state=0) # Random state 0 for determinism
 
-        kmeans = kmeans.fit(activation)
-        predictions: NDArray = kmeans.predict(activation)
+        success = True
+        try:
+            kmeans = kmeans.fit(activation)
+        except ValueError:
+            success = False
+        except Exception as e:
+            raise e
 
-        prediction_list[layer] = predictions
-        model_list[layer] = kmeans
+        if success:
+            predictions: NDArray = kmeans.predict(activation)
+
+            prediction_list[layer] = predictions
+            model_list[layer] = kmeans
 
     return prediction_list, model_list
