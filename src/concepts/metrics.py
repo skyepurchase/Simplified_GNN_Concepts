@@ -21,15 +21,15 @@ def purity(Graphs: list[Graph],
     else:
         for G1 in Graphs[1:]:
             if G1.number_of_nodes() > max_nodes:
-                raise  ValueError(f"Top graph has more than max_nodes ({max_nodes})")
-
-            score: Union[float, None] = nx.graph_edit_distance(top_graph, G1)
-
-            if score is not None:
-                purity += score
-                num_pairs += 1
+                continue
             else:
-                raise ValueError(f'score for graphs {top_graph} and {G1} resulted in {None}')
+                score: Union[float, None] = nx.graph_edit_distance(top_graph, G1)
+
+                if score is not None:
+                    purity += score
+                    num_pairs += 1
+                else:
+                    raise ValueError(f'score for graphs {top_graph} and {G1} resulted in {None}')
 
         return purity / num_pairs
 
