@@ -71,11 +71,13 @@ def main(args: Namespace,
 
             layer_graphs[layer] = sample_graphs
 
-        if args.purity:
-            layer = input("Which layer to calculate the score on? ")
-            concept = int(input("Which concept to calculate the score on? "))
-            avg_best_score = purity(layer_graphs[layer][concept][:-1])
-            print(f'Layer {layer} Concept {concept}\navg_score: {avg_best_score}')
+            concepts: list[Graph]
+            for i, concepts in sample_graphs.items():
+                try:
+                    avg_best_score = purity(concepts[:-1])
+                    print(f'Concept {i} avg_score: {avg_best_score}')
+                except ValueError:
+                    print(f'Concept {i} no score computed')
 
 
 if __name__=='__main__':
@@ -87,7 +89,6 @@ if __name__=='__main__':
     parser.add_argument('--clusters', type=int, required=True, help="Number of clusters, k in GCExplainer")
     parser.add_argument('--num_graphs', type=int, required=True, help="Number of graphs that are displayed per concept")
     parser.add_argument('--hops', type=int, required=True, help="Number of hops from the node of interest, n in GCExplainer")
-    parser.add_argument('--purity', action='store_true', help="Whether to calculate purity as this is costly", default=False)
     args = parser.parse_args()
 
     expr_name = args.activation.split('/')[-1]
