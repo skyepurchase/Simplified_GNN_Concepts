@@ -4,7 +4,7 @@ from os import mkdir
 from argparse import Namespace
 from networkx import Graph
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import Data, Dataset, InMemoryDataset
 
 from concepts.cluster import kmeans_cluster
 from concepts.metrics import purity
@@ -12,6 +12,7 @@ from concepts.plotting import plot_samples
 from datasets import get_dataset
 
 # Typing
+from typing import Union
 from sklearn.cluster import KMeans
 from torch import Tensor
 
@@ -25,14 +26,6 @@ def main(args: Namespace,
          dataset_name: str,
          save_name: str) -> None:
     print("ONLY TESTED FOR SYNTHETIC ACTIVATIONS")
-
-    dataset: InMemoryDataset = get_dataset(dataset_name,
-                                           "data/")
-    temp = dataset[0]
-    if isinstance(temp, Data):
-        data: Data = temp
-    else:
-        raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
 
     save_path: str = osp.join(DIR, "../output", save_name)
 
@@ -48,6 +41,18 @@ def main(args: Namespace,
     model_list: dict[str, KMeans]
     _, model_list = kmeans_cluster(activation_list, args.clusters)
 
+    dataset: InMemoryDataset = get_dataset(dataset_name,
+                                           "data/")
+    
+    if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
+        data = dataset
+    else:
+        temp = dataset[0]
+        if isinstance(temp, Data):
+            data: Union[Data, Dataset] = temp
+        else:
+            raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
+
     layer_graphs: dict[str, dict[int, list[Graph]]] = {}
     with open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w") as file:
         for layer, model in model_list.items():
@@ -58,18 +63,20 @@ def main(args: Namespace,
             file.write(f"{classifier.get_accuracy()}\n")
 
             layer_num = int(layer.split('.')[-1])
-            sample_graphs: dict[int, list[Graph]] = plot_samples(model,
-                                                                 activation_list[layer],
-                                                                 data.y,
-                                                                 layer_num,
-                                                                 args.clusters,
-                                                                 "KMeans-Raw",
-                                                                 args.num_graphs,
-                                                                 data.edge_index.detach().numpy().T,
-                                                                 args.hops,
-                                                                 save_path)
 
-            layer_graphs[layer] = sample_graphs
+            if isinstance(data, Data):
+                sample_graphs: dict[int, list[Graph]] = plot_samples(model,
+                                                                     activation_list[layer],
+                                                                     data.y,
+                                                                     layer_num,
+                                                                     args.clusters,
+                                                                     "KMeans-Raw",
+                                                                     args.num_graphs,
+                                                                     data.edge_index.detach().numpy().T,
+                                                                     args.hops,
+                                                                     save_path)
+
+                layer_graphs[layer] = sample_graphs
 
         if args.purity:
             layer = input("Which layer to calculate the score on? ")
