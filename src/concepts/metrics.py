@@ -17,7 +17,7 @@ def purity(Graphs: list[Graph],
 
     top_graph: Graph = Graphs[0]
     if top_graph.number_of_nodes() > max_nodes:
-        raise  ValueError(f"Top graph has more than max_nodes ({max_nodes})")
+        raise  ValueError(f"Top graph has more than maximum nodes ({max_nodes})")
     else:
         for G1 in Graphs[1:]:
             if G1.number_of_nodes() > max_nodes:
@@ -30,8 +30,11 @@ def purity(Graphs: list[Graph],
                     num_pairs += 1
                 else:
                     raise ValueError(f'score for graphs {top_graph} and {G1} resulted in {None}')
-
-        return purity / num_pairs
+        
+        try:
+            return purity / num_pairs
+        except ZeroDivisionError:
+            raise ValueError(f'All graphs besides top graph have more than maximum nodes ({max_nodes})')
 
 
 def completeness(model: KMeans,
