@@ -1,8 +1,13 @@
 import networkx as nx
 
+from models.activation_classifier import Activation_Classifier
+
 # Typing
+from sklearn.cluster import KMeans
+from torch_geometric.data import Data
 from networkx import Graph
 from typing import Union
+from torch import Tensor
 
 
 def purity(Graphs: list[Graph],
@@ -29,6 +34,12 @@ def purity(Graphs: list[Graph],
         return purity / num_pairs
 
 
-def completeness():
-    pass
+def completeness(model: KMeans,
+                 activation: Tensor,
+                 data: Data) -> float:
+    classifier = Activation_Classifier(model,
+                                       activation,
+                                       data)
+
+    return classifier.get_accuracy()
 

@@ -3,7 +3,7 @@ import os.path as osp
 from os import mkdir
 
 from concepts.cluster import kmeans_cluster
-from concepts.metrics import purity
+from concepts.metrics import completeness, purity
 from concepts.plotting import plot_samples
 from datasets import get_dataset
 from models.activation_classifier import Activation_Classifier
@@ -52,11 +52,12 @@ def main(args: Namespace,
     comp_file: TextIOWrapper = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w")
     pure_file = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-purity.txt"), "w")
     for layer, model in model_list.items():
-        classifier = Activation_Classifier(model_list[layer],
-                                           activation_list[layer],
-                                           data)
-        print(f'Layer {layer} completeness: {classifier.get_accuracy()}')
-        comp_file.write(f"{layer}: {classifier.get_accuracy()}\n")
+#         classifier = Activation_Classifier(model_list[layer],
+#                                            activation_list[layer],
+#                                            data)
+        comp_score = completeness(model_list[layer], activation_list[layer], data)
+        print(f'Layer {layer} completeness: {comp_score}')
+        comp_file.write(f"{layer}: {comp_score}\n")
 
         layer_num = int(layer.split('.')[-1])
         sample_graphs: dict[int, list[Graph]] = plot_samples(model,
