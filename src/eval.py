@@ -1,21 +1,21 @@
 import pickle
 import os.path as osp
 from os import mkdir
-from argparse import Namespace
-from networkx import Graph
-
-from torch_geometric.data import Data, InMemoryDataset
 
 from concepts.cluster import kmeans_cluster
 from concepts.metrics import purity
 from concepts.plotting import plot_samples
 from datasets import get_dataset
+from models.activation_classifier import Activation_Classifier
 
 # Typing
+from torch_geometric.data import Data, InMemoryDataset
+from io import TextIOWrapper
 from sklearn.cluster import KMeans
 from torch import Tensor
+from argparse import Namespace
+from networkx import Graph
 
-from models.activation_classifier import Activation_Classifier
 
 
 DIR = osp.dirname(__file__)
@@ -49,35 +49,42 @@ def main(args: Namespace,
     _, model_list = kmeans_cluster(activation_list, args.clusters)
 
     layer_graphs: dict[str, dict[int, list[Graph]]] = {}
-    with open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w") as file:
-        for layer, model in model_list.items():
-            classifier = Activation_Classifier(model_list[layer],
-                                               activation_list[layer],
-                                               data)
-            print(f'Layer {layer} completeness: {classifier.get_accuracy()}')
-            file.write(f"{classifier.get_accuracy()}\n")
+    comp_file: TextIOWrapper = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w")
+    pure_file = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-purity.txt"), "w")
+    for layer, model in model_list.items():
+        classifier = Activation_Classifier(model_list[layer],
+                                           activation_list[layer],
+                                           data)
+        print(f'Layer {layer} completeness: {classifier.get_accuracy()}')
+        comp_file.write(f"{layer}: {classifier.get_accuracy()}\n")
 
-            layer_num = int(layer.split('.')[-1])
-            sample_graphs: dict[int, list[Graph]] = plot_samples(model,
-                                                                 activation_list[layer],
-                                                                 data.y,
-                                                                 layer_num,
-                                                                 args.clusters,
-                                                                 "KMeans-Raw",
-                                                                 args.num_graphs,
-                                                                 data.edge_index.detach().numpy().T,
-                                                                 args.hops,
-                                                                 save_path)
+        layer_num = int(layer.split('.')[-1])
+        sample_graphs: dict[int, list[Graph]] = plot_samples(model,
+                                                             activation_list[layer],
+                                                             data.y,
+                                                             layer_num,
+                                                             args.clusters,
+                                                             "KMeans-Raw",
+                                                             args.num_graphs,
+                                                             data.edge_index.detach().numpy().T,
+                                                             args.hops,
+                                                             save_path)
 
-            layer_graphs[layer] = sample_graphs
+        layer_graphs[layer] = sample_graphs
 
-            concepts: list[Graph]
-            for i, concepts in sample_graphs.items():
-                try:
-                    avg_best_score = purity(concepts[:-1])
-                    print(f'Concept {i} avg_score: {avg_best_score}')
-                except ValueError:
-                    print(f'Concept {i} no score computed')
+        concepts: list[Graph]
+        pure_file.write(f"{layer}\n")
+        for i, concepts in sample_graphs.items():
+            try:
+                avg_best_score = purity(concepts[:-1])
+                print(f'Concept {i} avg_score: {avg_best_score}')
+                pure_file.write(f"Concept {i}: {avg_best_score}\n")
+            except ValueError:
+                print(f'Concept {i} no score computed')
+                pure_file.write(f"Concept {i}: none\n")
+
+    comp_file.close()
+    pure_file.close()
 
 
 if __name__=='__main__':
