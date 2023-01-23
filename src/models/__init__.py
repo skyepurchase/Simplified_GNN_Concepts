@@ -30,7 +30,7 @@ def register_hooks(model: nn.Module) -> nn.Module:
     OUTPUT
         model   : The resulting nn.Module model"""
     for name, m in model.named_modules():
-        if isinstance(m, (GCNConv, nn.Linear, Pool)):
+        if isinstance(m, (GCNConv, Pool)):
             m.register_forward_hook(_get_activation(f'{name}'))
 
     return model
