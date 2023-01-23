@@ -65,7 +65,7 @@ def get_loaders(name: str,
 
     elif name == "DataLoader":
         if "val" in config.keys():
-            raise ValueError("ATTENTION: DataLoader should be for GCExplainer comparison. No known reason for validation set")
+            raise ValueError("ATTENTION: DataLoader expects GCExplainer model. No validation set supported")
         else:
             train_loader = DataLoader(dataset, num_workers=16)
             test_loader = DataLoader(dataset, num_workers=16)
@@ -84,7 +84,7 @@ def get_loaders(name: str,
 
         if isinstance(train_set, Dataset) and isinstance(test_set, Dataset):
             if "val" in config.keys():
-                raise ValueError(f"Validation set not available for {name}")
+                raise ValueError(f"Validation set not supported")
             else:
                 train_loader = DataLoader(train_set, shuffle=True, num_workers=16, **config["train"])
                 test_loader = DataLoader(test_set, shuffle=False, num_workers=16, **config["train"])
