@@ -1,19 +1,25 @@
-from argparse import Namespace
 from datetime import datetime
+from tqdm import tqdm
 import os.path as osp
-import logging
+import pickle
+
+import torch
 
 from torch_geometric.data import InMemoryDataset
 
 from loaders import get_loaders, save_precomputation
 from datasets import get_dataset 
-from models import save_activation, get_model, register_hooks
+from models import get_activation, save_activation, get_model, register_hooks
 from wrappers import get_wrapper 
 
 from pytorch_lightning import loggers, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
+# Typing
+from torch_geometric.data import Data
+from argparse import Namespace
+from torch import Tensor
 
 DIR = osp.dirname(__file__)
 
@@ -113,7 +119,30 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[1])
-        save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
+
+        if config["sampler"]["name"] == "GraphLoader":
+            print("Evaluating on the entire dataset for concept extraction")
+            best_model.eval()
+
+            all_activations: dict[str, Tensor] = {}
+            graph: Data
+            for graph in tqdm(loaders[2], desc="Extracting activations"):
+                _ = best_model(graph) # Evaluate to allow hooks to extract activations
+
+                layer: str
+                activation: Tensor
+                for layer, activation in get_activation().items():
+                    if layer in all_activations:
+                        all_activations[layer] = torch.cat((all_activations[layer], activation))
+                    else:
+                        all_activations[layer] = activation
+
+            with open(osp.join(DIR, "../activations", f'{save_filename}.pkl'), 'wb') as file:
+                pickle.dump(all_activations, file)
+#
+#             trainer.test(best_model, dataloaders=loaders[2], verbose=False)
+        else:
+            save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
     else:
         raise Exception(f"{config['sampler']['name']} is not supported")
 
@@ -126,6 +155,7 @@ if __name__=="__main__":
     
     import yaml
     import argparse
+    import logging
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True, help="Config file")
