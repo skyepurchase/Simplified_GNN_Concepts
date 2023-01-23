@@ -86,8 +86,8 @@ def main(experiment: str,
 
     print(f'Running {experiment} with seed value {args.seed}')
     
-    if len(loaders) == 3:
-        print("ASSUMED TO BE SGC")
+    if config["sampler"]["name"] == "SGC":
+        assert len(loaders) == 3
         save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
         trainer.fit(pl_model, loaders[0], loaders[1])
 
@@ -100,7 +100,8 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[2])
-    elif len(loaders) == 2:
+    elif config["sampler"]["name"] in ["DataLoader", "GraphLoader"]:
+        assert len(loaders) > 1
         trainer.fit(pl_model, loaders[0])
 
         if checkpoint:
@@ -114,7 +115,7 @@ def main(experiment: str,
         trainer.test(best_model, dataloaders=loaders[1])
         save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
     else:
-        raise Exception(f"Not enough data loaders provided. Expected 2 or 3 received {len(loaders)}")
+        raise Exception(f"{config['sampler']['name']} is not supported")
 
 #     graph = to_networkx(data)
 #     nx.draw(graph)
