@@ -20,17 +20,20 @@ def get_loaders(name: str,
     """
     """ #TODO: Add a docstring
     if name == "RandomNodeSampler":
-        print("DEPRICATED: check that ***node*** sampling is desired! Change to DataLoader")
-        temp = dataset[0]
-        if isinstance(temp, Data):
-            data: Data = temp
-        else:
-            raise ValueError(f'Expected item at index zero to be type {Data} received type {type(temp)}')
-
-        if "val" in config.keys():
-            return [RandomNodeLoader(data, shuffle=True, **config["train"]), RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
-        else:
-            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+        raise DeprecationWarning("DEPRICATED: check that ***node*** sampling is desired! Change to DataLoader")
+#         temp = dataset[0]
+#         if isinstance(temp, Data):
+#             data: Data = temp
+#         else:
+#             raise ValueError(f'Expected item at index zero to be type {Data} received type {type(temp)}')
+# 
+#         if "val" in config.keys():
+#             return [RandomNodeLoader(data, shuffle=True, **config["train"]),
+#                     RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]),
+#                     RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+#         else:
+#             return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
+#                     RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
 
     elif name == "SGC":
         temp = dataset[0]
@@ -50,13 +53,16 @@ def get_loaders(name: str,
         assert torch.all(features.eq(data.x))
 
         if "val" in config.keys():
-            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
+                    RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]),
+                    RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
         else:
-            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
+                    RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
 
     elif name == "DataLoader":
         if "val" in config.keys():
-            raise Exception("ATTENTION: DataLoader should be for GCExplainer comparison. No known reason for validation set")
+            raise ValueError("ATTENTION: DataLoader should be for GCExplainer comparison. No known reason for validation set")
         else:
             train_loader = DataLoader(dataset, num_workers=16)
             test_loader = DataLoader(dataset, num_workers=16)
@@ -78,7 +84,7 @@ def get_loaders(name: str,
                 test_loader = DataLoader(test_set, shuffle=False, num_workers=16, **config["train"])
             return [train_loader, test_loader]
         else:
-            raise ValueError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
+            raise TypeError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
 
     else:
         raise ValueError(f"Unsupported data loader {name}")
