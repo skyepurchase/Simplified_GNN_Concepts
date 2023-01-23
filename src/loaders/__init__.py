@@ -88,7 +88,8 @@ def get_loaders(name: str,
             else:
                 train_loader = DataLoader(train_set, shuffle=True, num_workers=16, **config["train"])
                 test_loader = DataLoader(test_set, shuffle=False, num_workers=16, **config["train"])
-                full_loader = DataLoader(graphs, shuffle=False, num_workers=16, **config["full"])
+                # dataset is used rather than graphs for determinancy
+                full_loader = DataLoader(dataset, shuffle=False, num_workers=16, **config["full"])
             return [train_loader, test_loader, full_loader]
         else:
             raise TypeError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
