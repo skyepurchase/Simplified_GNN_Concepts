@@ -123,6 +123,9 @@ class GraphPoolWrapper(GraphWrapper):
         super().__init__(model, learning_rate)
         self.criterion: Callable[[Tensor, Tensor], Tensor] = torch.nn.BCEWithLogitsLoss()
 
+    def forward(self, batch) -> Tensor:
+        return self.model(batch.x, batch.edge_index, batch.batch)
+
     def training_step(self, batch, batch_idx: int) -> BatchDict:
         z: Tensor = self.model(batch.x, batch.edge_index, batch.batch)
         one_hot = torch.nn.functional.one_hot(batch.y, num_classes=2).type_as(z)
