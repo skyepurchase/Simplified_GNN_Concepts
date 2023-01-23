@@ -1,12 +1,15 @@
 import torch
 from torch.utils.data import DataLoader
-from torch_geometric.data import Data, Dataset
 from torch_geometric.loader import RandomNodeLoader, DataLoader
-from torch.utils.data import DataLoader as Loader
-
-from torch import Tensor
 from torch_sparse import SparseTensor
+
 from .utils import normalize_adjacency, precompute_features, save_activation
+
+# Typing
+from torch.utils.data import DataLoader as Loader
+from torch_geometric.data import Data, Dataset
+from torch import Tensor
+from typing import Union
 
 
 def save_precomputation(path: str):
@@ -72,9 +75,12 @@ def get_loaders(name: str,
     elif name == "GraphLoader":
         graphs = dataset.shuffle()
 
-        train_idx = int(len(graphs) * 0.8) # TODO: Potentially make this a user defined value
-        train_set = graphs[:train_idx]
-        test_set = graphs[train_idx:]
+        if isinstance(graphs, Dataset):
+            train_idx: int = int(len(graphs) * 0.8)
+            train_set: Union[Dataset, Data] = graphs[:train_idx]
+            test_set: Union[Dataset, Data] = graphs[train_idx:]
+        else:
+            raise TypeError(f"Expected graphs to be type {Dataset} instead received type {type(graphs)}")
 
         if isinstance(train_set, Dataset) and isinstance(test_set, Dataset):
             if "val" in config.keys():
