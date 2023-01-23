@@ -36,6 +36,11 @@ def register_hooks(model: nn.Module) -> nn.Module:
     return model
 
 
+def get_activation() -> dict[str, Tensor]:
+    """Return the current activation dictionary"""
+    return ACTIVATION_DICT
+
+
 def save_activation(path: str) -> None:
     """Store the current activations for each layer in a specified file
     INPUT
