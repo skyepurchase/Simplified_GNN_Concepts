@@ -124,21 +124,26 @@ def main(experiment: str,
             print("Evaluating on the entire dataset for concept extraction")
             best_model.eval()
 
-            all_activations: dict[str, Tensor] = {}
+            all_activations: list[dict[str, Tensor]] = []
+            cat_activations: dict[str, Tensor] = {}
             graph: Data
             for graph in tqdm(loaders[2], desc="Extracting activations"):
                 _ = best_model(graph) # Evaluate to allow hooks to extract activations
+                all_activations.append(get_activation())
 
                 layer: str
                 activation: Tensor
                 for layer, activation in get_activation().items():
                     if layer in all_activations:
-                        all_activations[layer] = torch.cat((all_activations[layer], activation))
+                        cat_activations[layer] = torch.cat((cat_activations[layer], activation))
                     else:
-                        all_activations[layer] = activation
+                        cat_activations[layer] = activation
 
             with open(osp.join(DIR, "../activations", f'{save_filename}.pkl'), 'wb') as file:
                 pickle.dump(all_activations, file)
+
+            with open(osp.join(DIR, "../activations", f'{save_filename}_concat.pkl'), 'wb') as file:
+                pickle.dump(cat_activations, file)
 #
 #             trainer.test(best_model, dataloaders=loaders[2], verbose=False)
         else:
