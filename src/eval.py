@@ -1,6 +1,17 @@
 import pickle
 import os.path as osp
 from os import mkdir
+
+from concepts.cluster import kmeans_cluster
+from concepts.metrics import completeness, purity
+from concepts.plotting import plot_samples
+from datasets import get_dataset
+
+# Typing
+from torch_geometric.data import Data, InMemoryDataset
+from io import TextIOWrapper
+from sklearn.cluster import KMeans
+from torch import Tensor
 from argparse import Namespace
 from networkx import Graph
 
@@ -15,8 +26,6 @@ from datasets import get_dataset
 from typing import Union
 from sklearn.cluster import KMeans
 from torch import Tensor
-
-from models.activation_classifier import Activation_Classifier
 
 
 DIR = osp.dirname(__file__)
@@ -54,35 +63,45 @@ def main(args: Namespace,
             raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
 
     layer_graphs: dict[str, dict[int, list[Graph]]] = {}
-    with open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w") as file:
-        for layer, model in model_list.items():
-            classifier = Activation_Classifier(model_list[layer],
-                                               activation_list[layer],
-                                               data)
-            print(f'Layer {layer} completeness: {classifier.get_accuracy()}')
-            file.write(f"{classifier.get_accuracy()}\n")
+    comp_file: TextIOWrapper = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w")
+    pure_file = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-purity.txt"), "w")
+    for layer, model in model_list.items():
+#         classifier = Activation_Classifier(model_list[layer],
+#                                            activation_list[layer],
+#                                            data)
+        comp_score = completeness(model_list[layer], activation_list[layer], data)
+        print(f'Layer {layer} completeness: {comp_score}')
+        comp_file.write(f"{layer}: {comp_score}\n")
 
-            layer_num = int(layer.split('.')[-1])
+        layer_num = int(layer.split('.')[-1])
 
-            if isinstance(data, Data):
-                sample_graphs: dict[int, list[Graph]] = plot_samples(model,
-                                                                     activation_list[layer],
-                                                                     data.y,
-                                                                     layer_num,
-                                                                     args.clusters,
-                                                                     "KMeans-Raw",
-                                                                     args.num_graphs,
-                                                                     data.edge_index.detach().numpy().T,
-                                                                     args.hops,
-                                                                     save_path)
+        if isinstance(data, Data):
+            sample_graphs: dict[int, list[Graph]] = plot_samples(model,
+                                                                 activation_list[layer],
+                                                                 data.y,
+                                                                 layer_num,
+                                                                 args.clusters,
+                                                                 "KMeans-Raw",
+                                                                 args.num_graphs,
+                                                                 data.edge_index.detach().numpy().T,
+                                                                 args.hops,
+                                                                 save_path)
 
-                layer_graphs[layer] = sample_graphs
+            layer_graphs[layer] = sample_graphs
 
-        if args.purity:
-            layer = input("Which layer to calculate the score on? ")
-            concept = int(input("Which concept to calculate the score on? "))
-            avg_best_score = purity(layer_graphs[layer][concept][:-1])
-            print(f'Layer {layer} Concept {concept}\navg_score: {avg_best_score}')
+            concepts: list[Graph]
+            pure_file.write(f"{layer}\n")
+            for i, concepts in sample_graphs.items():
+                try:
+                    avg_best_score = purity(concepts[:-1])
+                    print(f'Concept {i} avg_score: {avg_best_score}')
+                    pure_file.write(f"Concept {i}: {avg_best_score}\n")
+                except ValueError:
+                    print(f'Concept {i} no score computed')
+                    pure_file.write(f"Concept {i}: none\n")
+
+    comp_file.close()
+    pure_file.close()
 
 
 if __name__=='__main__':
@@ -94,7 +113,6 @@ if __name__=='__main__':
     parser.add_argument('--clusters', type=int, required=True, help="Number of clusters, k in GCExplainer")
     parser.add_argument('--num_graphs', type=int, required=True, help="Number of graphs that are displayed per concept")
     parser.add_argument('--hops', type=int, required=True, help="Number of hops from the node of interest, n in GCExplainer")
-    parser.add_argument('--purity', action='store_true', help="Whether to calculate purity as this is costly", default=False)
     args = parser.parse_args()
 
     expr_name = args.activation.split('/')[-1]

@@ -1,9 +1,10 @@
 from datetime import datetime
 from tqdm import tqdm
 import os.path as osp
+from os import mkdir
 import pickle
 
-import torch
+from torch import save, cat
 
 from torch_geometric.data import InMemoryDataset
 
@@ -103,6 +104,14 @@ def main(experiment: str,
                 model=model
             )
         else:
+            save_folder = osp.join(DIR, "../checkpoints", save_filename)
+            if not osp.exists(save_folder):
+                mkdir(save_folder)
+
+            save(
+                pl_model.model.state_dict(),
+                osp.join(save_folder, "weights.pt")
+            )
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[2])
@@ -116,6 +125,14 @@ def main(experiment: str,
                 model=model
             )
         else:
+            save_folder = osp.join(DIR, "../checkpoints", save_filename)
+            if not osp.exists(save_folder):
+                mkdir(save_folder)
+
+            save(
+                pl_model.model.state_dict(),
+                osp.join(save_folder, "weights.pt")
+            )
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[1])
@@ -135,7 +152,7 @@ def main(experiment: str,
                 activation: Tensor
                 for layer, activation in get_activation().items():
                     if layer in all_activations:
-                        cat_activations[layer] = torch.cat((cat_activations[layer], activation))
+                        cat_activations[layer] = cat((cat_activations[layer], activation))
                     else:
                         cat_activations[layer] = activation
 
