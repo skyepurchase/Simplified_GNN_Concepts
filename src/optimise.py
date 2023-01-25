@@ -1,17 +1,24 @@
-from argparse import Namespace
 import os.path as osp
+from os import mkdir
 
 from hyperopt import hp, fmin, tpe
 import hyperopt
 
-from torch import Tensor, nn, optim
-from torch.types import Number
-from torch.utils.data import DataLoader
-from torch_geometric.data import Data, InMemoryDataset
+from torch import Tensor, nn, optim, save
 
 from datasets import get_dataset
 from loaders import get_loaders
 from models import get_model
+
+#Typing
+from argparse import Namespace
+from torch_geometric.data import InMemoryDataset
+from torch.utils.data import DataLoader
+from torch.types import Number
+
+
+DIR = osp.dirname(__file__)
+
 
 # TODO: Add docstrings
 def train_loop(args):
@@ -46,7 +53,12 @@ def train_loop(args):
 
 def optimise(config: dict,
              dataset_name: str,
+             save_name: str,
              args: Namespace) -> None:
+
+    save_path: str = osp.join(DIR, "../output", save_name)
+    if not osp.exists(save_path):
+        mkdir(save_path)
     
     dataset: InMemoryDataset = get_dataset(dataset_name,
                                            osp.join(args.root,
@@ -57,9 +69,9 @@ def optimise(config: dict,
                                  dataset.num_classes,
                                  config["model"]["kwargs"])
 
-    train_loader = get_loaders(config["sampler"]["name"],
-                               dataset,
-                               config["sampler"])[0]
+    train_loader: DataLoader = get_loaders(config["sampler"]["name"],
+                                           dataset,
+                                           config["sampler"])[0]
 
     space = hp.choice('hyperparameters',
                       [
@@ -70,8 +82,11 @@ def optimise(config: dict,
                       ])
 
     best = fmin(train_loop, space, algo=tpe.suggest, max_evals=args.epochs)
-    
-    print(hyperopt.space_eval(space, best))
+    _, _, wd, lr = hyperopt.space_eval(space, best)
+
+    with open(osp.join(save_path, "hyperpot.txt"), "w") as file:
+        print(f"Best weight decay: {wd}\nBest learning rate: {lr}")
+        file.write(f"Over {args.epochs} epochs\nSearched for weight decay in [{args.min_decay, args.max_decay}] and found: {wd}\nSearched for learning rate in [{args.min_lr, args.max_lr}] and found: {lr}")
 
 
 if __name__=='__main__':
@@ -92,5 +107,6 @@ if __name__=='__main__':
         config = yaml.safe_load(config_file)
         filename = args.config.split('/')[-1]
         dataset_name = filename.split('.')[2]
-        optimise(config, dataset_name, args)
+        save_name = filename.split('.')[0] + "-" + dataset_name
+        optimise(config, dataset_name, save_name, args)
 
