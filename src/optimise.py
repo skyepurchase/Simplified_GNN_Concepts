@@ -45,11 +45,12 @@ def train_loop(args):
 
 
 def optimise(config: dict,
+             dataset_name: str,
              args: Namespace) -> None:
     
-    dataset: InMemoryDataset = get_dataset(args.dataset,
+    dataset: InMemoryDataset = get_dataset(dataset_name,
                                            osp.join(args.root,
-                                                    args.dataset))
+                                                    dataset_name))
 
     model: nn.Module = get_model(config["model"]["name"],
                                  dataset.num_features,
@@ -79,8 +80,7 @@ if __name__=='__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True, help="Config file")
-    parser.add_argument('--dataset', required=True, help="Dataset to run on")
-    parser.add_argument('--root', required=True, help="Root directory for dataset")
+    parser.add_argument('--root', help="Root directory for dataset", default="/data")
     parser.add_argument('--min_decay', type=float, default=0., help="Minimum weight decay constant")
     parser.add_argument('--max_decay', type=float, default=0., help="Maximum weight decay constant")
     parser.add_argument('--min_lr', type=float, default=0.2, help="Minimum learning rate")
@@ -91,5 +91,6 @@ if __name__=='__main__':
     with open(osp.abspath(args.config), 'r') as config_file:
         config = yaml.safe_load(config_file)
         filename = args.config.split('/')[-1]
-        optimise(config, args)
+        dataset_name = filename.split('.')[2]
+        optimise(config, dataset_name, args)
 
