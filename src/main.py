@@ -1,7 +1,10 @@
 from argparse import Namespace
 from datetime import datetime
 import os.path as osp
+from os import mkdir
 import logging
+
+from torch import save
 
 from torch_geometric.data import InMemoryDataset
 
@@ -97,6 +100,14 @@ def main(experiment: str,
                 model=model
             )
         else:
+            save_folder = osp.join(DIR, "../checkpoints", save_filename)
+            if not osp.exists(save_folder):
+                mkdir(save_folder)
+
+            save(
+                pl_model.model.state_dict(),
+                osp.join(save_folder, "weights.pt")
+            )
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[2])
@@ -109,6 +120,14 @@ def main(experiment: str,
                 model=model
             )
         else:
+            save_folder = osp.join(DIR, "../checkpoints", save_filename)
+            if not osp.exists(save_folder):
+                mkdir(save_folder)
+
+            save(
+                pl_model.model.state_dict(),
+                osp.join(save_folder, "weights.pt")
+            )
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[1])
