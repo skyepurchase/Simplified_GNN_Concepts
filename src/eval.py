@@ -15,17 +15,21 @@ from torch import Tensor
 from argparse import Namespace
 from networkx import Graph
 
+from torch import load
+
 from torch_geometric.data import Data, Dataset, InMemoryDataset
 
 from concepts.cluster import kmeans_cluster
 from concepts.metrics import purity
 from concepts.plotting import plot_samples
 from datasets import get_dataset
+from models import get_activation, get_model, register_hooks
 
 # Typing
 from typing import Union
 from sklearn.cluster import KMeans
 from torch import Tensor
+from torch.nn import Module
 
 
 DIR = osp.dirname(__file__)
@@ -33,7 +37,8 @@ DIR = osp.dirname(__file__)
 
 def main(args: Namespace,
          dataset_name: str,
-         save_name: str) -> None:
+         save_name: str,
+         config: dict) -> None:
     print("ONLY TESTED FOR SYNTHETIC ACTIVATIONS")
 
     save_path: str = osp.join(DIR, "../output", save_name)
@@ -41,26 +46,40 @@ def main(args: Namespace,
     if not osp.exists(save_path):
         mkdir(save_path)
 
-    activation_list: dict[str, Tensor]
-    with open(osp.join(DIR, "..", args.activation), 'rb') as file:
-        activation_list = pickle.loads(file.read())
-
-    # TODO: Potentially implement the dimensionality reduction for SGC
-    
-    model_list: dict[str, KMeans]
-    _, model_list = kmeans_cluster(activation_list, args.clusters)
-
     dataset: InMemoryDataset = get_dataset(dataset_name,
                                            "data/")
     
     if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
-        data = dataset
+        data: Union[Data, Dataset] = dataset
     else:
         temp = dataset[0]
         if isinstance(temp, Data):
             data: Union[Data, Dataset] = temp
         else:
             raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
+
+    if args.weights is not None:
+        gnn: Module = get_model(config["model"]["name"],
+                                dataset.num_features,
+                                dataset.num_classes,
+                                config["model"]["kwargs"])
+        gnn.load_state_dict(load(args.weights))
+        gnn = register_hooks(gnn)
+        gnn.eval()
+        if isinstance(data, Data):
+            _ = gnn(data.x, data.edge_index, None)
+            activation_list: dict[str, Tensor] = get_activation()
+        else:
+            raise Exception("Something went wrong")
+    else:
+        activation_list: dict[str, Tensor]
+        with open(osp.join(DIR, "..", args.activation), 'rb') as file:
+            activation_list = pickle.loads(file.read())
+
+    # TODO: Potentially implement the dimensionality reduction for SGC
+
+    model_list: dict[str, KMeans]
+    _, model_list = kmeans_cluster(activation_list, args.clusters)
 
     layer_graphs: dict[str, dict[int, list[Graph]]] = {}
     comp_file: TextIOWrapper = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w")
@@ -107,17 +126,27 @@ def main(args: Namespace,
 if __name__=='__main__':
     
     import argparse
+    import yaml
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--activation', required=True, help="Path to the desired activation file")
+    parser.add_argument('--activation', help="Path to the desired activation file")
     parser.add_argument('--clusters', type=int, required=True, help="Number of clusters, k in GCExplainer")
     parser.add_argument('--num_graphs', type=int, required=True, help="Number of graphs that are displayed per concept")
     parser.add_argument('--hops', type=int, required=True, help="Number of hops from the node of interest, n in GCExplainer")
+    parser.add_argument('--config', help="Model config to extract concepts from")
+    parser.add_argument('--weights', help="Path to the model trained weights to extract activations")
     args = parser.parse_args()
 
-    expr_name = args.activation.split('/')[-1]
-    dataset_name = expr_name.split('.')[2]
-    save_name = expr_name.split('.')[0] + "-" + dataset_name
-
-    main(args, dataset_name, save_name)
+    if (args.config is not None) and (args.weights is not None):
+        with open(osp.abspath(args.config), 'r') as config_file:
+            config = yaml.safe_load(config_file)
+            filename = args.config.split('/')[-1]
+            dataset_name = filename.split('.')[2]
+            save_name = filename.split('.')[0] + "-" + dataset_name
+            main(args, dataset_name, save_name, config)
+    elif args.activation is not None:
+        filename = args.activation.split('/')[-1]
+        dataset_name = filename.split('.')[2]
+        save_name = filename.split('.')[0] + "-" + dataset_name
+        main(args, dataset_name, save_name, {})
 
