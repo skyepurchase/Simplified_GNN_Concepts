@@ -54,6 +54,7 @@ def train_loop(args):
 def optimise(config: dict,
              dataset_name: str,
              save_name: str,
+             iteration: str,
              args: Namespace) -> None:
 
     save_path: str = osp.join(DIR, "../output", save_name)
@@ -84,7 +85,7 @@ def optimise(config: dict,
     best = fmin(train_loop, space, algo=tpe.suggest, max_evals=args.epochs)
     _, _, wd, lr = hyperopt.space_eval(space, best)
 
-    with open(osp.join(save_path, "hyperpot.txt"), "w") as file:
+    with open(osp.join(save_path, f"hyperpot_{iteration}.txt"), "w") as file:
         print(f"Best weight decay: {wd}\nBest learning rate: {lr}")
         file.write(f"Over {args.epochs} epochs\nSearched for weight decay in [{args.min_decay, args.max_decay}] and found: {wd}\nSearched for learning rate in [{args.min_lr, args.max_lr}] and found: {lr}")
 
@@ -106,7 +107,8 @@ if __name__=='__main__':
     with open(osp.abspath(args.config), 'r') as config_file:
         config = yaml.safe_load(config_file)
         filename = args.config.split('/')[-1]
-        dataset_name = filename.split('.')[2]
-        save_name = filename.split('.')[0] + "-" + dataset_name
-        optimise(config, dataset_name, save_name, args)
+        split = filename.split('.')
+        dataset_name = split[2]
+        save_name = split[0] + "-" + dataset_name
+        optimise(config, dataset_name, save_name, split[-2], args)
 
