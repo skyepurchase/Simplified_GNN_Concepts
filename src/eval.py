@@ -2,10 +2,15 @@ import pickle
 import os.path as osp
 from os import mkdir
 
+from models import get_activation, get_model, register_hooks
 from concepts.cluster import kmeans_cluster
 from concepts.metrics import completeness, purity
 from concepts.plotting import plot_samples
 from datasets import get_dataset
+
+from torch import load, cat, max
+
+from torch_geometric.data import Data, Dataset, InMemoryDataset
 
 # Typing
 from torch_geometric.data import Data, InMemoryDataset
@@ -14,25 +19,49 @@ from sklearn.cluster import KMeans
 from torch import Tensor
 from argparse import Namespace
 from networkx import Graph
-
-from torch import load
-
-from torch_geometric.data import Data, Dataset, InMemoryDataset
-
-from concepts.cluster import kmeans_cluster
-from concepts.metrics import purity
-from concepts.plotting import plot_samples
-from datasets import get_dataset
-from models import get_activation, get_model, register_hooks
-
-# Typing
-from typing import Union
+from typing import Union, Tuple
 from sklearn.cluster import KMeans
 from torch import Tensor
 from torch.nn import Module
 
 
 DIR = osp.dirname(__file__)
+
+
+#def convert(dataset: Dataset) -> Tuple[Data, Data]:
+#    """Convert a graph classification Dataset into a Data object for activation extraction and Data object with node labels"""
+#    x: Union[Tensor, None] = None
+#    y: Union[Tensor, None] = None
+#    edge_index: Union[Tensor, None] = None
+#
+#    graph: Union[Data, Dataset]
+#    for graph in dataset:
+#        if isinstance(graph, Data):
+#            if (x is None) or (y is None) or (edge_index is None):
+#                x = graph.x
+#                edge_index = graph.edge_index
+#                y = graph.y
+#
+#                if isinstance(x, Tensor) and isinstance(y, Tensor):
+#                    print(x.shape)
+#                    y = y.repeat(x.shape)
+#                else:    
+#                    raise TypeError("Expected x and y to have a value but received {None}")
+#                breakpoint()
+#            else:
+#                new_graph_edge: Tensor = graph.edge_index + x.shape[0] 
+#                edge_index = cat((edge_index, new_graph_edge), dim=1)
+#
+#                new_x: Tensor = graph.x
+#                x = cat((x, new_x))
+#
+#                new_y: Tensor = graph.y.repeat(new_x.shape)
+#                y = cat((y, new_y))
+#                breakpoint()
+#        else:
+#            raise TypeError(f"Expected graph to be type {Data} but received type {type(graph)} instead")
+#
+#    return Data(), Data()
 
 
 def main(args: Namespace,
@@ -48,7 +77,7 @@ def main(args: Namespace,
 
     dataset: InMemoryDataset = get_dataset(dataset_name,
                                            "data/")
-    
+
     if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
         data: Union[Data, Dataset] = dataset
     else:
@@ -66,9 +95,19 @@ def main(args: Namespace,
         gnn.load_state_dict(load(args.weights))
         gnn = register_hooks(gnn)
         gnn.eval()
+
         if isinstance(data, Data):
             _ = gnn(data.x, data.edge_index, None)
             activation_list: dict[str, Tensor] = get_activation()
+        elif isinstance(data, Dataset):
+            test_data: Union[Data, Dataset] = dataset[0]
+            if isinstance(test_data, Data):
+                data = test_data
+
+                _ = gnn(test_data.x, test_data.edge_index, None)
+                activation_list: dict[str, Tensor] = get_activation()
+            else:
+                raise Exception("Well if it doesn't work this is temporary")
         else:
             raise Exception("Something went wrong")
     else:
