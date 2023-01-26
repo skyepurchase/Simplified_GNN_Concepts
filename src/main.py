@@ -91,6 +91,10 @@ def main(experiment: str,
         log_every_n_steps=50,
         enable_progress_bar=args.verbose)
 
+    save_folder = osp.join(DIR, "../checkpoints", save_filename)
+    if not osp.exists(save_folder):
+        mkdir(save_folder)
+
     print(f'Running {experiment} with seed value {args.seed}')
     
     if config["sampler"]["name"] == "SGC":
@@ -104,10 +108,6 @@ def main(experiment: str,
                 model=model
             )
         else:
-            save_folder = osp.join(DIR, "../checkpoints", save_filename)
-            if not osp.exists(save_folder):
-                mkdir(save_folder)
-
             save(
                 pl_model.model.state_dict(),
                 osp.join(save_folder, "weights.pt")
@@ -125,10 +125,6 @@ def main(experiment: str,
                 model=model
             )
         else:
-            save_folder = osp.join(DIR, "../checkpoints", save_filename)
-            if not osp.exists(save_folder):
-                mkdir(save_folder)
-
             save(
                 pl_model.model.state_dict(),
                 osp.join(save_folder, "weights.pt")
@@ -138,29 +134,32 @@ def main(experiment: str,
         trainer.test(best_model, dataloaders=loaders[1])
 
         if config["sampler"]["name"] == "GraphLoader":
-            print("Evaluating on the entire dataset for concept extraction")
-            best_model.eval()
-
-            all_activations: list[dict[str, Tensor]] = []
-            cat_activations: dict[str, Tensor] = {}
-            graph: Data
-            for graph in tqdm(loaders[2], desc="Extracting activations"):
-                _ = best_model(graph) # Evaluate to allow hooks to extract activations
-                all_activations.append(get_activation())
-
-                layer: str
-                activation: Tensor
-                for layer, activation in get_activation().items():
-                    if layer in all_activations:
-                        cat_activations[layer] = cat((cat_activations[layer], activation))
-                    else:
-                        cat_activations[layer] = activation
-
-            with open(osp.join(DIR, "../activations", f'{save_filename}.pkl'), 'wb') as file:
-                pickle.dump(all_activations, file)
-
-            with open(osp.join(DIR, "../activations", f'{save_filename}_concat.pkl'), 'wb') as file:
-                pickle.dump(cat_activations, file)
+            assert len(loaders) > 2
+            trainer.test(best_model, dataloaders=loaders[2], verbose=False)
+            save_activation(osp.join(DIR, "../activations", f"{save_filename}.pkl"))
+#            print("Evaluating on the entire dataset for concept extraction")
+#            best_model.eval()
+#
+#            all_activations: list[dict[str, Tensor]] = []
+#            cat_activations: dict[str, Tensor] = {}
+#            graph: Data
+#            for graph in tqdm(loaders[2], desc="Extracting activations"):
+#                _ = best_model(graph) # Evaluate to allow hooks to extract activations
+#                all_activations.append(get_activation())
+#
+#                layer: str
+#                activation: Tensor
+#                for layer, activation in get_activation().items():
+#                    if layer in all_activations:
+#                        cat_activations[layer] = cat((cat_activations[layer], activation))
+#                    else:
+#                        cat_activations[layer] = activation
+#
+#            with open(osp.join(DIR, "../activations", f'{save_filename}.pkl'), 'wb') as file:
+#                pickle.dump(all_activations, file)
+#
+#            with open(osp.join(DIR, "../activations", f'{save_filename}_concat.pkl'), 'wb') as file:
+#                pickle.dump(cat_activations, file)
 #
 #             trainer.test(best_model, dataloaders=loaders[2], verbose=False)
         else:
