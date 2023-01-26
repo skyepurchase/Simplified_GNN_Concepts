@@ -89,7 +89,8 @@ def get_loaders(name: str,
                 train_loader = DataLoader(train_set, shuffle=True, num_workers=16, **config["train"])
                 test_loader = DataLoader(test_set, shuffle=False, num_workers=16, **config["train"])
                 # dataset is used rather than graphs for determinancy
-                full_loader = DataLoader(dataset, shuffle=False, num_workers=16, **config["full"])
+                # want to extract all graphs in a single batch for activations
+                full_loader = DataLoader(dataset, shuffle=False, num_workers=16, batch_size=len(dataset))
             return [train_loader, test_loader, full_loader]
         else:
             raise TypeError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
