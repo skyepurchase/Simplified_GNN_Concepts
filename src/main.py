@@ -98,7 +98,6 @@ def main(experiment: str,
     print(f'Running {experiment} with seed value {args.seed}')
     
     if config["sampler"]["name"] == "SGC":
-        assert len(loaders) == 3
         save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
         trainer.fit(pl_model, loaders[0], loaders[1])
 

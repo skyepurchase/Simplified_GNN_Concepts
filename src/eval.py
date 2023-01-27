@@ -1,14 +1,18 @@
 import pickle
 import os.path as osp
 from os import mkdir
+from pytorch_lightning import LightningModule
 
+from loaders import get_loaders
 from models import get_activation, get_model, register_hooks
 from concepts.cluster import kmeans_cluster
 from concepts.metrics import completeness, purity
 from concepts.plotting import plot_samples
 from datasets import get_dataset
 
-from torch import load, cat, max
+import pytorch_lightning as pl
+
+from torch import load, tensor
 
 from torch_geometric.data import Data, Dataset, InMemoryDataset
 
@@ -19,49 +23,16 @@ from sklearn.cluster import KMeans
 from torch import Tensor
 from argparse import Namespace
 from networkx import Graph
-from typing import Union, Tuple
+from typing import Union
 from sklearn.cluster import KMeans
 from torch import Tensor
 from torch.nn import Module
+from torch.utils.data import DataLoader
+
+from wrappers import get_wrapper
 
 
 DIR = osp.dirname(__file__)
-
-
-#def convert(dataset: Dataset) -> Tuple[Data, Data]:
-#    """Convert a graph classification Dataset into a Data object for activation extraction and Data object with node labels"""
-#    x: Union[Tensor, None] = None
-#    y: Union[Tensor, None] = None
-#    edge_index: Union[Tensor, None] = None
-#
-#    graph: Union[Data, Dataset]
-#    for graph in dataset:
-#        if isinstance(graph, Data):
-#            if (x is None) or (y is None) or (edge_index is None):
-#                x = graph.x
-#                edge_index = graph.edge_index
-#                y = graph.y
-#
-#                if isinstance(x, Tensor) and isinstance(y, Tensor):
-#                    print(x.shape)
-#                    y = y.repeat(x.shape)
-#                else:    
-#                    raise TypeError("Expected x and y to have a value but received {None}")
-#                breakpoint()
-#            else:
-#                new_graph_edge: Tensor = graph.edge_index + x.shape[0] 
-#                edge_index = cat((edge_index, new_graph_edge), dim=1)
-#
-#                new_x: Tensor = graph.x
-#                x = cat((x, new_x))
-#
-#                new_y: Tensor = graph.y.repeat(new_x.shape)
-#                y = cat((y, new_y))
-#                breakpoint()
-#        else:
-#            raise TypeError(f"Expected graph to be type {Data} but received type {type(graph)} instead")
-#
-#    return Data(), Data()
 
 
 def main(args: Namespace,
@@ -87,6 +58,7 @@ def main(args: Namespace,
         else:
             raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
 
+    # TODO: remove this for a smoother workflow
     if args.weights is not None:
         gnn: Module = get_model(config["model"]["name"],
                                 dataset.num_features,
@@ -94,28 +66,54 @@ def main(args: Namespace,
                                 config["model"]["kwargs"])
         gnn.load_state_dict(load(args.weights))
         gnn = register_hooks(gnn)
-        gnn.eval()
+
+        pl_model: LightningModule = get_wrapper(config["wrapper"]["name"],
+                                                gnn,
+                                                config["wrapper"]["kwargs"])
 
         if isinstance(data, Data):
             _ = gnn(data.x, data.edge_index, None)
             activation_list: dict[str, Tensor] = get_activation()
         elif isinstance(data, Dataset):
-            test_data: Union[Data, Dataset] = dataset[0]
-            if isinstance(test_data, Data):
-                data = test_data
+            full_loader: DataLoader = get_loaders(config["sampler"]["name"],
+                                                  data,
+                                                  config["sampler"])[2]
 
-                _ = gnn(test_data.x, test_data.edge_index, None)
-                activation_list: dict[str, Tensor] = get_activation()
-            else:
-                raise Exception("Well if it doesn't work this is temporary")
+            trainer = pl.Trainer(
+                accelerator=config["trainer"]["accelerator"],
+                devices=config["trainer"]["devices"],
+                max_epochs=config["trainer"]["max_epochs"],
+                enable_progress_bar=False)
+
+            trainer.test(pl_model, dataloaders=full_loader, verbose=False)
+            activation_list = get_activation()
+
+            all_graphs: Data = next(iter(full_loader))
+
+            class_labels_per_node = []
+            temp_mask: list[bool] = []
+            train_idx: int = int(len(data) * 0.8)
+            for batch_idx in all_graphs.batch:
+                if batch_idx < train_idx:
+                    temp_mask.append(True)
+                else:
+                    temp_mask.append(False)
+                class_labels_per_node.append(all_graphs.y[batch_idx])
+
+            train_mask = tensor(temp_mask)
+            test_mask = ~train_mask
+            data = Data(x=all_graphs.x,
+                        y=tensor(class_labels_per_node),
+                        edge_index=all_graphs.edge_index,
+                        batch=all_graphs.batch,
+                        train_mask=train_mask,
+                        test_mask=test_mask)
         else:
             raise Exception("Something went wrong")
     else:
         activation_list: dict[str, Tensor]
         with open(osp.join(DIR, "..", args.activation), 'rb') as file:
             activation_list = pickle.loads(file.read())
-
-    # TODO: Potentially implement the dimensionality reduction for SGC
 
     model_list: dict[str, KMeans]
     _, model_list = kmeans_cluster(activation_list, args.clusters)
@@ -124,39 +122,39 @@ def main(args: Namespace,
     comp_file: TextIOWrapper = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-completeness.txt"), "w")
     pure_file = open(osp.join(save_path, f"{args.clusters}k-{args.hops}n-purity.txt"), "w")
     for layer, model in model_list.items():
-#         classifier = Activation_Classifier(model_list[layer],
-#                                            activation_list[layer],
-#                                            data)
-        comp_score = completeness(model_list[layer], activation_list[layer], data)
-        print(f'Layer {layer} completeness: {comp_score}')
-        comp_file.write(f"{layer}: {comp_score}\n")
+        if "pool" in layer:
+            continue
+        else:
+            comp_score = completeness(model_list[layer], activation_list[layer], data)
+            print(f'Layer {layer} completeness: {comp_score}')
+            comp_file.write(f"{layer}: {comp_score}\n")
 
-        layer_num = int(layer.split('.')[-1])
+            layer_num = int(layer.split('.')[-1])
 
-        if isinstance(data, Data):
-            sample_graphs: dict[int, list[Graph]] = plot_samples(model,
-                                                                 activation_list[layer],
-                                                                 data.y,
-                                                                 layer_num,
-                                                                 args.clusters,
-                                                                 "KMeans-Raw",
-                                                                 args.num_graphs,
-                                                                 data.edge_index.detach().numpy().T,
-                                                                 args.hops,
-                                                                 save_path)
+            if isinstance(data, Data):
+                sample_graphs: dict[int, list[Graph]] = plot_samples(model,
+                                                                     activation_list[layer],
+                                                                     data.y,
+                                                                     layer_num,
+                                                                     args.clusters,
+                                                                     "KMeans-Raw",
+                                                                     args.num_graphs,
+                                                                     data.edge_index.detach().numpy().T,
+                                                                     args.hops,
+                                                                     save_path)
 
-            layer_graphs[layer] = sample_graphs
+                layer_graphs[layer] = sample_graphs
 
-            concepts: list[Graph]
-            pure_file.write(f"{layer}\n")
-            for i, concepts in sample_graphs.items():
-                try:
-                    avg_best_score = purity(concepts[:-1])
-                    print(f'Concept {i} avg_score: {avg_best_score}')
-                    pure_file.write(f"Concept {i}: {avg_best_score}\n")
-                except ValueError:
-                    print(f'Concept {i} no score computed')
-                    pure_file.write(f"Concept {i}: none\n")
+                concepts: list[Graph]
+                pure_file.write(f"{layer}\n")
+                for i, concepts in sample_graphs.items():
+                    try:
+                        avg_best_score = purity(concepts[:-1])
+                        print(f'Concept {i} avg_score: {avg_best_score}')
+                        pure_file.write(f"Concept {i}: {avg_best_score}\n")
+                    except ValueError:
+                        print(f'Concept {i} no score computed')
+                        pure_file.write(f"Concept {i}: none\n")
 
     comp_file.close()
     pure_file.close()
