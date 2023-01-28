@@ -42,7 +42,7 @@ class GCN(nn.Module):
 #                self.pools.append(global_max_pool)
 
         if pooling:
-            in_features = in_features * num_conv_layers
+            in_features = in_features
 
         for i in range(num_lin_layers - 1):
             lin = Linear(in_features,
@@ -57,21 +57,13 @@ class GCN(nn.Module):
         self.layers.append(output_layer)
 
     def forward(self, x : Tensor, edge_index: Adj, batch: Tensor) -> Tensor:
-        out_all = []
-#         breakpoint()
-
         for i, layer in enumerate(self.layers):
             if i < self.num_conv_layers:
                 x = layer(x, edge_index)
                 x = F.relu(x)
-
-                if self.pooling:
-#                     out = self.pools[i]
-                    out = self.pool_layer(x, batch)
-                    out_all.append(out)
             else:
                 if self.pooling:
-                    x = torch.cat(out_all, dim=-1)
+                    x = self.pool_layer(x, batch)
 
                 x = layer(x)
 
