@@ -28,7 +28,7 @@ def _get_subgraphs(top_indices: NDArray,
     # Converted to dataframe for easier data manipulation
     df = pd.DataFrame(edges)
 
-    for idx in tqdm(top_indices, desc="generating subgraph"):
+    for idx in top_indices:
         neighbours: list[Tensor] = [] 
         neighbours.append(idx)
 

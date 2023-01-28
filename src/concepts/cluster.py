@@ -1,5 +1,6 @@
 import torch
 import os.path as osp
+from tqdm import tqdm
 
 from sklearn.cluster import KMeans
 
@@ -15,7 +16,7 @@ def kmeans_cluster(activation_list: dict[str, torch.Tensor],
 
     prediction_list: dict[str, NDArray] = {}
     model_list: dict[str, KMeans] = {}
-    for layer, activations in activation_list.items():
+    for layer, activations in tqdm(activation_list.items(), desc="Clustering activations"):
         activation: NDArray = torch.squeeze(activations).detach().numpy()
         kmeans = KMeans(n_clusters=clusters, random_state=0) # Random state 0 for determinism
 
