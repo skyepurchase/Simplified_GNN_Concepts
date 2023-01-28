@@ -1,5 +1,6 @@
 import pickle
 import os.path as osp
+import numpy as np
 from os import mkdir
 from pytorch_lightning import LightningModule
 
@@ -14,7 +15,7 @@ import pytorch_lightning as pl
 
 from torch import load, tensor
 
-from torch_geometric.data import Data, Dataset, InMemoryDataset
+from torch_geometric.data import Data, InMemoryDataset
 
 # Typing
 from torch_geometric.data import Data, InMemoryDataset
@@ -23,7 +24,6 @@ from sklearn.cluster import KMeans
 from torch import Tensor
 from argparse import Namespace
 from networkx import Graph
-from typing import Union
 from sklearn.cluster import KMeans
 from torch import Tensor
 from torch.nn import Module
@@ -49,16 +49,34 @@ def main(args: Namespace,
     dataset: InMemoryDataset = get_dataset(dataset_name,
                                            "data/")
 
+    data: Data
     if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
-        data: Union[Data, Dataset] = dataset
+        # Convert the batch into a valid data object to completeness scores
+        full_loader: DataLoader = get_loaders("GraphLoader",
+                                              dataset,
+                                              {"test": {}, "train": {}})[2]
+
+        all_graphs: Data = next(iter(full_loader))
+
+        class_labels_per_node: list[int] = []
+        for batch_idx in all_graphs.batch:
+            class_labels_per_node.append(all_graphs.y[batch_idx])
+
+        train_mask: Tensor = tensor(np.random.rand(all_graphs.x.shape[0]) < 0.8)
+        test_mask: Tensor = ~train_mask
+        data = Data(x=all_graphs.x,
+                    y=tensor(class_labels_per_node),
+                    edge_index=all_graphs.edge_index,
+                    batch=all_graphs.batch,
+                    train_mask=train_mask,
+                    test_mask=test_mask)
     else:
         temp = dataset[0]
         if isinstance(temp, Data):
-            data: Union[Data, Dataset] = temp
+            data = temp
         else:
             raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
 
-    # TODO: remove this for a smoother workflow
     if args.weights is not None:
         gnn: Module = get_model(config["model"]["name"],
                                 dataset.num_features,
@@ -71,12 +89,9 @@ def main(args: Namespace,
                                                 gnn,
                                                 config["wrapper"]["kwargs"])
 
-        if isinstance(data, Data):
-            _ = gnn(data.x, data.edge_index, None)
-            activation_list: dict[str, Tensor] = get_activation()
-        elif isinstance(data, Dataset):
+        if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
             full_loader: DataLoader = get_loaders(config["sampler"]["name"],
-                                                  data,
+                                                  dataset,
                                                   config["sampler"])[2]
 
             trainer = pl.Trainer(
@@ -87,29 +102,9 @@ def main(args: Namespace,
 
             trainer.test(pl_model, dataloaders=full_loader, verbose=False)
             activation_list = get_activation()
-
-            all_graphs: Data = next(iter(full_loader))
-
-            class_labels_per_node = []
-            temp_mask: list[bool] = []
-            train_idx: int = int(len(data) * 0.8)
-            for batch_idx in all_graphs.batch:
-                if batch_idx < train_idx:
-                    temp_mask.append(True)
-                else:
-                    temp_mask.append(False)
-                class_labels_per_node.append(all_graphs.y[batch_idx])
-
-            train_mask = tensor(temp_mask)
-            test_mask = ~train_mask
-            data = Data(x=all_graphs.x,
-                        y=tensor(class_labels_per_node),
-                        edge_index=all_graphs.edge_index,
-                        batch=all_graphs.batch,
-                        train_mask=train_mask,
-                        test_mask=test_mask)
         else:
-            raise Exception("Something went wrong")
+            _ = gnn(data.x, data.edge_index, None)
+            activation_list: dict[str, Tensor] = get_activation()
     else:
         activation_list: dict[str, Tensor]
         with open(osp.join(DIR, "..", args.activation), 'rb') as file:
