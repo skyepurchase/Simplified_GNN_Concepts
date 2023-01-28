@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os.path as osp
+from tqdm import tqdm
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -27,7 +28,7 @@ def _get_subgraphs(top_indices: NDArray,
     # Converted to dataframe for easier data manipulation
     df = pd.DataFrame(edges)
 
-    for idx in top_indices:
+    for idx in tqdm(top_indices, desc="generating subgraph"):
         neighbours: list[Tensor] = [] 
         neighbours.append(idx)
 
@@ -86,7 +87,7 @@ def plot_samples(clustering_model: KMeans,
     l: list[int] = list(range(0, clusters))
     sample_graphs: dict[int, list[nx.Graph]] = {}
 
-    for cluster_id, ax_list in zip(l, axes):
+    for cluster_id, ax_list in tqdm(zip(l, axes), desc="plotting concepts"):
         # distances to centres for this centre
         distances: NDArray = activation_distances[:,cluster_id]
 
