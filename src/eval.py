@@ -39,8 +39,6 @@ def main(args: Namespace,
          dataset_name: str,
          save_name: str,
          config: dict) -> None:
-    print("ONLY TESTED FOR SYNTHETIC ACTIVATIONS")
-
     save_path: str = osp.join(DIR, "../output", save_name)
 
     if not osp.exists(save_path):
@@ -50,7 +48,7 @@ def main(args: Namespace,
                                            "data/")
 
     data: Data
-    if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
+    if dataset_name in ["REDDIT-BINARY", "Mutagenicity"]:
         # Convert the batch into a valid data object to completeness scores
         full_loader: DataLoader = get_loaders("GraphLoader",
                                               dataset,
@@ -89,7 +87,7 @@ def main(args: Namespace,
                                                 gnn,
                                                 config["wrapper"]["kwargs"])
 
-        if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
+        if dataset_name in ["REDDIT-BINARY", "Mutagenicity"]:
             full_loader: DataLoader = get_loaders(config["sampler"]["name"],
                                                   dataset,
                                                   config["sampler"])[2]
@@ -127,16 +125,21 @@ def main(args: Namespace,
             layer_num = int(layer.split('.')[-1])
 
             if isinstance(data, Data):
+                atom_colour: bool
+                if dataset_name == "Mutagenicity":
+                    atom_colour = True
+                else:
+                    atom_colour = False
                 sample_graphs: dict[int, list[Graph]] = plot_samples(model,
                                                                      activation_list[layer],
-                                                                     data.y,
+                                                                     data,
                                                                      layer_num,
                                                                      args.clusters,
                                                                      "KMeans-Raw",
                                                                      args.num_graphs,
-                                                                     data.edge_index.detach().numpy().T,
                                                                      args.hops,
-                                                                     save_path)
+                                                                     save_path,
+                                                                     atom_colour)
 
                 layer_graphs[layer] = sample_graphs
 
