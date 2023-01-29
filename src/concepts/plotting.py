@@ -117,7 +117,7 @@ def plot_samples(clustering_model: KMeans,
         # select the "ideal" graphs and it's distance to the cluster
         sample_graphs[cluster_id] = top_graphs[:3] + bot_graph
 
-    plt.savefig(osp.join(save_path, f'{layer_num}layer_{clustering_type}_{num_graphs_viewable}_view.png'))
+    plt.savefig(osp.join(save_path, f'{layer_num}layer_{clustering_type}_{clusters}k_{hops}n_{num_graphs_viewable}_view.png'))
 
     return sample_graphs
 
