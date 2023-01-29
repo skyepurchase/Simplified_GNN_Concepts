@@ -1,12 +1,15 @@
 import torch
 from torch.utils.data import DataLoader
-from torch_geometric.data import Data, Dataset
 from torch_geometric.loader import RandomNodeLoader, DataLoader
-from torch.utils.data import DataLoader as Loader
-
-from torch import Tensor
 from torch_sparse import SparseTensor
+
 from .utils import normalize_adjacency, precompute_features, save_activation
+
+# Typing
+from torch.utils.data import DataLoader as Loader
+from torch_geometric.data import Data, Dataset
+from torch import Tensor
+from typing import Union
 
 
 def save_precomputation(path: str):
@@ -20,17 +23,20 @@ def get_loaders(name: str,
     """
     """ #TODO: Add a docstring
     if name == "RandomNodeSampler":
-        print("DEPRICATED: check that ***node*** sampling is desired! Change to DataLoader")
-        temp = dataset[0]
-        if isinstance(temp, Data):
-            data: Data = temp
-        else:
-            raise ValueError(f'Expected item at index zero to be type {Data} received type {type(temp)}')
-
-        if "val" in config.keys():
-            return [RandomNodeLoader(data, shuffle=True, **config["train"]), RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
-        else:
-            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+        raise DeprecationWarning("DEPRICATED: check that ***node*** sampling is desired! Change to DataLoader")
+#         temp = dataset[0]
+#         if isinstance(temp, Data):
+#             data: Data = temp
+#         else:
+#             raise ValueError(f'Expected item at index zero to be type {Data} received type {type(temp)}')
+# 
+#         if "val" in config.keys():
+#             return [RandomNodeLoader(data, shuffle=True, **config["train"]),
+#                     RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]),
+#                     RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+#         else:
+#             return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
+#                     RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
 
     elif name == "SGC":
         temp = dataset[0]
@@ -50,13 +56,16 @@ def get_loaders(name: str,
         assert torch.all(features.eq(data.x))
 
         if "val" in config.keys():
-            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
+                    RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]),
+                    RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
         else:
-            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]), RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
+                    RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
 
     elif name == "DataLoader":
         if "val" in config.keys():
-            raise Exception("ATTENTION: DataLoader should be for GCExplainer comparison. No known reason for validation set")
+            raise ValueError("ATTENTION: DataLoader expects GCExplainer model. No validation set supported")
         else:
             train_loader = DataLoader(dataset, num_workers=16)
             test_loader = DataLoader(dataset, num_workers=16)
@@ -66,19 +75,25 @@ def get_loaders(name: str,
     elif name == "GraphLoader":
         graphs = dataset.shuffle()
 
-        train_idx = int(len(graphs) * 0.8) # TODO: Potentially make this a user defined value
-        train_set = graphs[:train_idx]
-        test_set = graphs[train_idx:]
+        if isinstance(graphs, Dataset):
+            train_idx: int = int(len(graphs) * 0.8)
+            train_set: Union[Dataset, Data] = graphs[:train_idx]
+            test_set: Union[Dataset, Data] = graphs[train_idx:]
+        else:
+            raise TypeError(f"Expected graphs to be type {Dataset} instead received type {type(graphs)}")
 
         if isinstance(train_set, Dataset) and isinstance(test_set, Dataset):
             if "val" in config.keys():
-                raise ValueError(f"Validation set not available for {name}")
+                raise ValueError(f"Validation set not supported")
             else:
                 train_loader = DataLoader(train_set, shuffle=True, num_workers=16, **config["train"])
                 test_loader = DataLoader(test_set, shuffle=False, num_workers=16, **config["train"])
-            return [train_loader, test_loader]
+                # dataset is used rather than graphs for determinancy
+                # want to extract all graphs in a single batch for activations
+                full_loader = DataLoader(dataset, shuffle=False, num_workers=16, batch_size=len(dataset))
+            return [train_loader, test_loader, full_loader]
         else:
-            raise ValueError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
+            raise TypeError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
 
     else:
         raise ValueError(f"Unsupported data loader {name}")

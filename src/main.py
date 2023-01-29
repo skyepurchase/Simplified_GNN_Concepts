@@ -1,22 +1,26 @@
-from argparse import Namespace
 from datetime import datetime
+from tqdm import tqdm
 import os.path as osp
 from os import mkdir
-import logging
+import pickle
 
-from torch import save
+from torch import save, cat
 
 from torch_geometric.data import InMemoryDataset
 
 from loaders import get_loaders, save_precomputation
 from datasets import get_dataset 
-from models import save_activation, get_model, register_hooks
+from models import get_activation, save_activation, get_model, register_hooks
 from wrappers import get_wrapper 
 
 from pytorch_lightning import loggers, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
+# Typing
+from torch_geometric.data import Data
+from argparse import Namespace
+from torch import Tensor
 
 DIR = osp.dirname(__file__)
 
@@ -87,10 +91,14 @@ def main(experiment: str,
         log_every_n_steps=50,
         enable_progress_bar=args.verbose)
 
+    save_folder = osp.join(DIR, "../checkpoints", save_filename)
+    if not osp.exists(save_folder):
+        mkdir(save_folder)
+
     print(f'Running {experiment} with seed value {args.seed}')
     
-    if len(loaders) == 3:
-        print("ASSUMED TO BE SGC")
+    if config["sampler"]["name"] == "SGC":
+        assert len(loaders) == 3
         save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
         trainer.fit(pl_model, loaders[0], loaders[1])
 
@@ -100,10 +108,6 @@ def main(experiment: str,
                 model=model
             )
         else:
-            save_folder = osp.join(DIR, "../checkpoints", save_filename)
-            if not osp.exists(save_folder):
-                mkdir(save_folder)
-
             save(
                 pl_model.model.state_dict(),
                 osp.join(save_folder, "weights.pt")
@@ -111,7 +115,8 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[2])
-    elif len(loaders) == 2:
+    elif config["sampler"]["name"] in ["DataLoader", "GraphLoader"]:
+        assert len(loaders) > 1
         trainer.fit(pl_model, loaders[0])
 
         if checkpoint:
@@ -120,10 +125,6 @@ def main(experiment: str,
                 model=model
             )
         else:
-            save_folder = osp.join(DIR, "../checkpoints", save_filename)
-            if not osp.exists(save_folder):
-                mkdir(save_folder)
-
             save(
                 pl_model.model.state_dict(),
                 osp.join(save_folder, "weights.pt")
@@ -131,9 +132,40 @@ def main(experiment: str,
             best_model = pl_model
 
         trainer.test(best_model, dataloaders=loaders[1])
-        save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
+
+        if config["sampler"]["name"] == "GraphLoader":
+            assert len(loaders) > 2
+            trainer.test(best_model, dataloaders=loaders[2], verbose=False)
+            save_activation(osp.join(DIR, "../activations", f"{save_filename}.pkl"))
+#            print("Evaluating on the entire dataset for concept extraction")
+#            best_model.eval()
+#
+#            all_activations: list[dict[str, Tensor]] = []
+#            cat_activations: dict[str, Tensor] = {}
+#            graph: Data
+#            for graph in tqdm(loaders[2], desc="Extracting activations"):
+#                _ = best_model(graph) # Evaluate to allow hooks to extract activations
+#                all_activations.append(get_activation())
+#
+#                layer: str
+#                activation: Tensor
+#                for layer, activation in get_activation().items():
+#                    if layer in all_activations:
+#                        cat_activations[layer] = cat((cat_activations[layer], activation))
+#                    else:
+#                        cat_activations[layer] = activation
+#
+#            with open(osp.join(DIR, "../activations", f'{save_filename}.pkl'), 'wb') as file:
+#                pickle.dump(all_activations, file)
+#
+#            with open(osp.join(DIR, "../activations", f'{save_filename}_concat.pkl'), 'wb') as file:
+#                pickle.dump(cat_activations, file)
+#
+#             trainer.test(best_model, dataloaders=loaders[2], verbose=False)
+        else:
+            save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
     else:
-        raise Exception(f"Not enough data loaders provided. Expected 2 or 3 received {len(loaders)}")
+        raise Exception(f"{config['sampler']['name']} is not supported")
 
 #     graph = to_networkx(data)
 #     nx.draw(graph)
@@ -144,6 +176,7 @@ if __name__=="__main__":
     
     import yaml
     import argparse
+    import logging
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True, help="Config file")
