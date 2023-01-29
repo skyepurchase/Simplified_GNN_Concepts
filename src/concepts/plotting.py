@@ -95,19 +95,14 @@ def plot_samples(clustering_model: KMeans,
         # This samples the quintessential examples of the concept
         # The index is important to locate within the coo adjacency matrix
         top_indices: NDArray = np.argsort(distances)[::][:num_graphs_viewable]
-        bot_index: NDArray = np.argsort(distances)[::][-1:]
 
         top_graphs: list[nx.Graph]
         color_maps: list[list[str]]
         labels: list[Tensor]
         top_graphs, color_maps, labels = _get_subgraphs(top_indices,
-                                                           y,
-                                                           edges,
-                                                           hops)
-        bot_graph, _, _ = _get_subgraphs(bot_index,
-                                        y,
-                                        edges,
-                                        hops)
+                                                        y,
+                                                        edges,
+                                                        hops)
 
         # Draw each quintessential graph for the concept 
         for ax, new_G, color_map, g_label in zip(ax_list, top_graphs, color_maps, labels):
@@ -115,7 +110,7 @@ def plot_samples(clustering_model: KMeans,
             ax.set_title(f'label {g_label}', fontsize=14)
 
         # select the "ideal" graphs and it's distance to the cluster
-        sample_graphs[cluster_id] = top_graphs[:3] + bot_graph
+        sample_graphs[cluster_id] = top_graphs[:3]
 
     plt.savefig(osp.join(save_path, f'{layer_num}layer_{clustering_type}_{clusters}k_{hops}n_{num_graphs_viewable}_view.png'))
 
