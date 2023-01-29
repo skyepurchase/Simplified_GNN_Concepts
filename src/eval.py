@@ -50,7 +50,7 @@ def main(args: Namespace,
                                            "data/")
 
     data: Data
-    if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
+    if dataset_name in ["REDDIT-BINARY", "Mutagenicity"]:
         # Convert the batch into a valid data object to completeness scores
         full_loader: DataLoader = get_loaders("GraphLoader",
                                               dataset,
@@ -89,7 +89,7 @@ def main(args: Namespace,
                                                 gnn,
                                                 config["wrapper"]["kwargs"])
 
-        if dataset_name in ["REDDIT-BINARY", "MUTAG"]:
+        if dataset_name in ["REDDIT-BINARY", "Mutagenicity"]:
             full_loader: DataLoader = get_loaders(config["sampler"]["name"],
                                                   dataset,
                                                   config["sampler"])[2]
