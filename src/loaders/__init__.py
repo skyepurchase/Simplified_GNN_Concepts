@@ -9,16 +9,22 @@ from .utils import normalize_adjacency, precompute_features, save_activation
 from torch.utils.data import DataLoader as Loader
 from torch_geometric.data import Data, Dataset
 from torch import Tensor
-from typing import Union, Tuple
+from typing import Any, Union, Tuple
 
 
 def save_precomputation(path: str):
-    """Wrapper for save_activation"""
+    """Wrapper for save_activation
+    INPUT
+        path    : The path to store the activations"""
     save_activation(path)
 
 
 def get_data(dataset: Dataset) -> Data:
-    """Extracting the first data element of a dataset confirming it is of type Data"""
+    """Extracting the first data element of a dataset confirming it is of type Data
+    INPUT
+        dataset : A dataset containing a single graph
+    OUTPUT
+        data    : The graph from the dataset"""
     temp = dataset[0]
     if isinstance(temp, Data):
         data: Data = temp
@@ -29,6 +35,12 @@ def get_data(dataset: Dataset) -> Data:
 
 
 def get_graphs(dataset: Dataset) -> Tuple[Dataset, Dataset]:
+    """Split a dataset of graphs into train and test randomly
+    INPUT
+        dataset     : A dataset of multiple graphs
+    OUTPUT
+        train_set   : A dataset of 80% of the graphs
+        test_set    : A dataset of the remaining graphs"""
     graphs = dataset.shuffle()
 
     if isinstance(graphs, Dataset):
@@ -44,6 +56,20 @@ def get_graphs(dataset: Dataset) -> Tuple[Dataset, Dataset]:
         raise TypeError(f"Train and Test set expected to be type {Dataset} received type {type(train_set)} and {type(test_set)}")
 
 
+def precompute_graph(graph: Data,
+                     config: dict[str, Any]) -> Tuple[Tensor, float]:
+    """A wrapper for the SGC precompute_features function
+    INPUT 
+        graph       : The graph which the precomputation is applied to 
+        config      : A dictionary detailing how the SGC model is built
+    OUTPUT
+        features    : The resulting computed features
+        time        : The time it took to compute the features"""
+    adjacency: Tensor  = SparseTensor(row=graph.edge_index[0], col=graph.edge_index[1]).to_dense()
+    norm_adj: Tensor = normalize_adjacency(adjacency)
+    return precompute_features(graph.x, norm_adj, config["degree"])
+
+
 def get_loaders(name: str,
                 dataset: Dataset,
                 config: dict) -> list[Loader]:
@@ -55,11 +81,9 @@ def get_loaders(name: str,
     elif name == "SGC":
         data = get_data(dataset)
 
-        adjacency: Tensor  = SparseTensor(row=data.edge_index[0], col=data.edge_index[1]).to_dense()
-        norm_adj: Tensor = normalize_adjacency(adjacency)
         features: Tensor
         precompute_time: float
-        features, precompute_time = precompute_features(data.x, norm_adj, config["degree"])
+        features, precompute_time = precompute_graph(data, config)
         print(f'PRECOMPUTE TIME: {precompute_time}')
 
         data.__setitem__("x", features)
@@ -68,10 +92,10 @@ def get_loaders(name: str,
         if "val" in config.keys():
             return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
                     RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]),
-                    RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+                    RandomNodeLoader(data, shuffle=False, num_workers=16, **config["test"])]
         else:
             return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
-                    RandomNodeLoader(data, shuffle=True, num_workers=16, **config["test"])]
+                    RandomNodeLoader(data, shuffle=False, num_workers=16, **config["test"])]
 
     elif name == "DataLoader":
         if "val" in config.keys():
