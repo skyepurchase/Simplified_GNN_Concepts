@@ -79,7 +79,7 @@ def get_loaders(name: str,
         raise DeprecationWarning("DEPRICATED: check that ***node*** sampling is desired! Change to DataLoader")
 
     elif name == "SGC":
-        data = get_data(dataset)
+        data: Data = get_data(dataset)
 
         features: Tensor
         precompute_time: float
@@ -96,6 +96,46 @@ def get_loaders(name: str,
         else:
             return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
                     RandomNodeLoader(data, shuffle=False, num_workers=16, **config["test"])]
+
+    elif name == "GraphSGC":
+        train_set: Dataset
+        test_set: Dataset
+        train_set, test_set = get_graphs(dataset)
+
+        total_compute_time: float = 0.0
+        graph: Union[Dataset, Data]
+        for graph in train_set:
+            assert isinstance(graph, Data)
+
+            features: Tensor
+            precompute_time: float
+            features, precompute_time = precompute_graph(graph, config)
+
+            total_compute_time += precompute_time
+
+            graph.__setitem__("x", features)
+            assert torch.all(features.eq(graph.x))
+
+        for graph in test_set:
+            assert isinstance(graph, Data)
+
+            features: Tensor
+            precompute_time: float
+            features, precompute_time = precompute_graph(graph, config)
+
+            total_compute_time += precompute_time
+
+            graph.__setitem__("x", features)
+            assert torch.all(features.eq(graph.x))
+        print(f"TOTAL PRECOMPUTATION TIME: {total_compute_time}")
+
+        if "val" in config.keys():
+            return [DataLoader(train_set, shuffle=True, num_workers=16, **config["train"]),
+                    DataLoader(train_set, shuffle=True, num_workers=16, **config["val"]),
+                    DataLoader(train_set, shuffle=True, num_workers=16, **config["test"])]
+        else:
+            return [DataLoader(train_set, shuffle=True, num_workers=16, **config["train"]),
+                    DataLoader(train_set, shuffle=True, num_workers=16, **config["test"])]
 
     elif name == "DataLoader":
         if "val" in config.keys():
