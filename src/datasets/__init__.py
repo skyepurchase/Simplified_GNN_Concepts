@@ -11,7 +11,7 @@ def get_dataset(name: str, root: str) -> InMemoryDataset:
         return Planetoid(root, name)
     elif name == "REDDIT-BINARY":
         return TUDataset(root, name, transform=Constant())
-    elif name == "MUTAG":
+    elif name == "Mutagenicity":
         return TUDataset(root, name)
     elif name == "Reddit":
         return Reddit(root)
