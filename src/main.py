@@ -59,16 +59,6 @@ def main(experiment: str,
     save_filename = experiment + f'_{str(args.seed)}-{time.strftime("%Y%m%d-%H%M%S")}'
     checkpoint = False 
     callbacks = []
-#     if experiment.split('.')[0] == "GCN":
-#         callbacks.append(
-#             EarlyStopping(
-#                 monitor="train_monitor",
-#                 stopping_threshold=0.05,
-#                 patience=100000,
-#                 check_on_train_epoch_end=True,
-#                 verbose=True,
-#             )
-#         )
     if experiment.split('.')[0] == "SGC":
         checkpoint = True
         print(f'Saving models to {osp.join(DIR, "../checkpoints", save_filename)}')
@@ -97,7 +87,7 @@ def main(experiment: str,
 
     print(f'Running {experiment} with seed value {args.seed}')
     
-    if config["sampler"]["name"] == "SGC":
+    if config["sampler"]["name"] in ["SGC", "GraphSGC"]:
         assert len(loaders) == 3
         save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
         trainer.fit(pl_model, loaders[0], loaders[1])
@@ -137,39 +127,10 @@ def main(experiment: str,
             assert len(loaders) > 2
             trainer.test(best_model, dataloaders=loaders[2], verbose=False)
             save_activation(osp.join(DIR, "../activations", f"{save_filename}.pkl"))
-#            print("Evaluating on the entire dataset for concept extraction")
-#            best_model.eval()
-#
-#            all_activations: list[dict[str, Tensor]] = []
-#            cat_activations: dict[str, Tensor] = {}
-#            graph: Data
-#            for graph in tqdm(loaders[2], desc="Extracting activations"):
-#                _ = best_model(graph) # Evaluate to allow hooks to extract activations
-#                all_activations.append(get_activation())
-#
-#                layer: str
-#                activation: Tensor
-#                for layer, activation in get_activation().items():
-#                    if layer in all_activations:
-#                        cat_activations[layer] = cat((cat_activations[layer], activation))
-#                    else:
-#                        cat_activations[layer] = activation
-#
-#            with open(osp.join(DIR, "../activations", f'{save_filename}.pkl'), 'wb') as file:
-#                pickle.dump(all_activations, file)
-#
-#            with open(osp.join(DIR, "../activations", f'{save_filename}_concat.pkl'), 'wb') as file:
-#                pickle.dump(cat_activations, file)
-#
-#             trainer.test(best_model, dataloaders=loaders[2], verbose=False)
         else:
             save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
     else:
         raise Exception(f"{config['sampler']['name']} is not supported")
-
-#     graph = to_networkx(data)
-#     nx.draw(graph)
-#     plt.savefig('test.png')
 
 
 if __name__=="__main__":
