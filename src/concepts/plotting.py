@@ -66,12 +66,26 @@ def _get_subgraphs(top_indices: NDArray,
                 else:
                     color_map.append('pink') # Node of concept (that is node to help classification)
         else:
-            ids = ["C", "O", "Cl", "H", "N", "F", "Br", "S", "P", "I", "Na", "K", "Li", "Ca"]
+            atoms: list[Tuple[str, str]] = [
+                ("black", "C"),
+                ("red", "O"),
+                ("green", "Cl"),
+                ("white", "H"),
+                ("darkblue", "N"),
+                ("green", "F"),
+                ("crimson", "Br"),
+                ("yellow", "S"),
+                ("orange", "P"),
+                ("indigo", "I"),
+                ("purple", "Na"),
+                ("purple", "K"),
+                ("violet", "Li"),
+                ("lightgreen", "Ca")
+            ]
             for node in new_G:
                 atom_id: int = int(argmax(data.x[node]))
-                color_map.append(atom_id)
-                print(atom_id)
-                node_label[node] = f"{ids[atom_id]}"
+                color_map.append(atoms[atom_id][0])
+                node_label[node] = f"{atoms[atom_id][1]}"
 
         color_maps.append(color_map)
         graphs.append(new_G)
