@@ -7,6 +7,8 @@ from scipy.sparse import coo_matrix, dia_matrix
 from numpy.typing import NDArray
 from torch.functional import Tensor
 
+from .layers import Pool
+
 
 def sparse_coo_to_torch_sparse_tensor(sparse_coo: coo_matrix) -> Tensor:
     """Convert scipy.sparse.coo_matrix to a torch.sparse.Tensor
@@ -77,4 +79,16 @@ class SGC(torch.nn.Module):
 
     def forward(self, x):
         return self.lin(x)
+
+
+class PoolSGC(SGC):
+    def __init__(self,
+                 num_features: int,
+                 num_classes: int) -> None:
+        super().__init__(num_features, num_classes)
+        self.pool = Pool()
+
+    def forward(self, x: Tensor, batch: Tensor) -> Tensor:
+        x = self.pool(x, batch)
+        return super().forward(x)
 

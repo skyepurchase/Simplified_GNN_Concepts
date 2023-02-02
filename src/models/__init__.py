@@ -1,5 +1,5 @@
 from .gcn import GCN
-from .sgc import SGC
+from .sgc import SGC, PoolSGC
 from .layers import Pool
 
 import pickle
@@ -58,7 +58,9 @@ def get_model(name: str,
     if name == "gcn":
         return GCN(num_features, num_classes, **config)
     elif name == "sgc":
-        return SGC(num_features, num_classes, **config)
+        return SGC(num_features, num_classes)
+    elif name == "psgc":
+        return PoolSGC(num_features, num_classes)
     else:
         raise ValueError(f'Unsupported model {name}')
 
