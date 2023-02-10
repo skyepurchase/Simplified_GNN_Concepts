@@ -66,6 +66,8 @@ class GraphWrapper(pl.LightningModule):
         correct: Number = sum([x['correct'] for x in outputs])
         total: int = sum([x['total'] for x in outputs])
 
+        self.log("avg_train_acc", correct * 100 / total, prog_bar=True)
+
         if isinstance(self.logger, TensorBoardLogger):
             self.logger.experiment.add_scalar("Loss/Train",
                                               avg_loss,
@@ -136,7 +138,7 @@ class GraphPoolWrapper(GraphWrapper):
         train_loss: Tensor = self.criterion(z, one_hot)
         train_acc: Tensor = z.argmax(dim=1).eq(batch.y).sum()/len(batch.y)
 
-        self.log("train_acc", train_acc*100, prog_bar=True)
+        self.log("train_acc", train_acc*100)
 
         logs = {"train_loss": train_loss,
                 "train_acc": train_acc}
@@ -226,6 +228,8 @@ class LinearWrapper(pl.LightningModule):
 
         correct: Number = sum([x['correct'] for x in outputs])
         total: int = sum([x['total'] for x in outputs])
+
+        self.log("avg_train_acc", correct * 100 / total, prog_bar=True)
 
         if isinstance(self.logger, TensorBoardLogger):
             self.logger.experiment.add_scalar("Loss/Train",
@@ -345,7 +349,7 @@ class LinearPoolWrapper(LinearWrapper):
         train_loss: Tensor = self.criterion(z, one_hot)
         train_acc: Tensor = z.argmax(dim=1).eq(batch.y).sum()/len(batch.y)
 
-        self.log("train_acc", train_acc*100, prog_bar=True)
+        self.log("train_acc", train_acc*100)
 
         logs = {"train_loss": train_loss,
                 "train_acc": train_acc}
@@ -370,7 +374,7 @@ class LinearPoolWrapper(LinearWrapper):
         test_loss: Tensor = self.criterion(z, one_hot)
         test_acc: Tensor = z.argmax(dim=1).eq(batch.y).sum()/len(batch.y)
 
-        self.log("test_acc", test_acc*100, prog_bar=True, batch_size=1)
+        self.log("test_acc", test_acc*100)
 
         logs = {"test_loss": test_loss,
                 "test_acc": test_acc}
