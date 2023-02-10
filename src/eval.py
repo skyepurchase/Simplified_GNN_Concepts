@@ -13,9 +13,8 @@ from datasets import get_dataset
 
 import pytorch_lightning as pl
 
+import torch
 from torch import load, tensor
-
-from torch_geometric.data import Data, InMemoryDataset
 
 # Typing
 from torch_geometric.data import Data, InMemoryDataset
@@ -24,10 +23,9 @@ from sklearn.cluster import KMeans
 from torch import Tensor
 from argparse import Namespace
 from networkx import Graph
-from sklearn.cluster import KMeans
-from torch import Tensor
 from torch.nn import Module
 from torch.utils.data import DataLoader
+from typing import Union
 
 from wrappers import get_wrapper
 
@@ -50,6 +48,7 @@ def main(args: Namespace,
                                            "data/")
 
     data: Data
+    batch: Union[None, Tensor] = None
     if dataset_name in ["REDDIT-BINARY", "Mutagenicity"]:
         # Convert the batch into a valid data object to completeness scores
         full_loader: DataLoader = get_loaders("GraphLoader",
@@ -57,6 +56,7 @@ def main(args: Namespace,
                                               {"test": {}, "train": {}})[2]
 
         all_graphs: Data = next(iter(full_loader))
+        batch = all_graphs.batch
 
         class_labels_per_node: list[int] = []
         for batch_idx in all_graphs.batch:
@@ -77,6 +77,7 @@ def main(args: Namespace,
         else:
             raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
 
+    activation_list: dict[str, Tensor]
     if args.weights is not None:
         gnn: Module = get_model(config["model"]["name"],
                                 dataset.num_features,
@@ -104,11 +105,23 @@ def main(args: Namespace,
             activation_list = get_activation()
         else:
             _ = gnn(data.x, data.edge_index, None)
-            activation_list: dict[str, Tensor] = get_activation()
+            activation_list = get_activation()
     else:
-        activation_list: dict[str, Tensor]
+        temp_activations: Union[list[Tensor], dict[str, Tensor]]
         with open(osp.join(DIR, "..", args.activation), 'rb') as file:
-            activation_list = pickle.loads(file.read())
+            temp_activations = pickle.loads(file.read())
+
+        if isinstance(temp_activations, list):
+            if batch is None:
+                # If this is not graph classification we only expect dictionaries
+                raise TypeError(f"Expected activations to be {dict} but received {list}.")
+            else:
+                # Check that the batch ids match
+                # This means that the completeness and purity will correcly match
+                assert torch.allclose(batch, temp_activations[1])
+                activation_list = {"layers.0": temp_activations[0]}
+        else:
+            activation_list = temp_activations
 
     model_list: dict[str, KMeans]
     _, model_list = kmeans_cluster(activation_list, args.clusters)

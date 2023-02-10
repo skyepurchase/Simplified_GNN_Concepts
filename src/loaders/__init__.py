@@ -1,3 +1,5 @@
+from copy import deepcopy
+import pickle
 import torch
 from torch.utils.data import DataLoader
 from torch_geometric.loader import RandomNodeLoader, DataLoader
@@ -17,6 +19,16 @@ def save_precomputation(path: str):
     INPUT
         path    : The path to store the activations"""
     save_activation(path)
+
+
+def save_graph_precomputation(path: str,
+                              graph: Data):
+    """
+    INPUT
+        path    : The path to store the activations
+        graph   : A single batch containing all the graph sin a graph classification dataset precomputed by SGC"""
+    with open(path, 'wb') as file:
+        pickle.dump([graph.x, graph.batch], file)
 
 
 def get_data(dataset: Dataset) -> Data:
@@ -67,7 +79,9 @@ def precompute_graph(graph: Data,
         time        : The time it took to compute the features"""
     adjacency: Tensor  = SparseTensor(row=graph.edge_index[0], col=graph.edge_index[1]).to_dense()
     norm_adj: Tensor = normalize_adjacency(adjacency)
-    return precompute_features(graph.x, norm_adj, config["degree"])
+
+    precomputation: Tuple[Tensor, float] = precompute_features(graph.x, norm_adj, config["degree"])
+    return precomputation
 
 
 def get_loaders(name: str,
@@ -100,6 +114,7 @@ def get_loaders(name: str,
     elif name == "GraphSGC":
         train_set: Dataset
         test_set: Dataset
+        full_set: Dataset = deepcopy(dataset) # Want a fresh copy not altered
         train_set, test_set = get_graphs(dataset)
 
         total_compute_time: float = 0.0
@@ -129,13 +144,17 @@ def get_loaders(name: str,
             assert torch.all(features.eq(graph.x))
         print(f"TOTAL PRECOMPUTATION TIME: {total_compute_time}")
 
-        if "val" in config.keys():
-            return [DataLoader(train_set, shuffle=True, num_workers=16, **config["train"]),
-                    DataLoader(train_set, shuffle=True, num_workers=16, **config["val"]),
-                    DataLoader(train_set, shuffle=True, num_workers=16, **config["test"])]
-        else:
-            return [DataLoader(train_set, shuffle=True, num_workers=16, **config["train"]),
-                    DataLoader(train_set, shuffle=True, num_workers=16, **config["test"])]
+        # As this is a deepcopy need to convert these graphs as well
+        for graph in full_set:
+            assert isinstance(graph, Data)
+
+            features: Tensor
+            features, _ = precompute_graph(graph, config)
+            graph.__setitem__("x", total_compute_time)
+
+        return [DataLoader(train_set, shuffle=True, num_workers=16, **config["train"]),
+                DataLoader(test_set, shuffle=False, num_workers=16, **config["test"]),
+                DataLoader(full_set, num_workers=16, batch_size=len(full_set))]
 
     elif name == "DataLoader":
         if "val" in config.keys():

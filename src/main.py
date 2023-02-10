@@ -1,16 +1,12 @@
 from datetime import datetime
-from tqdm import tqdm
 import os.path as osp
 from os import mkdir
-import pickle
 
-from torch import save, cat
+from torch import save
 
-from torch_geometric.data import InMemoryDataset
-
-from loaders import get_loaders, save_precomputation
+from loaders import get_loaders, save_graph_precomputation, save_precomputation
 from datasets import get_dataset 
-from models import get_activation, save_activation, get_model, register_hooks
+from models import save_activation, get_model, register_hooks
 from wrappers import get_wrapper 
 
 from pytorch_lightning import loggers, seed_everything
@@ -18,9 +14,9 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 import pytorch_lightning as pl
 
 # Typing
-from torch_geometric.data import Data
 from argparse import Namespace
-from torch import Tensor
+from torch_geometric.data import Dataset, Data
+from typing import Union
 
 DIR = osp.dirname(__file__)
 
@@ -32,8 +28,8 @@ def main(experiment: str,
          args: Namespace) -> None:
     seed_everything(args.seed)
 
-    dataset: InMemoryDataset = get_dataset(dataset_name,
-                                           args.root)
+    dataset: Dataset = get_dataset(dataset_name,
+                                   args.root)
 
     model = get_model(config["model"]["name"],
                       dataset.num_features,
@@ -88,9 +84,20 @@ def main(experiment: str,
     print(f'Running {experiment} with seed value {args.seed}')
     
     if config["sampler"]["name"] in ["SGC", "GraphSGC"]:
-        assert len(loaders) == 3
-        save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
-        trainer.fit(pl_model, loaders[0], loaders[1])
+        if config["sampler"]["name"] == "SGC":
+            save_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
+
+            if len(loaders) == 3:
+                trainer.fit(pl_model, loaders[0], loaders[1])
+            elif len(loaders) == 2:
+                trainer.fit(pl_model, loaders[0])
+        else:
+            assert len(loaders) == 3
+            graph: Data = next(iter(loaders[2]))
+            save_graph_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'),
+                                      graph)
+
+            trainer.fit(pl_model, loaders[0])
 
         if checkpoint:
             best_model = pl_model.load_from_checkpoint(
@@ -104,7 +111,12 @@ def main(experiment: str,
             )
             best_model = pl_model
 
-        trainer.test(best_model, dataloaders=loaders[2])
+        if config["sampler"]["name"] == "SGC":
+            trainer.test(best_model, dataloaders=loaders[-1])
+        else:
+            # Test for three loaders occurs earlier with no changes to the number of loaders inbetween
+            trainer.test(best_model, dataloaders=loaders[1])
+
     elif config["sampler"]["name"] in ["DataLoader", "GraphLoader"]:
         assert len(loaders) > 1
         trainer.fit(pl_model, loaders[0])
