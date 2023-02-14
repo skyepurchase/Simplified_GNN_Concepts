@@ -66,6 +66,8 @@ class GraphWrapper(pl.LightningModule):
         correct: Number = sum([x['correct'] for x in outputs])
         total: int = sum([x['total'] for x in outputs])
 
+        self.log("avg_train_acc", correct * 100 / total, prog_bar=True)
+
         if isinstance(self.logger, TensorBoardLogger):
             self.logger.experiment.add_scalar("Loss/Train",
                                               avg_loss,
@@ -136,7 +138,7 @@ class GraphPoolWrapper(GraphWrapper):
         train_loss: Tensor = self.criterion(z, one_hot)
         train_acc: Tensor = z.argmax(dim=1).eq(batch.y).sum()/len(batch.y)
 
-        self.log("train_acc", train_acc*100, prog_bar=True)
+        self.log("train_acc", train_acc*100)
 
         logs = {"train_loss": train_loss,
                 "train_acc": train_acc}
@@ -226,6 +228,8 @@ class LinearWrapper(pl.LightningModule):
 
         correct: Number = sum([x['correct'] for x in outputs])
         total: int = sum([x['total'] for x in outputs])
+
+        self.log("avg_train_acc", correct * 100 / total, prog_bar=True)
 
         if isinstance(self.logger, TensorBoardLogger):
             self.logger.experiment.add_scalar("Loss/Train",
@@ -323,4 +327,65 @@ class LinearValWrapper(LinearWrapper):
             self.logger.experiment.add_scalar("Accuracy/Validation",
                                               correct * 100/total,
                                               self.current_epoch)
+
+
+class LinearPoolWrapper(LinearWrapper):
+    def __init__(self,
+                 model: Module,
+                 learning_rate: float,
+                 weight_decay: float = 0) -> None:
+        super().__init__(model, learning_rate, weight_decay)
+
+    def forward(self, batch) -> Tensor:
+        return self.model(batch.x, batch.batch)
+
+    def training_step(self, batch, batch_idx: int) -> BatchDict:
+        z: Tensor = self.model(batch.x, batch.batch)
+        one_hot = torch.nn.functional.one_hot(batch.y, num_classes=2).type_as(z)
+
+        correct: Number = z.argmax(dim=1).eq(batch.y).sum().item()
+        total: int = len(batch.y)
+
+        train_loss: Tensor = self.criterion(z, one_hot)
+        train_acc: Tensor = z.argmax(dim=1).eq(batch.y).sum()/len(batch.y)
+
+        self.log("train_acc", train_acc*100)
+
+        logs = {"train_loss": train_loss,
+                "train_acc": train_acc}
+
+        batch_dictionary : BatchDict = {
+            'loss': train_loss,
+            'acc': train_acc,
+            'log': logs,
+            'correct': correct,
+            'total': total
+        }
+
+        return batch_dictionary
+
+    def test_step(self, batch, batch_idx: int) -> BatchDict:
+        z: Tensor = self.model(batch.x, batch.batch)
+        one_hot = torch.nn.functional.one_hot(batch.y, num_classes=2).type_as(z)
+
+        correct: Number = z.argmax(dim=1).eq(batch.y).sum().item()
+        total: int = len(batch.y)
+
+        test_loss: Tensor = self.criterion(z, one_hot)
+        test_acc: Tensor = z.argmax(dim=1).eq(batch.y).sum()/len(batch.y)
+
+        self.log("test_acc", test_acc*100)
+
+        logs = {"test_loss": test_loss,
+                "test_acc": test_acc}
+
+        batch_dictionary : BatchDict = {
+            'loss': test_loss,
+            'acc': test_acc,
+            'log': logs,
+            'correct': correct,
+            'total': total
+        }
+
+        return batch_dictionary
 
