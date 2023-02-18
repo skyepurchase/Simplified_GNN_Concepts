@@ -108,8 +108,8 @@ def get_loaders(name: str,
                     RandomNodeLoader(data, shuffle=False, num_workers=16, **config["val"]),
                     RandomNodeLoader(data, shuffle=False, num_workers=16, **config["test"])]
         else:
-            return [RandomNodeLoader(data, shuffle=True, num_workers=16, **config["train"]),
-                    RandomNodeLoader(data, shuffle=False, num_workers=16, **config["test"])]
+            return [DataLoader([data], num_workers=16),
+                    DataLoader([data], num_workers=16)]
 
     elif name == "GraphSGC":
         train_set: Dataset
