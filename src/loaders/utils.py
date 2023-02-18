@@ -9,6 +9,7 @@ from time import perf_counter
 from torch import Tensor
 from scipy.sparse import coo_matrix, dia_matrix
 from numpy.typing import NDArray
+from typing import Tuple
 
 
 ACTIVATION_DICT = {}
@@ -65,7 +66,7 @@ def normalize_adjacency(adj : Tensor) -> Tensor:
 
 def precompute_features(features: Tensor,
                         adj: Tensor,
-                        degree: int) -> tuple[Tensor, float]:
+                        degree: int) -> Tuple[Tensor, float]:
     """Precompute the features based on "normalised" adjacency and degree.
     INPUT
         features    : The input features from the graph

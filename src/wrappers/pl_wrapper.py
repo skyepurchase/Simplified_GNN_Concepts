@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 
 # type annotations
 from torch.nn import Module
-from typing import TypedDict
+from typing import TypedDict, List
 from collections.abc import Callable
 from pytorch_lightning.loggers import TensorBoardLogger
 from torch.types import Number
@@ -60,7 +60,7 @@ class GraphWrapper(pl.LightningModule):
        
         return batch_dictionary
 
-    def training_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def training_epoch_end(self, outputs: List[BatchDict]) -> None:
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
@@ -102,7 +102,7 @@ class GraphWrapper(pl.LightningModule):
 
         return batch_dictionary
 
-    def test_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def test_epoch_end(self, outputs: List[BatchDict]) -> None:
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
@@ -223,7 +223,7 @@ class LinearWrapper(pl.LightningModule):
        
         return batch_dictionary
 
-    def training_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def training_epoch_end(self, outputs: List[BatchDict]) -> None:
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
@@ -265,7 +265,7 @@ class LinearWrapper(pl.LightningModule):
 
         return batch_dictionary
 
-    def test_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def test_epoch_end(self, outputs: List[BatchDict]) -> None:
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])
@@ -313,7 +313,7 @@ class LinearValWrapper(LinearWrapper):
 
         return batch_dictionary
 
-    def validation_epoch_end(self, outputs: list[BatchDict]) -> None:
+    def validation_epoch_end(self, outputs: List[BatchDict]) -> None:
         avg_loss: Tensor = torch.stack([x['loss'] for x in outputs]).mean()
 
         correct: Number = sum([x['correct'] for x in outputs])

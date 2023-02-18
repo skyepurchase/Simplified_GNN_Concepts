@@ -9,7 +9,7 @@ import numpy as np
 
 # typing
 from numpy.typing import NDArray
-from typing import Callable, Optional
+from typing import Callable, Optional, Dict, Tuple
 from torch.functional import Tensor
 
 
@@ -24,7 +24,7 @@ def house_size():
 
 
 # Dictionary of shapes to attach to basis graph
-SHAPES: dict[str, tuple[Tensor, Tensor]] = defaultdict(house_shape)
+SHAPES: Dict[str, Tuple[Tensor, Tensor]] = defaultdict(house_shape)
 SHAPES['grid'] = (torch.tensor([[0, 0, 1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7, 8, 8],
                                 [1, 3, 0, 4, 2, 1, 5, 0, 4, 6, 1, 3, 5, 7, 2, 4, 8, 3, 7, 4, 6, 8, 5, 7]]),
                   torch.tensor([1, 1, 1, 1, 1, 1, 1, 1, 1]))
@@ -32,7 +32,7 @@ SHAPES['cycle'] = (torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5],
                                  [1, 5, 0, 2, 1, 3, 2, 4, 3, 5, 0, 4]]),
                    torch.tensor([1, 1, 1, 1, 1, 1]))
 
-SIZES: dict[str, int] = defaultdict(house_size)
+SIZES: Dict[str, int] = defaultdict(house_size)
 SIZES['grid'] = 9
 SIZES['cycle'] = 6
 
@@ -115,7 +115,7 @@ class SynGraph(InMemoryDataset):
 
 #         self.data, self.slices = self.collate([data])
 
-    def _gen_graph(self) -> tuple[Tensor, Tensor]:
+    def _gen_graph(self) -> Tuple[Tensor, Tensor]:
         # Generate the base graph
         edge_index, node_label = self._generate_basis(self.basis, self.graph_size)
         
@@ -129,7 +129,7 @@ class SynGraph(InMemoryDataset):
 
     def _generate_basis(self,
                         basis: str,
-                        graph_size: int) -> tuple[Tensor, Tensor]:
+                        graph_size: int) -> Tuple[Tensor, Tensor]:
         """
         """ #TODO: Add docstring
         if basis == "Barabasi-Albert":
@@ -151,7 +151,7 @@ class SynGraph(InMemoryDataset):
                        edge_index: Tensor,
                        node_label: Tensor,
                        base_shape_node_id: int,
-                       connecting_nodes: Tensor) -> tuple[Tensor, Tensor]:
+                       connecting_nodes: Tensor) -> Tuple[Tensor, Tensor]:
         """
         """ #TODO: Add docstring
         edge_indices = [edge_index]
@@ -178,7 +178,7 @@ class SynGraph(InMemoryDataset):
 
     def _join(self,
               edge_index: Tensor,
-              node_label: Tensor) -> tuple[Tensor, Tensor]:
+              node_label: Tensor) -> Tuple[Tensor, Tensor]:
 
         num_A_labels = torch.max(node_label)
 

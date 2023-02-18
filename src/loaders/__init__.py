@@ -11,7 +11,7 @@ from .utils import normalize_adjacency, precompute_features, save_activation
 from torch.utils.data import DataLoader as Loader
 from torch_geometric.data import Data, Dataset
 from torch import Tensor
-from typing import Any, Union, Tuple
+from typing import Any, Union, Tuple, Dict, List
 
 
 def save_precomputation(path: str):
@@ -69,7 +69,7 @@ def get_graphs(dataset: Dataset) -> Tuple[Dataset, Dataset]:
 
 
 def precompute_graph(graph: Data,
-                     config: dict[str, Any]) -> Tuple[Tensor, float]:
+                     config: Dict[str, Any]) -> Tuple[Tensor, float]:
     """A wrapper for the SGC precompute_features function
     INPUT 
         graph       : The graph which the precomputation is applied to 
@@ -86,7 +86,7 @@ def precompute_graph(graph: Data,
 
 def get_loaders(name: str,
                 dataset: Dataset,
-                config: dict) -> list[Loader]:
+                config: Dict) -> List[Loader]:
     """
     """ #TODO: Add a docstring
     if name == "RandomNodeSampler":
