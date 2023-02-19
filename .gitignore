@@ -19,3 +19,13 @@ pyg/
 
 # personal
 TODO
+
+# latex
+*.aux
+*.blg
+*.brf
+*.log
+*.out
+*.toc
+*.pdf
+*.bbl
