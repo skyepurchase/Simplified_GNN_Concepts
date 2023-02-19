@@ -1,0 +1,91 @@
+\chapter{Introduction}
+
+% Short introduction giving a full overview
+
+\emph{
+This dissertation explores the effect that simplifying graph neural network architecture has on the explainability of the trained model.
+Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the which label is chosen.
+These concepts are compared to the original Graph Convolution Network (GCN) using the metrics of concept purity and completeness proposed in \cite{magister2021gcexplainer}.
+The specific simplified model chosen is the Simplified Graph Convolution (SGC) proposed in \cite{wu2019simplifying} due to claims that it matches the performance of GCN.
+%Further studies are conducted extending the basic architecture of SGC, whilst keeping with the theme of simplified graph neural networks, to see the effect on the accuracy and concept scores.
+}
+
+\section{Motivation}
+
+% Importance/rise in use of GNNs
+
+%% Brief description of evolution of GNNs, looking at motivation and use cases
+
+%% 
+
+% The rise in use of ML systems
+
+%% Wide spread of ML systems in general prevalent in every day use
+
+%% Rapid integration of these systems 
+
+% The lack of clarity in ML systems
+% -> Explainability
+% -> Concepts
+
+%% Importance of understanding ML inference
+%% -> Link to potential use cases 
+
+%% Issues with interfering with training
+
+%% Recent development in developing frameworks to analyse these aspects
+%% The different goals of explainability 
+
+%% The idea of a concept
+%% The fact in our case this is done after training
+%% -> This does not effect training performance
+
+% More efficient systems should not sacrifice ease of understanding
+
+\section{Related Work}
+
+% GNN Explainer
+
+%% Actually read this paper
+
+% Graph Concepts Explainer
+
+%% The basis of the project, the framework used
+
+%% Introduces the notion of allowing the user to interact with the concepts
+
+%% Provides clear metrics to compare models in regards to concepts
+
+% Simplified Graph Convolution
+
+%% A simplified method based on the structure of graph convolutions
+
+%% A movement away from DNN
+
+% Maybe ablation studies: Pitfalls
+
+\section{Contributions}
+
+% Basic contributions with extending SGC in new ways
+
+%% Introduce two new extensions of SGC 
+
+%% These extensions are intended to adapt SGC to highly synthetic data 
+%% Furthermore the goal is to increase the explainability through increasing concept scores
+
+% An analysis of SGC on synthetic datasets
+
+%% This project (unintentionally) demonstrates the limitation of this simplified model
+
+%% minor point on the importance of fully testing modern models
+
+% -> Hopefully an analysis of SGC itself
+
+% Hopefully a new dataset with capabilities to demonstrate proper Graph learning
+
+% ORIGINAL PROPOSAL INTRODUCTION
+
+%Within the area of geometric deep learning there have been recent ablation studies looking into the effectiveness of Graph Neural Networks (GNNs). The majority of these studies question the effectiveness of the deep neural network approach of multiple layers separated by non-linear function passes when working with geometric datasets (graphs). \cite{wu2019simplifying} introduce a new approach, Simplified Graph Convolution (SGC), which remove these non-linear functions from the network. This reduces the problem to a pre-computation on the graph adjacency matrix and a simple linear regression using a single weight matrix. The pre-computation on the graph adjacency matrix encodes information about message passing between nodes in the graph.  \cite{chanpuriya2022simplified} introduce further variations on SGC that use the same underlying concept of a pre-computation but deal with the parameters differently allowing for more complex associations. In both cases the results show that removing the non-linearity does not hinder the performance of the network and can in fact improve performance.
+
+%Similarly, the has been a lot of interest into explainable artificial intelligence (XAI) to move away from the black box nature of AI models. There exists multiple methods within this field of machine learning and I will specifically focus on the idea of Concepts. Concepts focuses on relating specific outputs of a model to subspaces within its input space, this gives an indication of what the model is using within the input space to infer the given output. The collections of these subspaces are what are known as concepts. This approaches allows a human actor to get a better understanding of the model's inference as they can compare their own intuition of the input to the concepts the model uses to produce the given result.
+%\cite{magister2021gcexplainer} introduce GCExplainer which adapts prior techniques to extract high-level concepts from GNNs. The paper focuses on extracting concepts from a Graph Convolutional Network (GCN, \cite{kipf2016semi}) model.
