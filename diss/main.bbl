@@ -1,0 +1,41 @@
+\begin{thebibliography}{5}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Wu et~al.(2019)Wu, Souza, Zhang, Fifty, Yu, and
+  Weinberger]{wu2019simplifying}
+Felix Wu, Amauri Souza, Tianyi Zhang, Christopher Fifty, Tao Yu, and Kilian
+  Weinberger.
+\newblock Simplifying graph convolutional networks.
+\newblock In \emph{International conference on machine learning}, pages
+  6861--6871. PMLR, 2019.
+
+\bibitem[Chanpuriya and Musco(2022)]{chanpuriya2022simplified}
+Sudhanshu Chanpuriya and Cameron Musco.
+\newblock Simplified graph convolution with heterophily.
+\newblock \emph{arXiv preprint arXiv:2202.04139}, 2022.
+
+\bibitem[Magister et~al.(2021)Magister, Kazhdan, Singh, and
+  Li{\`o}]{magister2021gcexplainer}
+Lucie~Charlotte Magister, Dmitry Kazhdan, Vikash Singh, and Pietro Li{\`o}.
+\newblock Gcexplainer: Human-in-the-loop concept-based explanations for graph
+  neural networks.
+\newblock \emph{arXiv preprint arXiv:2107.11889}, 2021.
+
+\bibitem[Kipf and Welling(2016)]{kipf2016semi}
+Thomas~N Kipf and Max Welling.
+\newblock Semi-supervised classification with graph convolutional networks.
+\newblock \emph{arXiv preprint arXiv:1609.02907}, 2016.
+
+\bibitem[Xu et~al.(2018)Xu, Li, Tian, Sonobe, Kawarabayashi, and
+  Jegelka]{xu2018representation}
+Keyulu Xu, Chengtao Li, Yonglong Tian, Tomohiro Sonobe, Ken-ichi Kawarabayashi,
+  and Stefanie Jegelka.
+\newblock Representation learning on graphs with jumping knowledge networks.
+\newblock In \emph{International conference on machine learning}, pages
+  5453--5462. PMLR, 2018.
+
+\end{thebibliography}

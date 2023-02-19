@@ -1,0 +1,67 @@
+\section{Progress Report}
+
+.
+
+Supervisors: Charlotte Magister and Pietro Babiero
+
+Director of Studies: Robert Mullins
+
+Overseers: Ferenc Huszar and Andreas Vlachos
+
+\subsection{Completed}
+
+I am currently on schedule (core project completed, with extensions started) being satisfied by the following completed tasks:
+\begin{enumerate}[nolistsep]
+    \item Built and tested the synthetic datasets from \cite{magister2021gcexplainer} using networkx and Pytorch Geometric.
+    \item Built and trained a simple GCN model on said synthetic datasets using the. configurations from \cite{magister2021gcexplainer}
+    \item Implemented the precomputations from \cite{wu2019simplifying} (SGC) as a set of iterated matrix multiplications.
+    \begin{enumerate}[nolistsep]
+        \item Tested precomputations on a simple graph adjacency based on the mathematical description.
+        \item Integrated into a dataloader to use within my train-test pipeline.
+    \end{enumerate}
+    \item Trained a simple linear regressor on the precomputations.
+    \begin{enumerate}[nolistsep]
+        \item Carried out hyperparameter optimisation on learning rate and weight decay parameters.
+        \item Chose number of precomputation iterations based on number of layers in \cite{magister2021gcexplainer} for each dataset.
+    \end{enumerate}
+    \item Implemented concept extraction using kmeans clustering on activation space at different points in a models forward pass.
+    \item Implemented completeness and purity evaluation based on \cite{magister2021gcexplainer}.
+    \begin{enumerate}[nolistsep]
+        \item Utilising networkx graph edit path package implemented purity score related to graph similarity.
+        \item Using a decision tree developed a simple model to predict labels based solely on concepts as a proxy for completeness.
+    \end{enumerate}
+    \item Carried out concept and completeness scores on GCN and SGC models (analysis follows from comparing the concepts and the scores, this has demonstrated that SGC is insufficient in providing meaningful concepts and subsequently unable to identify high-level structures from the highly synthetic graphs).
+    \item Trained and computed completeness and purity on real world graph classification datatsets for GCN.
+\end{enumerate}
+
+These steps cover the 3 success criteria for the project:
+\begin{enumerate}[nolistsep]
+    \item train and extract concepts for SGC on the \cite{magister2021gcexplainer} datasets.
+    \item train and extract concepts for GCN as a baseline.
+    \item compare concepts between the two using the metrics of concept purity and completeness.
+\end{enumerate}
+
+\subsection{Unexpected Difficulties}
+
+\cite{magister2021gcexplainer} include concept extraction, calculating purity and completeness, on real world graph classification tasks. However, \cite[SGC]{wu2019simplifying} was developed for node classification tasks with minimal exploration into potential graph classification. 
+
+For this reason I consider this an extension to the core project. \bold{This is an extension which I am currently undertaking though the resulting model will not follow the discussed approaches in SGC}.
+
+\subsection{Current Plan}
+
+\subsubsection{Extensions}
+
+I have currently finished one minor extension which is to improve colour mapping for displaying Mutagenicity concepts as these are molecules and atoms have a standard representation colour.
+
+Remaining extensions include:
+\begin{enumerate}[nolistsep]
+    \item Graph classification for SGC to fully compare SGC to GCN in both synthetic \& real datasets, and node \& graph classification..
+    \item Adding a trainable hyperparameter to SGC precomputation in line with \cite{chanpuriya2022simplified} to analyse the effects on accuracy and concept scores.
+    \item Using a Multi-Layer Perceptron instead of a single linear layer to SGC to analyse the effects of more parameters on accuracy and concept scores.
+    \item Time permitting: 
+    \begin{enumerate}[nolistsep]
+        \item Implementing jump connections from \cite{xu2018representation} to SGC allowing the linear regressor access to all prior precomputation iterations to analyse the effect on accuracy and concept scores.
+        \item A UI allowing users to dynamically interact with concepts giving them options to change the number of concepts and neighbourhood influence.
+    \end{enumerate}
+    \item Research requiring no further code: In the background I wish to analyse the effect of different precomputation iterations on concepts and accuracy. This would act as a proxy to analysing how repeated message passing along graph edges effects concept scores in the absence of weights.
+\end{enumerate}

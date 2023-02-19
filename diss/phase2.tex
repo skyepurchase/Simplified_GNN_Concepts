@@ -1,0 +1,157 @@
+\chapter{Proposal}
+\section{Description}
+
+\subsection{Introduction}
+
+Within the area of geometric deep learning there have been recent ablation studies looking into the effectiveness of Graph Neural Networks (GNNs). The majority of these studies question the effectiveness of the deep neural network approach of multiple layers separated by non-linear function passes when working with geometric datasets (graphs). \cite{wu2019simplifying} introduce a new approach, Simplified Graph Convolution (SGC), which remove these non-linear functions from the network. This reduces the problem to a pre-computation on the graph adjacency matrix and a simple linear regression using a single weight matrix. The pre-computation on the graph adjacency matrix encodes information about message passing between nodes in the graph.  \cite{chanpuriya2022simplified} introduce further variations on SGC that use the same underlying concept of a pre-computation but deal with the parameters differently allowing for more complex associations. In both cases the results show that removing the non-linearity does not hinder the performance of the network and can in fact improve performance.
+
+Similarly, the has been a lot of interest into explainable artificial intelligence (XAI) to move away from the black box nature of AI models. There exists multiple methods within this field of machine learning and I will specifically focus on the idea of Concepts. Concepts focuses on relating specific outputs of a model to subspaces within its input space, this gives an indication of what the model is using within the input space to infer the given output. The collections of these subspaces are what are known as concepts. This approaches allows a human actor to get a better understanding of the model's inference as they can compare their own intuition of the input to the concepts the model uses to produce the given result.
+\cite{magister2021gcexplainer} introduce GCExplainer which adapts prior techniques to extract high-level concepts from GNNs. The paper focuses on extracting concepts from a Graph Convolutional Network (GCN, \cite{kipf2016semi}) model.
+
+Both SGC and GCExplainer are research papers but both including detailed sections on experiment setup and available github repositories. In the case of GCExplainer the author of the paper is one of my supervisors and can therefore clear up any setup details and help with common pitfalls in the training process.
+
+\subsection{Extensions}
+
+Further extensions on the core goal will look at the concepts extracted from variations on SGC with potential new approaches outside of existing literature being implemented. Approaches outside of literature include mixing SGC "layers" within GCN layers, allowing for non-linearity to be added later in the forward pass. Equally using multiple SGC steps and using Jump Knowledge \cite{xu2018representation} to help combat the common problem of over-smoothing in GNNs. Further extensions may be found based on results during the project.
+
+These extensions can also look into how accurate the new models are outside of the concept metrics and provide further comparison between accuracy and concept purity \& completeness.
+
+\subsection{Substance and Structure}
+
+With the rise in popularity of simplified GNNs due to their simple nature and effective representational learning it is important to evaluate how they fit into explainability frameworks. This project therefore looks to extract concepts from SGC trained on the same datasets using in \cite{magister2021gcexplainer} to compare against GCN. This work will provide useful insight into how these simplified networks operate as well as providing further comparison between previous GNN techniques (GCN) and new simplified GNN techniques (SGC). Comparison between the two GNN techniques will focus on concept purity and completeness as described in \cite{magister2021gcexplainer}.
+
+This is broken down into reproducing both papers using the setup and structure described in each to compare the results that I achieve with those published in each paper. The code used for both of these can then be combined to extract concepts from the SGC model. This will allow comparison between a simplified GNN (SGC) and a standard GNN (GCN). Further extensions can then be carried out based on these results to further investigate different GNN approaches in regard to concept extraction. 
+
+\section{Starting Point}
+
+I have worked with Pytorch and the extension for geometric deep learning, Pytorch Geometric, over the summer culminating in a research paper. During this summer project I worked with building and testing graph datasets, building new GNN models, and testing/comparing GNN models from previous models to the new models. During the project I also briefly learnt about and used convolutional neural networks and transformers. I do not have experience with XAI or the area of Concepts.
+
+No code has been written for this project beyond the code that will be used within the Pytorch and Pytorch Geometric libraries.
+
+\section{Success Criteria}
+
+The project will be deemed a success if I 
+
+\begin{itemize}[noitemsep]
+    \item Implement SGC and extract the concepts used for each of the datasets
+    \item Implement GCN and extract the concepts to use as a baseline
+    \item Compare the concepts between SGC and GCN using the metrics of concept completeness and concept purity
+\end{itemize}
+
+\section{Work Plan}
+
+\subsection{Interval 1: 13/10 - 26/10}
+
+\textit{Preparatory Work:} Download datasets (both SGC and GCExplainer), preliminary tests on datasets to check all correct, setup up environment (required libraries are up-to-date etc.), test training on local machine and servers to determine extra resources. Read and annotate the three papers being implemented.
+
+Start work on implementing Simplified Graph Convolution (SGC).
+
+\subsection{Interval 2: 27/10 - 9/11}
+
+Complete implementation of SGC and train on SGC paper datasets, compare against papers results to confirm implementation is correct. Train SGC on GCExplainer datasets.
+
+\textbf{Milestone:} Trained SGC model.
+
+\textit{Category Theory 1 Deadline: 4/11 (25\%)}
+
+\subsection{Interval 3: 10/11 - 23/11}
+
+Implement Graph Convolution Network (GCN, from GCExplainer) and train on GCExplainer datasets.
+
+\subsection{Interval 4: 24/11 - 7/12}
+
+Implement GCExplainer concept extraction on GCN and compare concept metrics to confirm implementation is correct.
+
+\textbf{Milestone:} Working GCExplainer.
+
+\textit{Category Theory 2 Deadline: 2/12 (75\%)}
+
+\subsection{Interval 5: 8/12 - 21/12}
+
+Carry out concept extraction on the trained SGC model(s) and produce concept metrics for SGC model(s).
+
+\textbf{Milestone:} SGC concept metrics (\textbf{Core Project Complete})
+
+\subsection{Interval 6: 22/12 - 4/1}
+
+\textit{Buffer.} Christmas and New Year
+
+\subsection{Interval 7: 5/1 - 18/1}
+\label{interval:extension}
+
+\textit{Extension:} Research (read papers and annotate) one of the following techniques
+
+\begin{itemize}[noitemsep]
+    \item Mixing SGC and GCN layers
+    \item Adding knowledge jumps
+    \item Other simplified graph convolutions
+\end{itemize}
+
+\subsection{Interval 8: 19/1 - 1/2}
+
+\textit{Extension:} Implement and train the chosen technique from \Cref{interval:extension} on the GCExplainer Datasets.
+
+\subsection{Interval 9: 2/2 - 15/2}
+
+\textit{Extension:} Carry out GCExplinaer concept extraction on the trained model from \Cref{interval:extension}.
+
+\textbf{Deadline:} Progress Report 3/2
+
+\subsection{Interval 10: 16/2 - 1/3}
+
+\textit{Write Dissertation:} Introduction and Implementation chapters, and share with supervisors.
+
+\textit{Deep Neural Networks 1 Deadline: 17/02 (30\%)}
+
+\subsection{Interval 11: 2/3 - 15/3}
+
+\textit{Buffer.} If not required and extension runs smoothly carry out a second technique from \Cref{interval:extension}.
+
+\subsection{Interval 12: 16/3 - 29/3}
+
+\textit{Write Dissertation:} Evaluation of different approaches and their concept metrics, and share with supervisors.
+
+\textbf{Milestone:} First draft
+
+\subsection{Interval 13: 30/3 - 12/4}
+
+\textit{Write Dissertation:} Respond to feedback on first draft and share with supervisors.
+
+\textbf{Milestone:} Second draft
+
+\textit{Deep Neural Networks 2 Deadline: 17/03 (70\%)}
+
+\subsection{Interval 14: 13/4 - 27/4}
+
+\textit{Write Dissertation:} Respond to feedback on second draft and share with supervisors.
+
+\textbf{Milestone:} Final draft
+
+\textbf{Deadline:} Dissertation submission 12/5
+
+\section{Supervisors}
+
+\begin{itemize}[noitemsep]
+    \item Lucie Charlotte Magister
+    \item Pietro Babiero
+    \item Pietro Lio
+\end{itemize}
+
+I will have joint weekly meetings at 5pm on Wednesday will all supervisors (barring temporary unavailability) to report on the progress of the project and help with any problems that have occurred in the current interval. 
+
+\section{Resource Declaration}
+
+My own machine (AMD Ryzen 7 5700U with Radeon Graphics (16) @ 1.8GHz, 16GB RAM, and AMD ATI Lucienne) for the primary implementation of the project and remote work on any provided servers used. The majority of the project should be completed on this machine. I will also use git version control storing a remote repository on a private github repository in the eventuality of my own machine malfunctioning. Regular remote pushes at the end of the day or major project milestones will be carried out. I accept full responsibility for this machine and I have made contingency plans to protect myself against hardware and/or software failure.
+
+High performance cluster (HPC) as intensive training may be required. The required hours will remain within the SL3 bracket so no funding for SL2 will be required. 
+
+Local CL server access (idun, heimdall, etc) for less costly iterations and testing of GPU models before utilising HPC if my own machine is not sufficient. I am able to acquire kerberos tickets to use these services.
+
+Storage space available on my own machine will be sufficienet for the datasets used. Though space on local CL and HPC servers would be required if I am using these for model training.
+
+I will require other software packages, PyTorch and PyTorch Geometric, to help with the framework of building, testing and training my models.
+
+
+%\bibliography{references}
+
+%\end{document}
