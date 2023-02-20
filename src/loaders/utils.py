@@ -9,7 +9,7 @@ from time import perf_counter
 from torch import Tensor
 from scipy.sparse import coo_matrix, dia_matrix
 from numpy.typing import NDArray
-from typing import Tuple
+from typing import Tuple, Union, List
 
 
 ACTIVATION_DICT = {}
@@ -90,10 +90,8 @@ def precompute_features(features: Tensor,
         _add_activation(f"layers.{i}", temp_features)
 
         if jump:
-            # TODO: more aggregation methods for jump Knowledge
             out_features = torch.cat([out_features, temp_features], dim=1)
 
-    # TODO: Figure out how to extract concepts from the concatenated version
     if not jump:
         out_features = temp_features
 

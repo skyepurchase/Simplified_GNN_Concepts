@@ -69,7 +69,7 @@ def get_graphs(dataset: Dataset) -> Tuple[Dataset, Dataset]:
 
 
 def precompute_graph(graph: Data,
-                     config: Dict[str, Any]) -> Tuple[Tensor, float]:
+                     config: Dict[str, Any]) -> Tuple[Union[Tensor, List[Tensor]], float]:
     """A wrapper for the SGC precompute_features function
     INPUT 
         graph       : The graph which the precomputation is applied to 
@@ -80,7 +80,7 @@ def precompute_graph(graph: Data,
     adjacency: Tensor  = SparseTensor(row=graph.edge_index[0], col=graph.edge_index[1]).to_dense()
     norm_adj: Tensor = normalize_adjacency(adjacency)
 
-    precomputation: Tuple[Tensor, float]
+    precomputation: Tuple[Union[Tensor, List[Tensor]], float]
     if "jump" in config:
         precomputation = precompute_features(graph.x, norm_adj, config["degree"], config["jump"])
     else:
@@ -100,7 +100,7 @@ def get_loaders(name: str,
     elif name == "SGC":
         data: Data = get_data(dataset)
 
-        features: Tensor
+        features: Union[Tensor, list[Tensor]]
         precompute_time: float
 
         features, precompute_time = precompute_graph(data, config)
