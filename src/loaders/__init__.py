@@ -80,7 +80,12 @@ def precompute_graph(graph: Data,
     adjacency: Tensor  = SparseTensor(row=graph.edge_index[0], col=graph.edge_index[1]).to_dense()
     norm_adj: Tensor = normalize_adjacency(adjacency)
 
-    precomputation: Tuple[Tensor, float] = precompute_features(graph.x, norm_adj, config["degree"])
+    precomputation: Tuple[Tensor, float]
+    if "jump" in config:
+        precomputation = precompute_features(graph.x, norm_adj, config["degree"], config["jump"])
+    else:
+        precomputation = precompute_features(graph.x, norm_adj, config["degree"])
+
     return precomputation
 
 
@@ -97,7 +102,9 @@ def get_loaders(name: str,
 
         features: Tensor
         precompute_time: float
+
         features, precompute_time = precompute_graph(data, config)
+
         print(f'PRECOMPUTE TIME: {precompute_time}')
 
         data.__setitem__("x", features)

@@ -66,25 +66,36 @@ def normalize_adjacency(adj : Tensor) -> Tensor:
 
 def precompute_features(features: Tensor,
                         adj: Tensor,
-                        degree: int) -> Tuple[Tensor, float]:
+                        degree: int,
+                        jump: bool = False) -> Tuple[Tensor, float]:
     """Precompute the features based on "normalised" adjacency and degree.
     INPUT
         features    : The input features from the graph
         adj         : "normalised" adjacency matrix from normalise_adjacency
         degree      : The number of message passing steps
+        jump        : Whether the concepts of Jump Knowledge networks should be applied
     OUTPUT
         out_features: The precomputed features
         time        : The time taken to precompute features"""
     start: float = perf_counter()
+    temp_features: Tensor = torch.clone(features)
     out_features: Tensor = torch.clone(features)
     for i in range(degree):
         try:
-            out_features: Tensor = torch.mm(adj, out_features)
+            temp_features: Tensor = torch.mm(adj, temp_features)
         except RuntimeError:
             # Very this is just a graph error, not being fully connected
-            assert out_features.shape[0] != adj.shape[1]
+            assert temp_features.shape[0] != adj.shape[1]
 
-        _add_activation(f"layers.{i}", out_features)
+        _add_activation(f"layers.{i}", temp_features)
+
+        if jump:
+            # TODO: more aggregation methods for jump Knowledge
+            out_features = torch.cat([out_features, temp_features], dim=1)
+
+    # TODO: Figure out how to extract concepts from the concatenated version
+    if not jump:
+        out_features = temp_features
 
     return out_features, perf_counter() - start
 
