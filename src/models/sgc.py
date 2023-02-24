@@ -17,7 +17,6 @@ class SGC(torch.nn.Module):
     def reset_parameters(self):
         self.lin.reset_parameters()
 
-
     def forward(self, x: Tensor) -> Tensor:
         x = self.lin(x)
         return F.log_softmax(x, dim=-1)

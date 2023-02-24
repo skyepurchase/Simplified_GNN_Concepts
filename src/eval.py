@@ -130,12 +130,12 @@ def main(args: Namespace,
     for layer, model in model_list.items():
         if "pool" in layer:
             continue
+        elif "lin" in layer:
+            continue
         else:
             comp_score = completeness(model_list[layer], activation_list[layer], data)
-            print(f'Layer {layer} completeness: {comp_score}')
+            print(f'{layer} completeness: {comp_score}')
             comp_file.write(f"{layer}: {comp_score}\n")
-
-            layer_num = int(layer.split('.')[-1])
 
             if isinstance(data, Data):
                 atom_colour: bool
@@ -146,7 +146,7 @@ def main(args: Namespace,
                 sample_graphs: dict[int, list[Graph]] = plot_samples(model,
                                                                      activation_list[layer],
                                                                      data,
-                                                                     layer_num,
+                                                                     layer,
                                                                      args.clusters,
                                                                      "KMeans-Raw",
                                                                      args.num_graphs,

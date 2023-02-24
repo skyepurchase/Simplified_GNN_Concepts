@@ -98,7 +98,7 @@ def _get_subgraphs(top_indices: NDArray,
 def plot_samples(clustering_model: KMeans,
                  activation: Tensor,
                  data: Data,
-                 layer_num: int,
+                 layer_name: str,
                  clusters: int,
                  clustering_type: str,
                  num_graphs_viewable: int,
@@ -110,7 +110,7 @@ def plot_samples(clustering_model: KMeans,
     
     fig: FigureBase
     fig, axes = plt.subplots(clusters, num_graphs_viewable, figsize=(18, 3 * clusters + 2))
-    fig.suptitle(f'Nearest Instances to {clustering_type} Cluster Centroid for Raw Activations of Layer {layer_num}', y=1.005)
+    fig.suptitle(f'Nearest Instances to {clustering_type} Cluster Centroid for Raw Activations of {layer_name}', y=1.005)
 
     l: list[int] = list(range(0, clusters))
     sample_graphs: dict[int, list[nx.Graph]] = {}
@@ -152,7 +152,7 @@ def plot_samples(clustering_model: KMeans,
         # select the "ideal" graphs and it's distance to the cluster
         sample_graphs[cluster_id] = top_graphs[:3]
 
-    plt.savefig(osp.join(save_path, f'{layer_num}layer_{clustering_type}_{clusters}k_{hops}n_{num_graphs_viewable}_view.png'))
+    plt.savefig(osp.join(save_path, f'{layer_name}_{clustering_type}_{clusters}k_{hops}n_{num_graphs_viewable}_view.png'))
 
     return sample_graphs
 

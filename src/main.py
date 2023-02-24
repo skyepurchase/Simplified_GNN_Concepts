@@ -6,7 +6,7 @@ from torch import save
 
 from loaders import get_loaders, save_graph_precomputation, save_precomputation
 from datasets import get_dataset 
-from models import save_activation, get_model, register_hooks
+from models import get_activation, save_activation, get_model, register_hooks
 from wrappers import get_wrapper 
 
 from pytorch_lightning import loggers, seed_everything
@@ -16,7 +16,6 @@ import pytorch_lightning as pl
 # Typing
 from argparse import Namespace
 from torch_geometric.data import Dataset, Data
-from typing import Union
 
 DIR = osp.dirname(__file__)
 
@@ -91,6 +90,10 @@ def main(experiment: str,
                 trainer.fit(pl_model, loaders[0], loaders[1])
             elif len(loaders) == 2:
                 trainer.fit(pl_model, loaders[0])
+
+            # Check if there are activations from Jump SGC aggregation layer
+            if "aggr" in get_activation():
+                save_activation(osp.join(DIR, "../activations", f'{save_filename}_concat.pkl'))
         else:
             assert len(loaders) == 3
             graph: Data = next(iter(loaders[2]))

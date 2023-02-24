@@ -27,45 +27,43 @@ class GCN(nn.Module):
         self.pooling = pooling
 
         self.pool_layer = Pool()
-        self.layers = nn.ModuleList() 
-#        self.pools = nn.ModuleList()
+        self.convs = nn.ModuleList() 
+
         in_features: int = in_channels
         for i in range(num_conv_layers):
             conv = GCNConv(in_features,
                            hid_features[i])
             conv.reset_parameters()
 
-            self.layers.append(conv)
+            self.convs.append(conv)
             in_features = hid_features[i]
-
-#            if pooling:
-#                self.pools.append(global_max_pool)
 
         if pooling:
             in_features = in_features
 
+        self.lins = nn.ModuleList()
         for i in range(num_lin_layers - 1):
             lin = Linear(in_features,
                          hid_features[num_conv_layers + i])
             lin.reset_parameters()
 
-            self.layers.append(lin)
+            self.lins.append(lin)
             in_features = hid_features[num_conv_layers + i]
 
         output_layer = Linear(in_features,
                               out_channels)
-        self.layers.append(output_layer)
+        self.lins.append(output_layer)
 
     def forward(self, x : Tensor, edge_index: Adj, batch: Tensor) -> Tensor:
-        for i, layer in enumerate(self.layers):
-            if i < self.num_conv_layers:
-                x = layer(x, edge_index)
-                x = F.relu(x)
-            else:
-                if self.pooling:
-                    x = self.pool_layer(x, batch)
+        for layer in self.convs:
+            x = layer(x, edge_index)
+            x = F.relu(x)
 
-                x = layer(x)
+        if self.pooling:
+            x = self.pool_layer(x, batch)
+
+        for layer in self.lins:
+            x = layer(x)
 
         return F.log_softmax(x, dim=-1)
 
