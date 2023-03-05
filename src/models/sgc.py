@@ -52,7 +52,7 @@ class JumpSGC(SGC):
         self.aggr = torch.nn.Linear(num_features * jump_degree, num_features)
         self.aggr.reset_parameters
 
-    def forward(self, x: list[Tensor]) -> Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         x_aggr = self.aggr(x)
         return super().forward(x_aggr)
 
