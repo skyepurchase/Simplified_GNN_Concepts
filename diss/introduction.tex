@@ -11,16 +11,13 @@ The specific simplified model chosen is the Simplified Graph Convolution (SGC) p
 }
 
 \section{Motivation}
+\label{sec:motivation}
 
 % Importance/rise in use of GNNs
 
 % The rise in use of ML systems
 
 %% Wide spread of ML systems in general prevalent in every day use
-
-\error{Write this after writing the individual points!}
-
-In recent years there has been a lot of development 
 
 In recent years there has been rapid development and adoption of machine learning systems such as \emph{neural networks} NN.
 However, methods to explain how these ever larger models work is lagging behind leading to either mistrust in, or worse, blind trust in these systems.
@@ -154,7 +151,24 @@ This project identifies a further issue with SGC when working with highly synthe
 
 % Basic contributions with extending SGC in new ways
 
-%% Introduce two new extensions of SGC 
+This project extends the work of \textit{Magister et al.} \cite{magister2021gcexplainer} to SGC \cite{wu2019simplifying} to help answer the questions posed in \ref{sec:motivation}.
+These techniques of concept extraction are applied to an implementation of SGC from \textit{Wu et al.} designed for the dataset.
+To achieve a full comparison between the two systems SGC is modified to graph classification tasks. 
+This extension uses a simpler approach than the one proposed in the original paper.
+This results demonstrate that far from being comparable to GCN in terms of concept score, SGC is not comparable in accuracy on highly synthetic datasets.
+These results suggest the SGC is primarily focused on tabular data rather than graph data and lacks the necessary mechanisms to infer graph structure.
+
+Two extensions to SGC are proposed to improve the accuracy of the model on the synthetic datasets.
+The primary method is to combine SGC and GCN layers effectively removing some of the unecessary non-linearity in GCN whilst maintaining message passing.
+This approach is shown to be successful when the choice of SGC and GCN layers is done carefully.
+An additional extension is to utilise the techniques of jump knowledge networks presented in \textit{Xu et al.} \cite{xu2018representation}.
+This demonstrates an improvement in performance in SGC suggesting that the ability to manipulate intermediatary node representations during message passing is important.
+
+All these methods are analysed in the framework of concepts to better understand and demonstrate how approaches to graph data and structure manifest themselves.
+
+\note{Hopefully will have implemented the dataset to get a better demonstration of the shortcomings of SGC. I would love to compare multiple techniques: GraphSAGE, GCN, GAT, GIN. Furthermore include an MLP as a baseline, hopefully showing that SGC almost behaves the same as an MLP.}
+
+%% Introduce two new extensions of SGC
 
 %% These extensions are intended to adapt SGC to highly synthetic data 
 
