@@ -5,8 +5,8 @@
 \emph{
 This dissertation explores the effect that simplifying graph neural network architecture has on the explainability of the trained model.
 Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the which label is chosen.
-These concepts are compared to the original Graph Convolution Network (GCN) using the metrics of concept purity and completeness proposed in \cite{magister2021gcexplainer}.
-The specific simplified model chosen is the Simplified Graph Convolution (SGC) proposed in \cite{wu2019simplifying} due to claims that it matches the performance of GCN.
+These concepts are compared to the original Graph Convolution Network (GCN) using the metrics of concept purity and completeness proposed in \textit{Magister et al.} \cite{magister2021gcexplainer}.
+The specific simplified model chosen is the Simplified Graph Convolution (SGC) proposed in \textit{Wu et al.} \cite{wu2019simplifying} due to claims that it matches the performance of GCN.
 %Further studies are conducted extending the basic architecture of SGC, whilst keeping with the theme of simplified graph neural networks, to see the effect on the accuracy and concept scores.
 }
 
@@ -14,19 +14,74 @@ The specific simplified model chosen is the Simplified Graph Convolution (SGC) p
 
 % Importance/rise in use of GNNs
 
-%% Brief description of evolution of GNNs, looking at motivation and use cases
-
-%% 
-
 % The rise in use of ML systems
 
 %% Wide spread of ML systems in general prevalent in every day use
+
+\error{Write this after writing the individual points!}
+
+In recent years there has been a lot of development 
+
+In recent years there has been rapid development and adoption of machine learning systems such as \emph{neural networks} NN.
+However, methods to explain how these ever larger models work is lagging behind leading to either mistrust in, or worse, blind trust in these systems.
+Though standard NNs are in the mainstream spotlight there is increasing requirement for NNs to infer knowledge about connected systems such as social networks and molecules.
+%The mainstream advancements result in increasingly larger \emph{neural network} (NN) models focusing on text and image based input.
+%This development makes sense from the perspective of human interaction however these are limited datastructures especially in the ever increasing interaction of digital information.
+%Data present in social networks, computational biology, and systems such as smart cities have multiple predefined connections between each data point.
+In Theses the connected structure is important to classification of the individual data-points leading to the concept of \emph{graph data} and the idea of the \emph{graph neural network} (GNN).
+But criticisms of the deep learning (DL) approach of multiple layers has resulted in \emph{Simplified GNNs} (SGNNs) that remove non-linearity and focus on the additional information provided by the graph connections.
+How do these SGNNs compare to GNNs in how they infer labels for graph data?
+Are there potential insights into how graph structure can be better utilised?
+This dissertation answers these questions by evaluating an SGNN within an explanability framework and provides new methods of utilising graph data in SGNNs.
+
+%% Brief description of evolution of GNNs, looking at motivation and use cases
+
+\paragraph{Graph data}
+Rather than a dataset being only a collection of feature vectors representing observed data points within the problem setting an additional adjacency matrix is also present.
+The adjacency matrix represents the connections between data points that is inherently present in the observed data.
+An example being friendship connections in a social network or bonds between atoms in a molecule.
+This additional structure provides useful information for tasks where the interaction between data points has importance to the data points themselves.
+More complex graph data may also include attributes associated with the connections which can be simple scalars or multidimensional vectors.
+For these reasons graph data is a highly flexible and versatile datastructure promoting complex inference.
+
+\paragraph{Graph neural networks} 
+GNNs are designed to handle graph data where the connections between data points is an important aspect as the data itself.
+The standard form of a GNN \note{make sure this is valid here!} consists of multiple layers connected together by a non-linearity step.
+Each layer performs inference on a node's feature vector in the same way as a NN would perform inference.
+%The graph structure is utilised by broadcasting this new node representation along the connected edges to neighbouring nodes.
+%Each node then aggregates the representations of its neighbouring nodes creating a compact representation of the neighbourhood according to itself.
+%The updated representation and aggregation are then combined to produce a final representation before the next layer.
+By using a process known as \emph{message passing} each node's feature vector is updated based on the graph neighbourhood inferring graph structure as well.
+%This process, known as \emph{message passing}, allows a GNN to utilise the graph structure and infer more complex relationships between the data points than an ordinary NN.
 
 %% Rapid integration of these systems 
 
 % The lack of clarity in ML systems
 % -> Explainability
 % -> Concepts
+
+\paragraph{Linearising NNs}
+Modern specialist computer hardware, such as graphics processing units (GPU), are incredibly efficient at carrying out large linear operations such as matrix multiplication.
+However, the vast majority of NNs contain non-linear operators between generally linear layers.
+The idea of linearising NNs is to remove \emph{some} of the non-linearity in the architecture multiple layers to be combined into a single linear operation.
+Removal the early non-linearity (or all the non-linearity) results in a pre-computation step that can be carried out on an entire dataset before training or inference.
+%Thus in cases where inputs are sampled from a collection of data points this prevents calculating the same operation on the same data point across samples.
+But, it is important that this does not effect the performance of the model.
+
+\paragraph{Simplified GNNs}
+The process of message passing though complex conceptually can easily be decomposed into a linear operation on the graph features and graph adjacency.
+Using the idea of linearising NNs the non-linearity between individual message passing layers can be removed.
+This allows a GNN to pre-compute multiple message passing steps on the graph dataset before inference.
+Inference then results in a simple classification or linear regression task where only a single layer is required.
+This new emph{simplified GNNs} (SGNNs) remove their non-linear complexities whilst demonstrating comparable performance to standard GNNs.
+
+\paragraph{Explainability}
+The advancement of new NNs has focused on improving the performance in metrics such as accuracy and training cost which has resulted in impressive models.
+However, these models remain as blackboxes to the users of these systems but equally to the designers.
+Once a model is trained on a specific dataset there is very limited understanding of how the model is analysing the input to produce a result.
+This can and does create a lot of mistrust in NNs as there is a large element of trusting that the output it produces on unseen data will match our expectation.
+The idea of explainability is to provide different methods of visualising how a model works to a human to verify that the model is working as intended.
+Many different approaches exist including before, during and after training, to varying degrees of explanation.
 
 %% Importance of understanding ML inference
 %% -> Link to potential use cases 
@@ -35,6 +90,19 @@ The specific simplified model chosen is the Simplified Graph Convolution (SGC) p
 
 %% Recent development in developing frameworks to analyse these aspects
 %% The different goals of explainability 
+
+\paragraph{Concepts}
+A specific form of explainability that is applied after the training of a model \note{Check that this is always the case!} is that of concepts.
+The idea is to find different subspaces of the input space (where each input to tthe NN is some element of the input space) that correspondent to a specific output.
+This way patterns can be found between input and output to verify that the model is behaving as expected.
+In this dissertation the focus is on graph concepts which are subgraphs created from the input graph(s) for the model.
+These subgraphs represent the graph structures that the model is using to carry out inference on specific inputs.
+
+\paragraph{Concepts in simplified GNNs}
+Though SGNNs show competitive performance when looking at classification accuracy they are a black box as with the majority of NNs.
+As SGNNs delay the influence of the models weights until the final classification step this provides an opportunity to see how graph concepts are effected.
+If these models are truly comparable to GNNs then the concepts should demonstrate how the message passing steps operate.
+These results could therefore influence the design of future networks as the DL approach may not be required for graph data. \note{This needs better wording, I don't know how much I agree with it myself.}
 
 %% The idea of a concept
 %% The fact in our case this is done after training
@@ -56,11 +124,17 @@ The specific simplified model chosen is the Simplified Graph Convolution (SGC) p
 
 %% Provides clear metrics to compare models in regards to concepts
 
-% Simplified Graph Convolution
+% Simplifying Graph Convolutional Networks
 
 %% A simplified method based on the structure of graph convolutions
 
 %% A movement away from DNN
+
+% Simplified Graph Convolution with Heterophily
+
+%% Identifies the heterophily problem with SGC
+
+%% Note this is different from our observed problems
 
 % Maybe ablation studies: Pitfalls
 
@@ -71,6 +145,7 @@ The specific simplified model chosen is the Simplified Graph Convolution (SGC) p
 %% Introduce two new extensions of SGC 
 
 %% These extensions are intended to adapt SGC to highly synthetic data 
+
 %% Furthermore the goal is to increase the explainability through increasing concept scores
 
 % An analysis of SGC on synthetic datasets

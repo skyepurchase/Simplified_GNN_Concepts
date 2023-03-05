@@ -9,6 +9,7 @@
 \usepackage{changepage}
 \usepackage{blindtext}
 \usepackage{adjustbox}
+\usepackage[skip=10pt plus1pt, indent=0pt]{parskip}
 
 % Miscellaneous
 \usepackage{url}
@@ -28,3 +29,8 @@
 \sloppy
 \clubpenalty1000%
 \widowpenalty1000%
+
+\newcommand{\smalltitle}[1]{\textbf{#1}\hspace{3mm}}
+
+\newcommand\note[1]{\textcolor{blue}{\textsc{\textbf{[NB:} #1\textbf{]}}}}
+\newcommand\error[1]{\textcolor{red}{\textsc{\textbf{[Error: #1]}}}}
