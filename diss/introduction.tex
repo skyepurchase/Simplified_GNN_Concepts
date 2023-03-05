@@ -110,7 +110,7 @@ These results could therefore influence the design of future networks as the DL 
 
 % More efficient systems should not sacrifice ease of understanding
 
-\section{Related Work}
+\section{Previous and Related Work}
 
 % GNN Explainer
 
@@ -124,17 +124,29 @@ These results could therefore influence the design of future networks as the DL 
 
 %% Provides clear metrics to compare models in regards to concepts
 
+This project is based on the recent work by \textit{Magister et al.} \cite{magister2021gcexplainer} which proposes a new method of graph concepts.
+The paper introduces two concept metrics to guide a human in picking optimal parameters for concept extraction.
+It is using these metrics that I compare a SGNN to a GNN as well as confirming that performance matches.
+
 % Simplifying Graph Convolutional Networks
 
 %% A simplified method based on the structure of graph convolutions
 
 %% A movement away from DNN
 
+\textit{Wu et al.} \cite{wu2019simplifying} introduce the original SGNN the \emph{simplified graph convolution} (SGC) based on the \emph{graph convolution network} (GCN) proposed by \textit{Kipf et al.} \cite{kipf2016semi}.
+The method linearises the graph convolution layers in the network allowing these to be pre-computed leaving just a classification layer.
+It is this SGNN that I will be using to compare against the GCN models used in \textit{Magister et al.} \cite{magister2021gcexplainer}.
+
 % Simplified Graph Convolution with Heterophily
 
 %% Identifies the heterophily problem with SGC
 
 %% Note this is different from our observed problems
+
+\textit{Chanpuriya et al.} \cite{chanpuriya2022simplified} identify one shortcoming of SGC which is its poor performance on heterophilic data.
+The paper introduces SGC with heterophily (hSGC) to overcome these issues. 
+This project identifies a further issue with SGC when working with highly synthetic data where node representations carry little meaning.
 
 % Maybe ablation studies: Pitfalls
 
