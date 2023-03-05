@@ -16,6 +16,7 @@ import pytorch_lightning as pl
 # Typing
 from argparse import Namespace
 from torch_geometric.data import Dataset, Data
+from typing import List, Dict
 
 DIR = osp.dirname(__file__)
 
@@ -24,7 +25,7 @@ DIR = osp.dirname(__file__)
 def main(experiment: str,
          dataset_name: str,
          config: dict,
-         args: Namespace) -> None:
+         args: Namespace) -> float:
     seed_everything(args.seed)
 
     dataset: Dataset = get_dataset(dataset_name,
@@ -81,6 +82,8 @@ def main(experiment: str,
         mkdir(save_folder)
 
     print(f'Running {experiment} with seed value {args.seed}')
+
+    results: List[Dict[str, float]]
     
     if config["sampler"]["name"] in ["SGC", "GraphSGC"]:
         if config["sampler"]["name"] == "SGC":
@@ -93,11 +96,16 @@ def main(experiment: str,
 
             # Check if there are activations from Jump SGC aggregation layer
             if "aggr" in get_activation():
-                save_activation(osp.join(DIR, "../activations", f'{save_filename}_concat.pkl'))
+                save_activation(osp.join(DIR,
+                                         "../activations",
+                                         f'{save_filename}_concat.pkl'))
         else:
             assert len(loaders) == 3
             graph: Data = next(iter(loaders[2]))
-            save_graph_precomputation(osp.join(DIR, "../activations", f'{save_filename}.pkl'),
+
+            save_graph_precomputation(osp.join(DIR,
+                                               "../activations",
+                                               f'{save_filename}.pkl'),
                                       graph)
 
             trainer.fit(pl_model, loaders[0])
@@ -115,10 +123,15 @@ def main(experiment: str,
             best_model = pl_model
 
         if config["sampler"]["name"] == "SGC":
-            trainer.test(best_model, dataloaders=loaders[-1])
+            results = trainer.test(best_model, dataloaders=loaders[-1])
         else:
             # Test for three loaders occurs earlier with no changes to the number of loaders inbetween
-            trainer.test(best_model, dataloaders=loaders[1])
+            results = trainer.test(best_model, dataloaders=loaders[1])
+
+        if "test_acc" in results[0]:
+            return results[0]["test_acc"]
+        else:
+            raise KeyError("test results do not contain the key 'test_acc'")
 
     elif config["sampler"]["name"] in ["DataLoader", "GraphLoader"]:
         assert len(loaders) > 1
@@ -136,14 +149,19 @@ def main(experiment: str,
             )
             best_model = pl_model
 
-        trainer.test(best_model, dataloaders=loaders[1])
+        results = trainer.test(best_model, dataloaders=loaders[1])
 
         if config["sampler"]["name"] == "GraphLoader":
             assert len(loaders) > 2
             trainer.test(best_model, dataloaders=loaders[2], verbose=False)
-            save_activation(osp.join(DIR, "../activations", f"{save_filename}.pkl"))
         else:
             save_activation(osp.join(DIR, "../activations", f'{save_filename}.pkl'))
+
+        if "test_acc" in results[0]:
+            return results[0]["test_acc"]
+        else:
+            raise KeyError("test results do not contain the key 'test_acc'")
+
     else:
         raise Exception(f"{config['sampler']['name']} is not supported")
 
