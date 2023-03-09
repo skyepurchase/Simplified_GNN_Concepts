@@ -94,11 +94,10 @@ class SynGraph(InMemoryDataset):
 
         # Generate graph
         edge_index, node_label = self._gen_graph()
-        if join:
-            edge_index, node_label = self._join(edge_index,
-                                                node_label)
-
         x = torch.ones((len(node_label), 10), dtype=torch.float) # No feature data added
+        if join:
+            edge_index, node_label, x = self._join(edge_index,
+                                                   node_label)
 
         # Generating random split
         # TODO: Test that these masks work correctly
@@ -178,7 +177,7 @@ class SynGraph(InMemoryDataset):
 
     def _join(self,
               edge_index: Tensor,
-              node_label: Tensor) -> Tuple[Tensor, Tensor]:
+              node_label: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
 
         num_A_labels = torch.max(node_label)
 
@@ -197,8 +196,15 @@ class SynGraph(InMemoryDataset):
             edge_indices.append(connections)
             edge_count += 1
 
-        return torch.cat(edge_indices, dim=1), torch.cat([node_label, node_label_B + num_A_labels + 1], dim=0)
+        x_A = torch.ones((num_A_nodes, 10), dtype=torch.float)
+        x_B = torch.ones((num_B_nodes, 10), dtype=torch.float) + 1.0
+        assert torch.equal(x_A, x_B) == False
 
+        new_edge_index = torch.cat(edge_indices, dim=1)
+        new_node_label = torch.cat([node_label, node_label_B + num_A_labels + 1], dim=0)
+        x = torch.cat([x_A, x_B], dim=0)
+
+        return new_edge_index, new_node_label, x
 
 if __name__=='__main__':
     dataset = SynGraph("data/BAShape")

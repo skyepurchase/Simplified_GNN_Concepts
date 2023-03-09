@@ -111,6 +111,7 @@ def sweep(filename: str,
             np.log10(grid_Y),
             grid_Z.T,
             linewidth=0,
+            cmap=cm.coolwarm,
             antialiased=False
         )
         ax.set_xlabel(f"Log learning rate from {args.lr}")
