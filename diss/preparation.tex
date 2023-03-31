@@ -4,32 +4,246 @@
 
 \section{Graph Representational Learning}
 
+% Formal definition of graph based data
+
+%% Formal definition of a graph
+
+A \emph{graph} can be formally represented as the tuple $\gG(\sV, \sE, \mX)$ where $\sV$ is the set of nodes in the graph, $\sE$ is the set of edges, and $\mX$ the data associated with the graph also known as the input features.
+Two nodes of the graph, $v_i, v_j \in \sV$, are \emph{connected} if and only if $(v_i, v_j) \in \sE$, the edge is directed with $v_i$ as the source and $v_j$ as the destination.
+%It is possible to associate data with the edges of the graph where $(v_i, v_j, \textbf{e}_{ij}) \in \sE$ represents a connection between $v_i$ and $v_j$ and associated vector $\textbf{e}_{ij}$.
+Each node, $v_i \in \sV$, has associated data represented by the \emph{feature vector} $\vx_i = \emX_{i,\star}$ the $i^{th}$ row of $\mX$.
+
+The edges can be represented as an \emph{adjacency matrix}, $\mA$, where 
+
+\begin{equation*}
+\emA_{ij} = \begin{cases}1 &\text{if $(v_i, v_j) \in \sE$} \\ 0 &\text{otherwise}\end{cases}.
+\end{equation*}
+
+This allows the edge information to be passed to a NN as another feature vector along with $\mX$.
+Furthermore, each node, $v_i \in \sV$, has \emph{neighbours} which is set of connected nodes, $\sN_i = \{v_j | (v_i, v_j) \in \sE\}$.
+An element of $\sN$ is a therefore a \emph{neighbour} of the node $v_i$.
+%If there is data associated with the edges, such as edge weights, this value is stored in the adjacency matrix.
+%An unweighted graph can be described as a weighted graph with edge weights of value $1$.
+%Adjacency matrices can be very sparse, meaning they have very few non-zero values, and therefore the matrix is commonly stored in a \emph{coordinate matrix} (COO) of size $2 \times N$ for $N$ edges in the graph thus only storing edge information.
+
+% Formal definition of representational learning
+
+The goal of graph representational learning is to find, for each $v_i \in \sV$, a vector $\vh_i$ based on the the input features $\mX$ and adjacency matrix $\mA$.
+$\vh_i$ is known as the \emph{node representation} and $\mH$ is the total graph representation where $\mH_{i, \star} = \vh_i$.
+
+% Comparison of graph, edge and node based learning
+
+%% Expand the above definition to edges and graphs
+%% discussion of edge weights in training when talking about edge learning
+%% discussion of pooling functions with graph classification
+
+These representations may then be used as input to a classifier to solve one of 3 different classification tasks: node classification, graph classification, edge classification.
+For the remainder of this dissertation only node and graph classification will be considered.
+Node classification classifies each node solely on the final node representation $\vh_i$.
+Comparitively graph classification aggregates all of the node representations and classifies the entire graph accordingly.
+
 \subsection{Graph Neural Networks}
+
+%% Formal definition of a function on this graph
+%%      Think about Petars talk here
+
+To produce updated node representations consider a function, $F$, which acts on a graph taking the input features, $\mX$, and adjacency matrix, $\mA$, and producing a new feature matrix $F(\mX, \mA)$.
+If this function where to be given instead a different permutation of the graph it is important that the resulting output is permuted the same way.
+That is given some permutation, $\mP$, the following must hold
+
+\begin{equation}
+    F(\mP\mX, \mP\mA) \equiv \mP F(\mX, \mA).
+\end{equation}
+
+This function can be described by a function, $f$, which acts on a single node, $v_i$, using the feature vector, $\vx_i$, and neighbours, $\sN_i$.
+Rather than $f$ being applied to the input features consider some node representation $\vh_i^l$ after $l$ iterations, where $\vh_i^0 = \vx_i$.
+Then $\vh_i^{l+1} = f^l(\vh_i^l, \sN_i)$, where $f^l$ is the $l^{th}$ application of the function $f$.
+
+%% The idea of invariants, equivariants and approaches
+
+% Formal definition of a graph neural network
+
+%% Expand on the invariants and equivariants above (maybe only start that here)
+%% Formalise the notion of how a GNN would behave
+%% Discuss the differing approaches
+
+% Potentially the motivation behind this formalisation
+
+%% This is the invariance and equivariance
+%% Might be possible to motivate this from the development perspective
+
+% Identify the root of deep learning in its formulation
+
+%% Highlight the concept of non-linear layers
+%% potentially a brief discussion on the importance of this concept
 
 \subsection{Graph Convolutional Network}
 
+% Formal implementation of Graph Convolutional Network
+
+%% Expand on the convolutional approach to discuss this formulation
+
+\subsubsection{As a GNN}
+
+The \emph{graph convolutional network} (GCN) follows the formulation of GNNs outlined above the simplest fashion possible.
+The principle is to add the edge weighted sum of a node's neighbour representations to the current node representation.
+This maintains the graph function equivariance constraint as sum is equivariant, however, nodes with a high degree are overly represented and so each term is normalised by the degree of the connecting nodes.
+This results in the common representation of GCN as
+
+\begin{equation}
+    f(\vh_i^l) = \frac1{d_i + 1}\vh_i^l + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{l},
+\end{equation}
+
+where $d_i$ is the degree of node $v_i$, $d_i = \sum_j^N \emA_{i,j}$.
+
+To better demonstrate that the same operation is being applied to each neighbouring representation (including the nodes current representation) the equation may be rewritten as
+
+\begin{equation}
+    f(\vh_i^l) = (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^l + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_i + 1)^{-\frac12}\vh_j^{l}.
+\end{equation}
+
+Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$, and $\mH^l$ the node representations of the graph after layer $l$. The above equation can now be compactly described as 
+
+\begin{equation}
+    F(\mH^l) = (\mD + 1)^{-\frac12}(\mA + \mI)(\mD + 1)^{-\frac12}\mH^l.
+\end{equation}
+
+Let $\widetilde{\mA} = \mA + \mI$, then $\widetilde{\mD} = \sum_j^N \widetilde{\mA} = \sum_j^N[\mA] + 1 = \mD + 1$.
+Ignoring the application and looking only at the operator which will be called $\mS$, the other representation of a GCN layer is
+\begin{equation}
+    \mS = \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12}.
+\end{equation}
+
+\subsubsection{As a convolution}
+
+The above formulation is often derived from the principle of a convolution applied to the graph.
+From this view point $\widetilde{\mA}$ represents a renormalisation of the convolution by adding self-loops where every node in the graph is connected to itself.
+The motivation is to prevent exploding/vanishing weights that occur from the approximate graph convolution
+
+\begin{equation}
+    \mS = \mI + \mD^{-\frac12}\mA\mD^{-\frac12}
+\end{equation}
+
+which has eigenvalues in the range $[0,2]$ rather than remaining at or close to $1$.
+
+\error{How do convolutions and spectral filters arrive at this stage?}
+
+%= \widetilde{\textbf{D}}^{-\frac12}\widetilde{\mA}\widetilde{\textbf{D}}^{-\frac12}\mX\textbf{\Theta}$
+
+% Link to the paper
+
+%% Lay out the exact formulation from the paper
+%% Explain this formulation
+%% include the motivations/reasonings from the paper
+
+% Discussion of importance in the field?
+
+%% Description of the fact that this is the first graph approach
+%% Maybe a link to DeepSet
+
 \subsection{Simplified Graph Convolution}
+
+% Motivation behind SGC
+
+%% Reiterate the points made in the introduction
+%% Now specifically highlight these areas in the GCN formulisation
+
+% Demonstration of how the GCN leads to the SGC
+
+%% Demonstrate that the removal of layers logically leads to SGC
+%% Explanation of how the weight matrix would behave
+%% Potential hint or discussion about the effect of weight decay later
 
 \section{Explainability}
 
+% Overview of the concept of explainability
+
+%% This needs some proper reading in the topic see below
+
+% This probabily requires reading some papers "yay"
+
 \subsection{Concepts}
+
+% Explanation of what a concept is generally
+
+%% Again this requires proper reading in the subject see above
+
+% Relating the explanation to graph based Datasets
+
+%% Demonstrate the idea of concepts translates to subgraphs
+%% Focus on the node classification task for this explanation
+%% Potentially a motivating example
+
+% Discussion of complications when looking at graph classification
+
+%% Identify the issue when scaling to graph classification
+%% Discuss solutions and the chosen solution for this project
 
 \subsection{Graph Concept Explainer}
 
+% The motivation for the paper
+
+%% The human in the loop aspect of this project
+%% Link in ideas from GNNExplainer
+
+% Discussion of the metrics
+
+%% Formulisation of the two metrics that are presented
+%% Discussion what each metric measures with link to results
+%% Discussion of short comings of clusterings
+%% Discussion of further benefits of latent space
+
+% Detailing why this method was chosen
+
+%% The improvements seen in the paper in regards to visual comparison
+%% The clear metrics for comparison
+
 \section{Datasets}
+
+% Continue the concepts in GRL subchapter
+% There may be more details about implementation
+% May need chapters here or somewhere else about inductive v. transductive!!
 
 \subsection{Synthetic}
 
+% From GRL and the overview discuss a bottom up approach
+% Discuss how certain properties can be instilled
+% Relation to graph theory or importance thereof
+
 \subsection{Real-World}
+
+% Linking to motivation and GRL
+% Demonstrating that these techniques are important for real world use
+% Discussions of the short comings of this approach
 
 \section{Tools Used}
 
+% I believe this is stuff like vim
+% Pytorch, pytorch lightning and pytorch geometric
+% scipy and numpy
+% python unittest and typing
+% python linter through vim
+
 %MAYBE THE REQUIREMENTS ANALYSIS POST-HUMOUSLY?
+
+% definitely think this is useful
+% to be figured out later
 
 \section{Software Methodology}
 
+% Generally waterfall approach to design
+% But iterative when looking at the results and direction forward
+% sprint work style between meetings
+
 \section{Testing}
+
+% unittest for specific sections of code and infrastructure
+% comparison to paper baselines when dealing with model implementation
 
 \section{Licensing}
 
+% Definitely need to research this aspect
+
 \section{Starting Point}
+
+% Discussion of summer project using the same rough build environment
