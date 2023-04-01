@@ -33,17 +33,19 @@ This dissertation answers these questions by evaluating an SGNN within an explan
 
 %% Brief description of evolution of GNNs, looking at motivation and use cases
 
-\paragraph{Graph data}
-Rather than a dataset being only a collection of feature vectors representing observed data points within the problem setting an additional adjacency matrix is also present.
-The adjacency matrix represents the connections between data points that is inherently present in the observed data.
-An example being friendship connections in a social network or bonds between atoms in a molecule.
-This additional structure provides useful information for tasks where the interaction between data points has importance to the data points themselves.
-More complex graph data may also include attributes associated with the connections which can be simple scalars or multidimensional vectors.
-For these reasons graph data is a highly flexible and versatile datastructure promoting complex inference.
+%\paragraph{Graph data}
+%Rather than a dataset being only a collection of feature vectors representing observed data points within the problem setting an additional adjacency matrix is also present.
+%The adjacency matrix represents the connections between data points that is inherently present in the observed data.
+%An example being friendship connections in a social network or bonds between atoms in a molecule.
+%This additional structure provides useful information for tasks where the interaction between data points has importance to the data points themselves.
+%More complex graph data may also include attributes associated with the connections which can be simple scalars or multidimensional vectors.
+%For these reasons graph data is a highly flexible and versatile datastructure promoting complex inference.
 
 \paragraph{Graph neural networks} 
 GNNs are designed to handle graph data where the connections between data points is an important aspect as the data itself.
-The standard form of a GNN \note{make sure this is valid here!} consists of multiple layers connected together by a non-linearity step.
+The standard form of a GNN 
+%\note{make sure this is valid here!}
+consists of multiple layers connected together by a non-linearity step.
 Each layer performs inference on a node's feature vector in the same way as a NN would perform inference.
 %The graph structure is utilised by broadcasting this new node representation along the connected edges to neighbouring nodes.
 %Each node then aggregates the representations of its neighbouring nodes creating a compact representation of the neighbourhood according to itself.
@@ -57,28 +59,28 @@ By using a process known as \emph{message passing} each node's feature vector is
 % -> Explainability
 % -> Concepts
 
-\paragraph{Linearising NNs}
-Modern specialist computer hardware, such as graphics processing units (GPU), are incredibly efficient at carrying out large linear operations such as matrix multiplication.
-However, the vast majority of NNs contain non-linear operators between generally linear layers.
-The idea of linearising NNs is to remove \emph{some} of the non-linearity in the architecture multiple layers to be combined into a single linear operation.
-Removal the early non-linearity (or all the non-linearity) results in a pre-computation step that can be carried out on an entire dataset before training or inference.
-%Thus in cases where inputs are sampled from a collection of data points this prevents calculating the same operation on the same data point across samples.
-But, it is important that this does not effect the performance of the model.
+%\paragraph{Linearising NNs}
+%Modern specialist computer hardware, such as graphics processing units (GPU), are incredibly efficient at carrying out large linear operations such as matrix multiplication.
+%However, the vast majority of NNs contain non-linear operators between generally linear layers.
+%The idea of linearising NNs is to remove \emph{some} of the non-linearity in the architecture multiple layers to be combined into a single linear operation.
+%Removal the early non-linearity (or all the non-linearity) results in a pre-computation step that can be carried out on an entire dataset before training or inference.
+%%Thus in cases where inputs are sampled from a collection of data points this prevents calculating the same operation on the same data point across samples.
+%But, it is important that this does not effect the performance of the model.
 
 \paragraph{Simplified GNNs}
 The process of message passing though complex conceptually can easily be decomposed into a linear operation on the graph features and graph adjacency.
 Using the idea of linearising NNs the non-linearity between individual message passing layers can be removed.
 This allows a GNN to pre-compute multiple message passing steps on the graph dataset before inference.
 Inference then results in a simple classification or linear regression task where only a single layer is required.
-This new emph{simplified GNNs} (SGNNs) remove their non-linear complexities whilst demonstrating comparable performance to standard GNNs.
+This new emph{simplified GNN} (SGNN) remove their non-linear complexities whilst demonstrating comparable performance to standard GNNs.
 
 \paragraph{Explainability}
 The advancement of new NNs has focused on improving the performance in metrics such as accuracy and training cost which has resulted in impressive models.
 However, these models remain as blackboxes to the users of these systems but equally to the designers.
 Once a model is trained on a specific dataset there is very limited understanding of how the model is analysing the input to produce a result.
 This can and does create a lot of mistrust in NNs as there is a large element of trusting that the output it produces on unseen data will match our expectation.
-The idea of explainability is to provide different methods of visualising how a model works to a human to verify that the model is working as intended.
-Many different approaches exist including before, during and after training, to varying degrees of explanation.
+The idea of explainability is to provide different methods of visualising how a model works to a human as a form of verification or to provide insight.
+%Many different approaches exist including before, during and after training, to varying degrees of explanation.
 
 %% Importance of understanding ML inference
 %% -> Link to potential use cases 
@@ -88,18 +90,18 @@ Many different approaches exist including before, during and after training, to 
 %% Recent development in developing frameworks to analyse these aspects
 %% The different goals of explainability 
 
-\paragraph{Concepts}
-A specific form of explainability that is applied after the training of a model \note{Check that this is always the case!} is that of concepts.
-The idea is to find different subspaces of the input space (where each input to tthe NN is some element of the input space) that correspondent to a specific output.
-This way patterns can be found between input and output to verify that the model is behaving as expected.
-In this dissertation the focus is on graph concepts which are subgraphs created from the input graph(s) for the model.
-These subgraphs represent the graph structures that the model is using to carry out inference on specific inputs.
-
-\paragraph{Concepts in simplified GNNs}
-Though SGNNs show competitive performance when looking at classification accuracy they are a black box as with the majority of NNs.
-As SGNNs delay the influence of the models weights until the final classification step this provides an opportunity to see how graph concepts are effected.
-If these models are truly comparable to GNNs then the concepts should demonstrate how the message passing steps operate.
-These results could therefore influence the design of future networks as the DL approach may not be required for graph data. \note{This needs better wording, I don't know how much I agree with it myself.}
+%\paragraph{Concepts}
+%A specific form of explainability that is applied after the training of a model \note{Check that this is always the case!} is that of concepts.
+%The idea is to find different subspaces of the input space (where each input to tthe NN is some element of the input space) that correspondent to a specific output.
+%This way patterns can be found between input and output to verify that the model is behaving as expected.
+%In this dissertation the focus is on graph concepts which are subgraphs created from the input graph(s) for the model.
+%These subgraphs represent the graph structures that the model is using to carry out inference on specific inputs.
+%
+%\paragraph{Concepts in simplified GNNs}
+%Though SGNNs show competitive performance when looking at classification accuracy they are a black box as with the majority of NNs.
+%As SGNNs delay the influence of the models weights until the final classification step this provides an opportunity to see how graph concepts are effected.
+%If these models are truly comparable to GNNs then the concepts should demonstrate how the message passing steps operate.
+%These results could therefore influence the design of future networks as the DL approach may not be required for graph data. \note{This needs better wording, I don't know how much I agree with it myself.}
 
 %% The idea of a concept
 %% The fact in our case this is done after training
@@ -162,11 +164,11 @@ Two extensions to SGC are proposed to improve the accuracy of the model on the s
 The primary method is to combine SGC and GCN layers effectively removing some of the unecessary non-linearity in GCN whilst maintaining message passing.
 This approach is shown to be successful when the choice of SGC and GCN layers is done carefully.
 An additional extension is to utilise the techniques of jump knowledge networks presented in \textit{Xu et al.} \cite{xu2018representation}.
-This demonstrates an improvement in performance in SGC suggesting that the ability to manipulate intermediatary node representations during message passing is important.
+This demonstrates an improvement in performance in SGC emphasising the importance intermediatary node representations during message passing.
 
-All these methods are analysed in the framework of concepts to better understand and demonstrate how approaches to graph data and structure manifest themselves.
+All these methods are analysed in the framework of graph concepts to better understand and demonstrate how approaches to graph data and structure manifest themselves.
 
-\note{Hopefully will have implemented the dataset to get a better demonstration of the shortcomings of SGC. I would love to compare multiple techniques: GraphSAGE, GCN, GAT, GIN. Furthermore include an MLP as a baseline, hopefully showing that SGC almost behaves the same as an MLP.}
+%\note{Hopefully will have implemented the dataset to get a better demonstration of the shortcomings of SGC. I would love to compare multiple techniques: GraphSAGE, GCN, GAT, GIN. Furthermore include an MLP as a baseline, hopefully showing that SGC almost behaves the same as an MLP.}
 
 %% Introduce two new extensions of SGC
 
