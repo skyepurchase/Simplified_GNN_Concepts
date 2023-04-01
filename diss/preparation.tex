@@ -20,15 +20,16 @@ The edges can be represented as an \emph{adjacency matrix}, $\mA$, where
 \end{equation*}
 
 This allows the edge information to be passed to a NN as another feature vector along with $\mX$.
-Furthermore, each node, $v_i \in \sV$, has \emph{neighbours} which is set of connected nodes, $\sN_i = \{v_j | (v_i, v_j) \in \sE\}$.
+Furthermore, each node, $v_i \in \sV$, has \emph{neighbours} which is set of connected nodes, $\sN_i = \{v_j | (v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE\}$.
 An element of $\sN$ is a therefore a \emph{neighbour} of the node $v_i$.
+For ease of writing $\mX_{\sN_i}$ represents the features of the neighbours of $v_i$ defined as $\mX_{\sN_i} = \{\{\vx_j | v_j \in \sN_i\}\}$.\footnote{As the neighbours may have the same feature vector this must be a multiset.}
 %If there is data associated with the edges, such as edge weights, this value is stored in the adjacency matrix.
 %An unweighted graph can be described as a weighted graph with edge weights of value $1$.
 %Adjacency matrices can be very sparse, meaning they have very few non-zero values, and therefore the matrix is commonly stored in a \emph{coordinate matrix} (COO) of size $2 \times N$ for $N$ edges in the graph thus only storing edge information.
 
 % Formal definition of representational learning
 
-The goal of graph representational learning is to find, for each $v_i \in \sV$, a vector $\vh_i$ based on the the input features $\mX$ and adjacency matrix $\mA$.
+The goal of \emph{graph representational learning} (GRL) is to find, for each $v_i \in \sV$, a vector $\vh_i$ based on the the input features $\mX$ and adjacency matrix $\mA$.
 $\vh_i$ is known as the \emph{node representation} and $\mH$ is the total graph representation where $\mH_{i, \star} = \vh_i$.
 
 % Comparison of graph, edge and node based learning
@@ -37,7 +38,7 @@ $\vh_i$ is known as the \emph{node representation} and $\mH$ is the total graph 
 %% discussion of edge weights in training when talking about edge learning
 %% discussion of pooling functions with graph classification
 
-These representations may then be used as input to a classifier to solve one of 3 different classification tasks: node classification, graph classification, edge classification.
+These representations may then be used as input to a classifier to solve one of 3 different classification tasks: node classification, graph classification, link prediction.
 For the remainder of this dissertation only node and graph classification will be considered.
 Node classification classifies each node solely on the final node representation $\vh_i$.
 Comparitively graph classification aggregates all of the node representations and classifies the entire graph accordingly.
@@ -47,19 +48,60 @@ Comparitively graph classification aggregates all of the node representations an
 %% Formal definition of a function on this graph
 %%      Think about Petars talk here
 
-To produce updated node representations consider a function, $F$, which acts on a graph taking the input features, $\mX$, and adjacency matrix, $\mA$, and producing a new feature matrix $F(\mX, \mA)$.
+%% The idea of invariants, equivariants and approaches
+
+To produce updated node representations consider a matrix valued function, $F$, which acts on a graph taking the input features, $\mX$, and adjacency matrix, $\mA$, and producing a new feature matrix $F(\mX, \mA)$.
 If this function where to be given instead a different permutation of the graph it is important that the resulting output is permuted the same way.
 That is given some permutation, $\mP$, the following must hold
 
 \begin{equation}
-    F(\mP\mX, \mP\mA) \equiv \mP F(\mX, \mA).
+    \label{eq:equivar}
+    F(\mP\mX, \mP\mA\mP^T) \equiv \mP F(\mX, \mA).\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the premultiplication transposed to permute the columns.}
 \end{equation}
 
-This function can be described by a function, $f$, which acts on a single node, $v_i$, using the feature vector, $\vx_i$, and neighbours, $\sN_i$.
-Rather than $f$ being applied to the input features consider some node representation $\vh_i^l$ after $l$ iterations, where $\vh_i^0 = \vx_i$.
-Then $\vh_i^{l+1} = f^l(\vh_i^l, \sN_i)$, where $f^l$ is the $l^{th}$ application of the function $f$.
+This principle is known as \emph{equivariance} as the output varies in the same way as the input.
 
-%% The idea of invariants, equivariants and approaches
+It is also important to consider \emph{invariance} where the result of a function is the same regardless of the permutation. In this case consider the real valued function, $f$, where $f(\mX, \mA)$ is a single real value.
+
+\begin{equation}
+    \label{eq:invar}
+    f(\mP\mX, \mP\mA\mP^T) \equiv f(\mX, \mA).
+\end{equation}
+
+To prevent problems with noise and distortions propagating the function should adhere to locality, that is the representation of a specific node only depends on neighbours.
+That is some function
+
+\begin{equation}
+    \label{eq:phi}
+    \bm{\phi}(\vx_i, \mX_{\sN_i}).
+\end{equation}
+
+\ref{eq:phi} gives a definition for $F$ as
+
+\begin{equation}
+    F(\mX, \mA) = \begin{bmatrix}\bm{\phi}(\vx_1, \mX_{\sN_1}) \\ \vdots \\ \bm{\phi}(\vx_N, \mX_{\sN_N})\end{bmatrix}.
+\end{equation}
+
+\paragraph{Lemma.}
+If $\bm{\phi}$ is permutation invariant in $\mX_{\sN_i}$ then $F(\mX, \mA)$ is equivariant.
+
+\paragraph{Proof.}
+Let $\pi$ be a permutation of $\sV$, the set of nodes, and $\mP$ the corresponding permutation matrix.
+Given $\mX = \begin{bmatrix}\vx_1 \\ \vdots \\ \vx_n\end{bmatrix}$, $\mP\mX = \begin{bmatrix}\vx_{\pi(1)} \\ \vdots \\ \vx_{\pi(N)}\end{bmatrix}$ noting that each node $v_i$ has the same neighbours, $\sN_i$, however the feature matrix of the neighbours is now $\mP\mX_{\sN_i}$. Therefore $F(\mX, \mA) = \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mP\mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mP\mX_{\sN_{\pi(N)}})\end{bmatrix}$. As $\bm{\phi}$ is permutation invariant in $\mX_{\sN_i}$, $\bm{\phi}(\vx_{\pi(i)}, \mP\mX_{\sN_{\pi(i)}}) = \bm{\phi}(\vx_{\pi(i)}, \mX_{\sN_{\pi(i)}})$.
+
+Thus 
+\begin{align*}
+    F(\mP\mX, \mP\mA\mP^T) &= \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mP\mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mP\mX_{\sN_{\pi(N)}})\end{bmatrix} \\ 
+        &= \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mX_{\sN_{\pi(N)}})\end{bmatrix} \\
+        &= \mP\begin{bmatrix}\bm{\phi}(\vx_1, \mX_{\sN_1}) \\ \vdots \\ \bm{\phi}(\vx_N, \mX_{\sN_N})\end{bmatrix} \\
+        &= \mP F(\mX, \mA).
+\end{align*}
+
+\error{Fill in the remainder.}
+
+%This function can be described by a function, $f$, which acts on a single node, $v_i$, using the feature vector, $\vx_i$, and neighbours, $\sN_i$.
+%Rather than $f$ being applied to the input features consider some node representation $\vh_i^l$ after $l$ iterations, where $\vh_i^0 = \vx_i$.
+%Then $\vh_i^{l+1} = f^l(\vh_i^l, \sN_i)$, where $f^l$ is the $l^{th}$ application of the function $f$.
 
 % Formal definition of a graph neural network
 
@@ -85,7 +127,7 @@ Then $\vh_i^{l+1} = f^l(\vh_i^l, \sN_i)$, where $f^l$ is the $l^{th}$ applicatio
 
 \subsubsection{As a GNN}
 
-The \emph{graph convolutional network} (GCN) follows the formulation of GNNs outlined above the simplest fashion possible.
+The \emph{graph convolutional network} (GCN) is the simplest implementation of the formulation of GNNs outlined above.
 The principle is to add the edge weighted sum of a node's neighbour representations to the current node representation.
 This maintains the graph function equivariance constraint as sum is equivariant, however, nodes with a high degree are overly represented and so each term is normalised by the degree of the connecting nodes.
 This results in the common representation of GCN as
@@ -224,7 +266,31 @@ which has eigenvalues in the range $[0,2]$ rather than remaining at or close to 
 % python unittest and typing
 % python linter through vim
 
-%MAYBE THE REQUIREMENTS ANALYSIS POST-HUMOUSLY?
+\paragraph{Programming languages}
+I use Python to write the majority of the software as there is a lot of existing support for machine learning frameworks.
+Furthermore, Python is easy to read, debug and iterate in which is very useful for developing and testing new methods.
+
+To reduce the need for human input when running multiple experiments to get confidence intervals or hyperparameter tuning I also use bash scripts.
+And to allow for easier reproducibility and iteration I utilise YAML files to store build configurations for all of my models.
+
+\paragraph{Software development}
+
+I use \texttt{NeoVim} to develop my code as this has high customisability allowing me to include specific linters to highlight bugs, typing errors and general static code analysis.
+Additionally I use a local \texttt{Tensorboard} instance to visualise and analyse progress of my experiments in realtime, \texttt{Git} and \texttt{Github} \note{Citation needed?}for version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup of experiment results.
+I occasionally used \texttt{Google Colab} for compute units to run the large experiment batches.
+
+\paragraph{Libraries}
+\label{sec:libraries}
+
+The major libraries I used where the two ML libraries \texttt{PyTorch} \note{Citation needed} and \texttt{PyTorch Geometric} \note{Citation needed} an extension to \texttt{PyTorch} which includes support for GRL.
+\texttt{PyTorch} was chosen over Tensorflow as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
+To help with running experiments, logging results and reproducibility I use \texttt{PyTorch Lightning} which handles the underlying training and testing loop while integrating with Tensorboard.
+
+For scientific computing when analysing concepts I use \texttt{Numpy}, \texttt{Scipy} and \texttt{Sklearn}. For the visualisation of graphs I use \texttt{Networkx} to draw the graphs and \texttt{Matplotlib} to visualise and store the result, I also use \texttt{Matplotlib} to visualise hyperparameter surfaces. Note that \texttt{Networkx} is included in the \texttt{PyTorch Geometric} library automatically.
+
+For unit tests I use Python's own \texttt{unittest} library, to help with software development I use Python's \texttt{typing} library alongside the built in typing functionality of my other libraries.
+
+\section{Requirements Analysis}
 
 % definitely think this is useful
 % to be figured out later
@@ -235,15 +301,45 @@ which has eigenvalues in the range $[0,2]$ rather than remaining at or close to 
 % But iterative when looking at the results and direction forward
 % sprint work style between meetings
 
+For the core of my project I adopt a Waterfall method \note{Citation needed} for my project:
+
+\begin{equation*}
+    \textit{Requirements analysis} \longrightarrow \textit{Design} \longrightarrow \textit{Implementation} \longrightarrow \textit{Testing} \longrightarrow \textit{Evaluation}
+\end{equation*}
+
+During the \textit{Design} phase I start with a skeleton implementation of the ML pipeline and focus on each of the requirements in turn carrying out both \texttt{Implementation} and \texttt{Testing} together where possible.
+At each stage I confirm that the implemented requirement integrates with the rest of the project using a combination of predetermined dummy data, dummy models and dummy concept analysis where these aspects where not yet implemented.
+\textit{Evaluation} stage includes all the experiment runs and concept analysis required to meet my success criteria replacing \textit{Operations} which is not required for my project.
+
+My extensions do not fit into the Waterfall method as they are research based in nature. I therefore switch to an Agile software development to allow the project to adjust to the experimental results achieved during development.
+
 \section{Testing}
 
 % unittest for specific sections of code and infrastructure
 % comparison to paper baselines when dealing with model implementation
+
+Machine learning does not provide precise metric against which correctness of an implementation can be verified.
+This is due to the multiple factors that contribute to a machine learning models performance such as hyperparameters, initialisation/random seeds, architecture and dataset.
+As example a trained model may result in poor results because the underlying architecture is not suited to the dataset, there is too much noise in the data to properly train, or because there is a software bug.
+Thus, unlike traditional software development, it is much harder to verify that an ML model or algorithm has been implemented correctly.
+However, my project does include software that follows traditional software development and therefore a use the following two testing approaches:
+
+\paragraph{Unit testing}
+is suitable for traditional software development where a specific result is required for specific input.
+The concept analysis and dataset handling fall into this category.
+These two aspects are therefore verified using unit testing described later. \note{Remember to include reference when complete.}
+
+\paragraph{Reproduction of prior results}
+The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}. The hyperparameters for the GCN model baseline are available in \textit{Magister et al.}\cite{magister2021gcexplainer} where accuracy scores are also published. In \note{Reference the section when complete} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
 
 \section{Licensing}
 
 % Definitely need to research this aspect
 
 \section{Starting Point}
+
+My starting point is the same as the starting point declared in my proposal except for the additional information that the research paper over the summer has resulted in an acceptance to Learning on Graphs 2022.
+I use the \texttt{PyTorch Geometric} implementation of GCN layers to build the GCN network, as this is just a baseline model. I also rely on the libraries discussed in \Sref{sec:libraries}.
+Aside from these dependencies I built the project from scratch.
 
 % Discussion of summer project using the same rough build environment
