@@ -3,6 +3,7 @@
 \section{Background}
 
 \section{Graph Representational Learning}
+\label{sec:GRL}
 
 % Formal definition of graph based data
 
@@ -222,6 +223,7 @@ which has eigenvalues in the range $[0,2]$ rather than remaining at or close to 
 %% Discuss solutions and the chosen solution for this project
 
 \subsection{Graph Concept Explainer}
+\label{sec:GCE}
 
 % The motivation for the paper
 
@@ -246,17 +248,82 @@ which has eigenvalues in the range $[0,2]$ rather than remaining at or close to 
 % There may be more details about implementation
 % May need chapters here or somewhere else about inductive v. transductive!!
 
-\subsection{Synthetic}
+To evaluate different GNNs using the metrics described in \Sref{sec:GCE} a trained model needs to be evaluated on specific graphs and concepts extracted from the models inference.
+To train the model the a notion of a graph dataset needs to be defined.
+As described in \Sref{sec:GRL} there three different classification tasks commonly carried out on graphs (though only two are considered) therefore there are three different notions of a graph dataset.
+Node classification datasets assign a class to each node in the dataset, thus each graph has an associated vector, $\vy$, of classifications.
+Comparitively, graph classification datasets assign a single value to the entire graph and so each graph is associated with a single value $y$.
+A graph dataset is therefore described by its collection of graphs and corresponding labels, $\{(\sG, \vy)\}$ in the case of node classification and $\{(\sG, y)\}$ in the case of graph classification.
+
+However, node classification datasets generally include a single \emph{connected} graph where, in the undirected case, there exists at least one path from every node to every other node.
+This creates another distinction between two types of graph datasets:
+
+\paragraph{Transductive datasets} are datasets where during training the node representations of nodes outside of the training set are ``seen'' by the model but importantly the model does not ``see'' the labels for these nodes.
+The model will later be tested on the labels of these additional nodes without access to the training sets labels.
+This is because the training, validation and test sets are sampled from the nodes, but if only these nodes where given to the model the structure of the graph is lost and a large proportion of the nodes will no longer be connected.
+\note{Include a diagram!}.
+This dataset forces the model to transfer knowledge about existing representation, label pairs to unlabelled nodes.
+
+\paragraph{Inductive datasets} are datasets where the nodes ``seen'' during training, validation and testing are completely disjoint.
+This is generally the case in graph classification tasks where each data point is a unique graph with a classification thus the test set is a new set of graphs with completely unseen nodes.
+This dataset forces the model to induce information of relationships between nodes and optimal representations.
+
+As an extension to my project I extended SGC to apply to graph classification tasks thus allowing for analysis of both the transductive and inductive cases of GNNs as well as node and graph classification.
+
+\subsection{Synthetic Datasets}
 
 % From GRL and the overview discuss a bottom up approach
 % Discuss how certain properties can be instilled
 % Relation to graph theory or importance thereof
 
-\subsection{Real-World}
+To better visualise and analyse concepts for GNNs it is easier to construct graphs with specific properties that produce easy to interpret concepts.
+Because these graphs are generated based on desired properties they are considered synthetic graphs.
+As discussed in \Sref{sec:GCE} there are five synthetic graphs that were used to analyse concepts for a GCN model.
+The construction of these graphs includes a base graph onto which multiple copies of the same \emph{motif} are attached.
+The motifs and the base graph have different classifications and the goal is to correctly classify which classification a node belongs to, that is which graph structure is the node part of.
+
+\Sref{sec:GCE} describes the idea of motifs that can be recognised by a GNN and used whilst classifying a node or a graph.
+
+\paragraph{Motifs} are highly ordered graph structures that are easy to identify and differ from the structure of the base graph.
+\note{Include diagram of the motifs!}
+The five motifs can be seen in the figure \note{reference the figure}.
+As these motifs are also very simple they speed up the intensive process of calculating concept purity.
+
+The following two graphs are used as base graphs:
+
+\paragraph{Barabasi-Albert}
+a densely connected graph where nodes are probabilisitically connected to each other.
+The probability of a node connecting to another depends on the existing degree of the node thus keeping limiting the maximum degree of a node in the graph.
+
+\paragraph{Tree}
+a binary symmetric tree of height 8 and is therefore very sparse in comparison to Barabasi.
+These two base graphs provide two different scenarios to compare a models ability to identify the motifs accurately.
+
+Not all motifs and base graphs are paired together and only BA-Shapes\footnote{Which utilises the house motif}, BA-Grid, Tree-Grid and Tree-Cycles are considered.
+There is an additional synthetic dataset, BA-Community, which combines two BA-Shapes graphs and requires the model distinguish between the communities as well as identify the motifs.
+
+Node features for all the graphs are all-$1$ vectors of length 10, except in the case of BA-Community where one of the communities has all-$2$ vectors of length 10.
+
+\subsection{Real-World Datasets}
 
 % Linking to motivation and GRL
 % Demonstrating that these techniques are important for real world use
 % Discussions of the short comings of this approach
+
+As an extension and to produce meaningful results that reflect real-world applications of GNNs two real world datasets are also tested against.
+These two datasets are graph classification datasets and therefore inductive datasets compared to the transductive synthetic datasets.
+These datasets are part of TUDataset \cite{Morris+2020} available through \texttt{PyTorch Geometric}.
+
+\paragraph{REDDIT BINARY}
+is a dataset where each graph represents a discussion on Reddit with nodes being users and an edge represents one user responding to anothers comment.
+The discussions are sampled from IAmA, AskReddit, TrollXChromosomes, and atheism.
+IAmA and AskReddit are question-answer based whereas TrollXChromosomes and atheism are discussion based.
+The task is to classify the graphs as question-answer or discussion based.
+
+\paragraph{Mutagenicity}
+is a dataset where each graph is a chemical compound where nodes are atoms and edges are chemical bonds.
+The chemical compounds correspond to drugs some of which are mutagens and the rest are not.
+The task is to classify the graphs as to whether or not they are mutagens.
 
 \section{Tools Used}
 
