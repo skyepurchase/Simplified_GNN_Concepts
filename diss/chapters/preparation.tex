@@ -15,23 +15,31 @@ Two nodes of the graph, $v_i, v_j \in \sV$, are \emph{connected} if and only if 
 Each node, $v_i \in \sV$, has associated data represented by the \emph{feature vector} $\vx_i = \emX_{i,\star}$ the $i^{th}$ row of $\mX$.
 
 The edges can be represented as an \emph{adjacency matrix}, $\mA$, where 
-
-\begin{equation*}
-\emA_{ij} = \begin{cases}1 &\text{if $(v_i, v_j) \in \sE$} \\ 0 &\text{otherwise}\end{cases}.
-\end{equation*}
-
+\begin{equation}
+    \label{eq:adj}
+    \emA_{ij} = \begin{cases}1 &\text{iff $(v_i, v_j) \in \sE$} \\ 0 &\text{otherwise}\end{cases}.
+\end{equation}
 This allows the edge information to be passed to a NN as another feature vector along with $\mX$.
-Furthermore, each node, $v_i \in \sV$, has \emph{neighbours} which is set of connected nodes, $\sN_i = \{v_j | (v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE\}$.
+Furthermore, each node, $v_i \in \sV$, has \emph{neighbours} which is set of connected nodes,
+\begin{equation}
+    \label{eq:neighbour}
+    \sN_i = \{v_j | (v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE\}.
+\end{equation}
 An element of $\sN$ is a therefore a \emph{neighbour} of the node $v_i$.
-For ease of writing $\mX_{\sN_i}$ represents the features of the neighbours of $v_i$ defined as $\mX_{\sN_i} = \{\{\vx_j | v_j \in \sN_i\}\}$.\footnote{As the neighbours may have the same feature vector this must be a multiset.}
+For ease of writing $\mX_{\sN_i}$ represents the features of the neighbours of $v_i$ defined as 
+\begin{equation}
+    \label{eq:neighbour-reps}
+    \mX_{\sN_i} = \{\{\vx_j | v_j \in \sN_i\}\}.\footnote{As the neighbours may have the same feature vector this must be a multiset.}
+\end{equation}
 %If there is data associated with the edges, such as edge weights, this value is stored in the adjacency matrix.
 %An unweighted graph can be described as a weighted graph with edge weights of value $1$.
 %Adjacency matrices can be very sparse, meaning they have very few non-zero values, and therefore the matrix is commonly stored in a \emph{coordinate matrix} (COO) of size $2 \times N$ for $N$ edges in the graph thus only storing edge information.
 
 % Formal definition of representational learning
 
-The goal of \emph{graph representational learning} (GRL) is to find, for each $v_i \in \sV$, a vector $\vh_i$ based on the the input features $\mX$ and adjacency matrix $\mA$.
-$\vh_i$ is known as the \emph{node representation} and $\mH$ is the total graph representation where $\mH_{i, \star} = \vh_i$.
+The goal of \emph{graph representational learning} (GRL) is to find, for each $v_i \in \sV$, a vector $\vh_i^{(l)}$ based on the the input features $\mX$ and adjacency matrix $\mA$, where $\vh_i^{(0)} = \vx_i$.
+$\vh_i^{(l)}$ is lnown as the \emph{node representation} after the $l^{th}$-layer and $\mH^{(l)}$ is the total graph representation where $\mH_{i, \star}^{(l)} = \vh_i^{(l)}$.
+%It is therefore important to consider an updated version of equation \ref{eq:neighbour-reps} as $mH_{\sN_i}^{(l)} = \{\{\vh_j^{(l)} | v_j \in \sN_i\}\}$ however $\mX_{\sN_i}$ will be used and the
 
 % Comparison of graph, edge and node based learning
 
@@ -98,11 +106,18 @@ Thus
         &= \mP F(\mX, \mA).
 \end{align*}
 
-\error{Fill in the remainder.}
+Therefore a GNN layer requires a local permutation-invariant function $\bm{\phi}$.
+specifically, the function can be broken down into an ``update'' function, $\bm{\varphi}$, applied to the current node and a permutation-invariant operation on the neighbourhood as this holds the permutation-invariance property.
+A further function, $\bm{\psi}$, is also introduced to act on the neighbour node representations.
+The definition of such functions is still an active area of research and so for the purposes of this dissertation only the convolutional approach is considered:
+\begin{equation}
+    \label{eq:conv-def}
+    \bm{\phi}(\vx_i, \mX_{\sN_i}) = \bm{\varphi}(\vx_i, \bigoplus_{\vx_j \in \mX_{\sN_i}}c_{ij}\bm{\psi}(\vx_j))
+\end{equation}
 
 %This function can be described by a function, $f$, which acts on a single node, $v_i$, using the feature vector, $\vx_i$, and neighbours, $\sN_i$.
-%Rather than $f$ being applied to the input features consider some node representation $\vh_i^l$ after $l$ iterations, where $\vh_i^0 = \vx_i$.
-%Then $\vh_i^{l+1} = f^l(\vh_i^l, \sN_i)$, where $f^l$ is the $l^{th}$ application of the function $f$.
+%Rather than $f$ being applied to the input features consider some node representation $\vh_i^{(l)}$ after $l$ iterations, where $\vh_i^0 = \vx_i$.
+%Then $\vh_i^{(l+1)} = f^{(l)}(\vh_i^{(l)}, \sN_i)$, where $f^{(l)}$ is the $l^{th}$ application of the function $f$.
 
 % Formal definition of a graph neural network
 
@@ -121,6 +136,7 @@ Thus
 %% potentially a brief discussion on the importance of this concept
 
 \subsection{Graph Convolutional Network}
+\label{sec:GCN}
 
 % Formal implementation of Graph Convolutional Network
 
@@ -135,25 +151,32 @@ This results in the common representation of GCN as
 
 \begin{equation}
     \label{eq:GCN-as-GNN}
-    f(\vh_i^l, \mA) = \frac1{d_i + 1}\vh_i^l + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{l},
+    f(\vh_i^{(l)}, \mA) = \frac1{d_i + 1}\vh_i^{(l)} + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{(l)},
 \end{equation}
 \begin{equation}
-    \vh_i^{l+1} = \sigma(f(\vh_i^l, \mA)\theta_i^l)
+    \vh_i^{(l+1)} = \sigma(f(\vh_i^{(l)}, \mA)\theta_i^{(l)})
 \end{equation}
 
-where $d_i$ is the degree of node $v_i$, $d_i = \sum_j^N \emA_{i,j}$, $\theta_i^l$ is a learnable parameter, and $\sigma$ is an activation function.
+where $d_i$ is the degree of node $v_i$, $d_i = \sum_j^N \emA_{i,j}$, $\theta_i^{(l)}$ is a learnable parameter, and $\sigma$ is an activation function. Comparing to equation \ref{eq:conv-def} $c_{ij} = \frac1{\sqrt{(d_i + 1)(d_j + 1)}}$ and $\sum_j^N$ is equivalent to $\bigoplus_{\vx_j \in \mX_{\sN_i}}$ as 
+
+\begin{align*}
+    &\vx_j \in \mX_{\sN_i} \\
+    \iff &j \in \sN_i &&\text{by def. \ref{eq:neighbour-reps}} \\
+    \iff &(v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE &&\text{by def. \ref{eq:neighbour}} \\
+    \iff &A_{ij} = 1 &&\text{by def. \ref{eq:adj}}
+\end{align*}
 
 To better demonstrate that the same operation is being applied to each neighbouring representation (including the nodes current representation) equation \ref{eq:GCN-as-GNN} may be rewritten as
 
 \begin{equation}
     \label{eq:same-op}
-    f(\vh_i^l, \mA) = (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^l + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_i + 1)^{-\frac12}\vh_j^{l}.
+    f(\vh_i^{(l)}, \mA) = (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^{(l)} + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_i + 1)^{-\frac12}\vh_j^{(l)}.
 \end{equation}
 
-Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$, and $\mH^l$ the node representations of the graph after layer $l$. Equation \ref{eq:same-op} can now be compactly described as 
+Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$, and $\mH^{(l)}$ the node representations of the graph after layer $l$. Equation \ref{eq:same-op} can now be compactly described as 
 
 \begin{equation}
-    F(\mH^l, \mA) = (\mD + 1)^{-\frac12}(\mA + \mI)(\mD + 1)^{-\frac12}\mH^l.
+    F(\mH^{(l)}, \mA) = (\mD + 1)^{-\frac12}(\mA + \mI)(\mD + 1)^{-\frac12}\mH^{(l)}.
 \end{equation}
 
 Let $\widetilde{\mA} = \mA + \mI$, then $\widetilde{\mD} = \sum_j^N \widetilde{\mA} = \sum_j^N[\mA] + 1 = \mD + 1$.
@@ -166,11 +189,11 @@ This reformulation gives the following graph operator
 Thus a standard GCN layer can be interpretted as a graph operator and parameterised non-linearity, giving
 \begin{align}
     \label{eq:GCN1}
-    \mH^{l+1} & = \sigma(\mS\mH^l\bm{\Theta})
+    \mH^{(l+1)} & = \sigma(\mS\mH^{(l)}\bm{\Theta}^{(l)})
 \end{align}
 %resulting in the following formulation
 %\begin{equation}
-%    F(\mH^l, \mA) = \mS\mH.
+%    F(\mH^{(l)}, \mA) = \mS\mH.
 %\end{equation}
 
 %The function is parameterised by a weight matrix, $\bm{\Theta}$, to give a single layer 
@@ -187,7 +210,7 @@ As an analogy to classical Fourier analysis the operation is defined in the spec
 Let $\mL$ be the graph Laplacian with eigendecomposition $\mU\bm{\Lambda}\mU^T$ where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$. Define $\hat{\vh_i}$, the graph Fourier transform of the signal, as
 \begin{equation}
     \label{eq:graph-fourier}
-    \hat{\vh_i} = U^T\vh_i.
+    \hat{\vh_i} = \mU^T\vh_i.
 \end{equation}
 
 Equation \ref{eq:graph-fourier} carries out the dot product between $\vh_i$ and each of the eigenvectors of the graph Laplacian, $\mL$.
@@ -230,7 +253,7 @@ Using the normalised graph Laplacian, $\mL = \mI - \mD^{-\frac12}\mA\mD^{-\frac1
 Applying an individual paramaterised filter to each signal, that is each node, in the graph results in the following formulisation
 \begin{equation}
     \label{eq:GCN2}
-    \mZ = (\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\mH\bm{\Theta}
+    \mH^{(l+1)} = \sigma((\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\mH^{(l)}\bm{\Theta}^{(l)})
 \end{equation}
 
 \textit{Kipf et al.}\cite{kipf2016semi} apply the following renormalisation to equation \ref{eq:no-norm} to reduce the size of the eigenvalues and therefore the instability due to vanishing/exploding gradients
@@ -260,6 +283,16 @@ By considering multiple layers to allow for more complex inference given the red
 
 %% Reiterate the points made in the introduction
 %% Now specifically highlight these areas in the GCN formulisation
+
+As both approaches in \Sref{sec:GCN} demonstrate a GCN can be broken down into individual layers, containing a linear graph operation on the current node representations, stacked together using a non-linear activation function.
+This means that the $k^{th}$-layer node representation requires the calculation of all the non-linear activations up until this layer.
+This is apparent when looking at the formulation in equation \ref{eq:GCN1}.
+
+If the model is used for node classification the standard approach is to use a final linear classifier with \emph{softmax} resulting in 
+\begin{equation}
+    \label{eq:cls}
+    \hat\mY = \operatorname{softmax}(\mS\mH^({K-1})\bm{\Theta}^(K))
+\end{equation}
 
 % Demonstration of how the GCN leads to the SGC
 
