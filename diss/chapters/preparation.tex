@@ -134,42 +134,112 @@ This maintains the graph function equivariance constraint as sum is equivariant,
 This results in the common representation of GCN as
 
 \begin{equation}
-    f(\vh_i^l) = \frac1{d_i + 1}\vh_i^l + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{l},
+    \label{eq:GCN-as-GNN}
+    f(\vh_i^l, \mA) = \frac1{d_i + 1}\vh_i^l + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{l},
+\end{equation}
+\begin{equation}
+    \vh_i^{l+1} = \sigma(f(\vh_i^l, \mA)\theta_i^l)
 \end{equation}
 
-where $d_i$ is the degree of node $v_i$, $d_i = \sum_j^N \emA_{i,j}$.
+where $d_i$ is the degree of node $v_i$, $d_i = \sum_j^N \emA_{i,j}$, $\theta_i^l$ is a learnable parameter, and $\sigma$ is an activation function.
 
-To better demonstrate that the same operation is being applied to each neighbouring representation (including the nodes current representation) the equation may be rewritten as
+To better demonstrate that the same operation is being applied to each neighbouring representation (including the nodes current representation) equation \ref{eq:GCN-as-GNN} may be rewritten as
 
 \begin{equation}
-    f(\vh_i^l) = (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^l + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_i + 1)^{-\frac12}\vh_j^{l}.
+    \label{eq:same-op}
+    f(\vh_i^l, \mA) = (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^l + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_i + 1)^{-\frac12}\vh_j^{l}.
 \end{equation}
 
-Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$, and $\mH^l$ the node representations of the graph after layer $l$. The above equation can now be compactly described as 
+Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$, and $\mH^l$ the node representations of the graph after layer $l$. Equation \ref{eq:same-op} can now be compactly described as 
 
 \begin{equation}
-    F(\mH^l) = (\mD + 1)^{-\frac12}(\mA + \mI)(\mD + 1)^{-\frac12}\mH^l.
+    F(\mH^l, \mA) = (\mD + 1)^{-\frac12}(\mA + \mI)(\mD + 1)^{-\frac12}\mH^l.
 \end{equation}
 
 Let $\widetilde{\mA} = \mA + \mI$, then $\widetilde{\mD} = \sum_j^N \widetilde{\mA} = \sum_j^N[\mA] + 1 = \mD + 1$.
-Ignoring the application and looking only at the operator which will be called $\mS$, the other representation of a GCN layer is
+This reformulation gives the following graph operator 
 \begin{equation}
+    \label{eq:op}
     \mS = \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12}.
 \end{equation}
 
+Thus a standard GCN layer can be interpretted as a graph operator and parameterised non-linearity, giving
+\begin{align}
+    \label{eq:GCN1}
+    \mH^{l+1} & = \sigma(\mS\mH^l\bm{\Theta})
+\end{align}
+%resulting in the following formulation
+%\begin{equation}
+%    F(\mH^l, \mA) = \mS\mH.
+%\end{equation}
+
+%The function is parameterised by a weight matrix, $\bm{\Theta}$, to give a single layer 
+
 \subsubsection{As a convolution}
+\note{This section needs a lot of rewriting and potentially to be scrapped entirely.}
 
-The above formulation is often derived from the principle of a convolution applied to the graph.
-From this view point $\widetilde{\mA}$ represents a renormalisation of the convolution by adding self-loops where every node in the graph is connected to itself.
-The motivation is to prevent exploding/vanishing weights that occur from the approximate graph convolution
+To motivate the idea of the simple graph convolution (SGC) it is important to think of $\mS$ from a different perspective, as a graph operator first.
 
+The idea behind a convolution is a multiplication of two functions together, in this case a signal, represented by the node representation $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
+\footnote{The signal is a function $\vh : \sV \to \R^n$ however as the nodes are fixed each signal can be represented as a vector using the notation $\vh_i \equiv \vh(v_i)$.}
+As an analogy to classical Fourier analysis the operation is defined in the spectral domain of the graph allowing for the convolution to be a pointwise product.
+
+Let $\mL$ be the graph Laplacian with eigendecomposition $\mU\bm{\Lambda}\mU^T$ where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$. Define $\hat{\vh_i}$, the graph Fourier transform of the signal, as
 \begin{equation}
-    \mS = \mI + \mD^{-\frac12}\mA\mD^{-\frac12}
+    \label{eq:graph-fourier}
+    \hat{\vh_i} = U^T\vh_i.
 \end{equation}
 
-which has eigenvalues in the range $[0,2]$ rather than remaining at or close to $1$.
+Equation \ref{eq:graph-fourier} carries out the dot product between $\vh_i$ and each of the eigenvectors of the graph Laplacian, $\mL$.
+This corresponds to the ``frequency'' of the signal $\vh_i$ with respect to the frequencies of the graph.
+This transforms $\vh_i$ into its frequency components according to the spectral domain of the graph.
 
-\error{How do convolutions and spectral filters arrive at this stage?}
+The same process in equation \ref{eq:graph-fourier} is applied to $f_\theta$ to produce $\hat f_\theta$.
+$\hat\vh_i$ and $\hat f_\theta$ are now both defined in the graph spectral domain allowing the convolution to be a pointwise product\footnote{Also known as the Hadamard product.} followed by an inverse graph Fourier transform. To simplify the equation define 
+\begin{equation}
+    \label{eq:filter1}
+    \hat\mF_{\bm{\theta}} = \operatorname{diag}\hat f_\theta = \operatorname{diag}{\bm{\theta}}
+\end{equation}
+where $\bm{\theta}$ is a vector of parameters which can be learnt by a NN. Resulting in the following formalisation of a graph convolution
+\begin{equation}
+    \label{eq:graph-conv}
+    f_\theta *_\sG \vh_i = \mU\hat\mF_{\bm{\theta}}\mU^T\vh_i.
+\end{equation}
+
+As equation \ref{eq:filter1} requires a learnable parameter for each dimension of $\vh_i$ this filter will grow in size with the data and is therefore unsuitable for learning. Instead a polynomial in terms of powers of the spectral matrix $\bm{\Lambda}$ yields the suitable filter
+\begin{equation}
+    \label{eq:filter}
+    \hat\mF_{\bm{\theta}} = \sum_{i=0}^k\theta_j\bm{\Lambda}^j.
+\end{equation}
+
+\textit{Kipf et al.}\cite{kipf2016semi} suggest using $k=1$ in equation \ref{eq:filter} which in turn simplifies equation \ref{eq:graph-conv} and is equivalent to a linear function on the graph Laplacian. To address overfitting the number of learnable parameters can be reduced by defined $\theta = \theta_0 = -\theta_1$. The resulting graph convolution is
+\begin{equation}
+    \label{eq:GCN-comp}
+    f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i = \theta(\mI - \mL)\vh_i.
+\end{equation}
+
+Computation of the eigendecomposition of $\mL$ may be too expensive for large graphs and so \textit{Hammond et al.}\note{citation needed} suggest using Chebyshev polynomials\note{citation needed? maybe appendix}.
+With the additional assumption that a NN can adapt to scaling we assume that the maximum eigenvalue is approximately $2$.
+This results in the first order Chebyshev polynomial is $\mL - \mI$.
+Using the normalised graph Laplacian, $\mL = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$, where $\mD$ is the degree matrix of the graph, equation \ref{eq:GCN-comp} becomes
+\begin{equation}
+    \label{eq:no-norm}
+    f_\theta *_\sG \vh_i \approx \theta(\mI - (\mL - \mI))\vh_i = \theta(\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\vh_i.
+\end{equation}
+
+Applying an individual paramaterised filter to each signal, that is each node, in the graph results in the following formulisation
+\begin{equation}
+    \label{eq:GCN2}
+    \mZ = (\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\mH\bm{\Theta}
+\end{equation}
+
+\textit{Kipf et al.}\cite{kipf2016semi} apply the following renormalisation to equation \ref{eq:no-norm} to reduce the size of the eigenvalues and therefore the instability due to vanishing/exploding gradients
+\begin{equation}
+    \label{eq:norm}
+    \mI + \mD^{-\frac12}\mA\mD^{-\frac12} \to \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12} = \mS.
+\end{equation}
+
+By considering multiple layers to allow for more complex inference given the reduced parameters in equation \ref{eq:GCN2} and the renormalisation in equation \ref{eq:norm} it is clear that the graph operator in equation \ref{eq:op} is a normalised graph spectral filter.
 
 %= \widetilde{\textbf{D}}^{-\frac12}\widetilde{\mA}\widetilde{\textbf{D}}^{-\frac12}\mX\textbf{\Theta}$
 
@@ -356,7 +426,7 @@ To help with running experiments, logging results and reproducibility I use \tex
 
 For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX} to draw the graphs and \texttt{Matplotlib} to visualise and store the result, I also use \texttt{Matplotlib} to visualise hyperparameter surfaces. Note that \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library automatically.
 
-For unit tests I use Python's own \texttt{unittest} library, to help with software development I use Python's \texttt{typing} library alongside the built in typing functionality of my other libraries. Additionally I occasionally use \texttt{tqdm} to visualise progress during concept analysis.
+For unit tests I use Python's own \texttt{unittest} library, to help with software development I use Python's \texttt{typing} library alongside the built in typing functionality of the other libraries. Additionally I use \texttt{tqdm} to visualise progress during concept analysis.
 
 \section{Requirements Analysis}
 
