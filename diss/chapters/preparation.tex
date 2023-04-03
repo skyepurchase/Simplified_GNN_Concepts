@@ -37,7 +37,7 @@ For ease of writing $\mX_{\sN_i}$ represents the features of the neighbours of $
 
 % Formal definition of representational learning
 
-The goal of \emph{graph representational learning} (GRL) is to find, for each $v_i \in \sV$, a vector $\vh_i^{(l)}$ based on the the input features $\mX$ and adjacency matrix $\mA$, where $\vh_i^{(0)} = \vx_i$.
+The goal of \emph{graph representational learning} is to find, for each $v_i \in \sV$, a vector $\vh_i^{(l)}$ based on the the input features $\mX$ and adjacency matrix $\mA$, where $\vh_i^{(0)} = \vx_i$.
 $\vh_i^{(l)}$ is lnown as the \emph{node representation} after the $l^{th}$-layer and $\mH^{(l)}$ is the total graph representation where $\mH_{i, \star}^{(l)} = \vh_i^{(l)}$.
 %It is therefore important to consider an updated version of equation \ref{eq:neighbour-reps} as $mH_{\sN_i}^{(l)} = \{\{\vh_j^{(l)} | v_j \in \sN_i\}\}$ however $\mX_{\sN_i}$ will be used and the
 
@@ -176,10 +176,10 @@ To better demonstrate that the same operation is being applied to each neighbour
 Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$, and $\mH^{(l)}$ the node representations of the graph after layer $l$. Equation \ref{eq:same-op} can now be compactly described as 
 
 \begin{equation}
-    F(\mH^{(l)}, \mA) = (\mD + 1)^{-\frac12}(\mA + \mI)(\mD + 1)^{-\frac12}\mH^{(l)}.
+    F(\mH^{(l)}, \mA) = (\mD + \mI)^{-\frac12}(\mA + \mI)(\mD + \mI)^{-\frac12}\mH^{(l)}.
 \end{equation}
 
-Let $\widetilde{\mA} = \mA + \mI$, then $\widetilde{\mD} = \sum_j^N \widetilde{\mA} = \sum_j^N[\mA] + 1 = \mD + 1$.
+Let $\widetilde{\mA} = \mA + \mI$, then $\widetilde{\emD}_{ii} = \sum_j^N \widetilde{\emA}_{ij} = \sum_j^N \emA_{ij} + 1 = \emD_{ii} + 1$ thus $\widetilde{\mD} = \mD + \mI$.
 This reformulation gives the following graph operator 
 \begin{equation}
     \label{eq:op}
@@ -199,6 +199,7 @@ Thus a standard GCN layer can be interpretted as a graph operator and parameteri
 %The function is parameterised by a weight matrix, $\bm{\Theta}$, to give a single layer 
 
 \subsubsection{As a convolution}
+\label{sec:conv}
 \note{This section needs a lot of rewriting and potentially to be scrapped entirely.}
 
 To motivate the idea of the simple graph convolution (SGC) it is important to think of $\mS$ from a different perspective, as a graph operator first.
@@ -277,6 +278,12 @@ By considering multiple layers to allow for more complex inference given the red
 %% Description of the fact that this is the first graph approach
 %% Maybe a link to DeepSet
 
+If the model is used for node classification the standard approach is to use a final linear classifier with \emph{softmax} resulting in 
+\begin{equation}
+    \label{eq:cls}
+    \hat\mY = \operatorname{softmax}(\mS\mH^{(k-1)}\bm{\Theta}^{(k)}).
+\end{equation}
+
 \subsection{Simplified Graph Convolution}
 
 % Motivation behind SGC
@@ -288,11 +295,38 @@ As both approaches in \Sref{sec:GCN} demonstrate a GCN can be broken down into i
 This means that the $k^{th}$-layer node representation requires the calculation of all the non-linear activations up until this layer.
 This is apparent when looking at the formulation in equation \ref{eq:GCN1}.
 
-If the model is used for node classification the standard approach is to use a final linear classifier with \emph{softmax} resulting in 
+\paragraph{Linearization.}
+Considering the linear graph operation as a normalised spectral filter as described in \Sref{sec:conv} the non-linearity between layers may be considered non-critical to GCN performance.
+Instead the benefit comes from successive applications of the filter on the node representations of the graph.
+\textit{Wu et al.}\cite{wu2019simplifying} consider this hypothesis citing the benefit arises from the local averaging as apparent in the graph operation formulation described in \Sref{sec:conv}.
+The resulting model is therefore a linear multiplication of the normalised spectral filters and parameter matrix.
+Considering the node classification equation, \ref{eq:cls}, becomes
 \begin{equation}
-    \label{eq:cls}
-    \hat\mY = \operatorname{softmax}(\mS\mH^({K-1})\bm{\Theta}^(K))
+    \hat\mY = \operatorname{softmax}(\mS\cdots\mS\mX\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}),
 \end{equation}
+where the filter is applied $k$ times to allow for the retention of the receptive field.
+As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameter $\bm{\Theta} = \bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}$.
+The final linearised model, SGC, is therefore
+\begin{equation}
+    \hat\mY = \operatorname{softmax}(\mS^{k}\mX\bm{\Theta}).
+\end{equation}
+
+As $\mS$ is fixed for a specific graph $\mS^{(k)}\mX$ is also fixed for a specific node features $\mX$.
+Thus SGC can be broken down into a representation extraction component, $\bar\mX = \mS^{(k)}\mX$, and a classification component, $\hat\mY = \operatorname{softmax}(\bar\mX\bm{\Theta})$.
+This allows for $\bar\mX$ to be precomputed for fixed node features $\mX$ reducing the training cost.
+Furthermore, different node features can be easily calculated as $\mS^{(k)}$ can be precomputed separately.
+
+Rather than considering how many layers an SGC model has the equivalent notion of \emph{degree} is used where the degree is the power of $\mS$.
+This directly corresponds to the receptive field of the model where a $k$-degree SGC model has the same receptive field as a $k$-layer GCN model.
+
+\paragraph{Drawbacks}
+\note{\textit{Chanpuriya et al.}\cite{chanpuriya2022simplified} does not explicitly suggest this, I thought I had seen it somewhere but maybe not}
+of SGC include vanishing/exploding values in $\bm{\Theta}$ as the degree of the model increases and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of an entire graphs nodes.}.
+However, for the purposes of this project the main issue is the fact that SGC has a fixed feature extraction step where the model cannot influence the resulting node representations.
+Extensions presented in \note{add references when sections finished} address and aim to fix this issue.
+
+%The fomulation in equation \ref{GCN-as-GNN} highlights that at after each layer each node representation includes a representation of its immediate neighbours.
+%This means that the $k^{th}$-layer node representations are influenced by the node representations at most $k$-hops away. 
 
 % Demonstration of how the GCN leads to the SGC
 
