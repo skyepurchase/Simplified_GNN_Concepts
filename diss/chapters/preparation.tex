@@ -357,11 +357,36 @@ Furthermore, as GNNs utilise both graph structure and node features concepts can
 
 %% Again this requires proper reading in the subject see above
 
+A concept can be considered an ``interpretable'' high-level units which are more understandable to a human than the standard input units such as inidividual features, pixels or characters.
+A precise definition of a concept in the general sense is hard to formalise.
+\textit{Ghorbani et al.}\note{Cite Towards automatic concept-based explanations} instead propose the following desired properties
+\begin{itemize}
+    \item[]
+        \smalltitle{Meaningfulness}
+        dictates that the concept is semantically meaningful on its own.
+        That is there is not requirement of additional concepts to provide semantic meaning.
+        An example is an object such as ``Apple'' or ``Personal Pronoun'' rather than an individual pixel or character.
+    \item[]
+        \smalltitle{Coherency}
+        requires examples within a concept be perceptually the same or similar to each other whilst simultaneously being different from examples within other concepts.
+        This constraint can be taken further to desire a concept contains identical examples.
+        An example is ``Stripes'' containing examples of only stripes and no examples of circles if ``Circles'' is another concept.
+    \item[]
+        \smalltitle{Importance}
+        represents how necessary the presence of a concept is to the prediction of a class.
+        For example the classification of a specific object requires that object's concept to be present by the concepts associated with the background are not.
+\end{itemize}
+
 % Relating the explanation to graph based Datasets
 
 %% Demonstrate the idea of concepts translates to subgraphs
 %% Focus on the node classification task for this explanation
 %% Potentially a motivating example
+
+\paragraph{Graph concepts} can therefore be described in the units of subgraphs of the input graph.
+These subgraphs can therefore represent both the structure and the node features that represent the quintessential properties of a given concept.
+The concepts can still satisfy the above desiderata as meaningfulness relates to receptive field of a concepts central node, coherency relates to the graph isomorphy, and importance relates to whether a graph can be classified based on its subgraphs.
+\note{Include a diagram, also for the above text.}
 
 % Discussion of complications when looking at graph classification
 
@@ -413,6 +438,13 @@ This process is therefore tied to classification, however due to the fact that c
 
 %% The improvements seen in the paper in regards to visual comparison
 %% The clear metrics for comparison
+
+\paragraph{Concept extraction}
+uses $k$-Means clustering\note{Citation needed} on the activation space of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
+This clusters nodes by the similarity of the representations as this is equivalent to the model treating these nodes as the same concept.
+Concept subgraphs are then generating by taking the $n$-hop neighbourhood of nodes closest to a clusters centre representing the quintessential subgraphs of a concept.
+Both $k$ and $n$ are tunable parameters where concept completeness and purity guide the choice in values.
+For the purposes of SGC the same process is carried out on $\bar\mX$, the pre-computed features.
 
 \paragraph{Comparing concepts} between two models trained on the same dataset can give an indication as to how the two models differ in their inference.
 Furthermore, the differences present between the two models provides further insight into how the models reason about the task.
