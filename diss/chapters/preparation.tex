@@ -2,7 +2,7 @@
 
 \section{Background}
 
-\section{Graph Representational Learning}
+\section{Graph representational learning}
 \label{sec:GRL}
 
 % Formal definition of graph based data
@@ -52,7 +52,7 @@ For the remainder of this dissertation only node and graph classification will b
 Node classification classifies each node solely on the final node representation $\vh_i$.
 Comparitively graph classification aggregates all of the node representations and classifies the entire graph accordingly.
 
-\subsection{Graph Neural Networks}
+\subsection{Graph neural networks}
 
 %% Formal definition of a function on this graph
 %%      Think about Petars talk here
@@ -135,7 +135,7 @@ The definition of such functions is still an active area of research and so for 
 %% Highlight the concept of non-linear layers
 %% potentially a brief discussion on the importance of this concept
 
-\subsection{Graph Convolutional Network}
+\subsection{Graph convolutional network}
 \label{sec:GCN}
 
 % Formal implementation of Graph Convolutional Network
@@ -284,7 +284,7 @@ If the model is used for node classification the standard approach is to use a f
     \hat\mY = \operatorname{softmax}(\mS\mH^{(k-1)}\bm{\Theta}^{(k)}).
 \end{equation}
 
-\subsection{Simplified Graph Convolution}
+\subsection{Simplified graph convolution}
 
 % Motivation behind SGC
 
@@ -321,7 +321,7 @@ This directly corresponds to the receptive field of the model where a $k$-degree
 
 \paragraph{Drawbacks}
 \note{\textit{Chanpuriya et al.}\cite{chanpuriya2022simplified} does not explicitly suggest this, I thought I had seen it somewhere but maybe not}
-of SGC include vanishing/exploding values in $\bm{\Theta}$ as the degree of the model increases and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of an entire graphs nodes.}.
+of SGC include vanishing/exploding values in $\bm{\Theta}$ as the degree of the model increases and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of the graphs nodes.}.
 However, for the purposes of this project the main issue is the fact that SGC has a fixed feature extraction step where the model cannot influence the resulting node representations.
 Extensions presented in \note{add references when sections finished} address and aim to fix this issue.
 
@@ -340,7 +340,16 @@ Extensions presented in \note{add references when sections finished} address and
 
 %% This needs some proper reading in the topic see below
 
-% This probabily requires reading some papers "yay"
+% This probably requires reading some papers "yay"
+
+NNs are presented as black-box models where the decision process used to infer an output based on input is opaque to a user.
+This results in mistrust in NNs especially deep NNs where the relationship between input and output is complex.
+
+the goal of explainability is to provide a human interpretable representation of the models decision process in inferring a specific output.
+Ideally global explanations are provided allowing insight into the models full decision process rather than for a specific input.
+
+The proposed approach to explainability that this dissertation choses is that of concepts as these can be inferred after training and thus do not effect model performance.
+Furthermore, as GNNs utilise both graph structure and node features concepts can provide a better human interpretable representation of a GNNs decision process.
 
 \subsection{Concepts}
 
@@ -359,13 +368,18 @@ Extensions presented in \note{add references when sections finished} address and
 %% Identify the issue when scaling to graph classification
 %% Discuss solutions and the chosen solution for this project
 
-\subsection{Graph Concept Explainer}
+\subsection{Graph concept explainer}
 \label{sec:GCE}
+\note{Diagrams are required for better explanation.}
 
 % The motivation for the paper
 
 %% The human in the loop aspect of this project
 %% Link in ideas from GNNExplainer
+
+\emph{Graph concept explainer} (GCExplainer) proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} focuses on unsupervised concept extraction putting the human in the loop to achieve meaningulness and coherency.
+GCExplainer automates concept extraction by clustering the activation space of different layers throughout the network mapping each cluster to a concept.
+GCExplainer is designed to provide global explanations for a specific class to provide better insight into the model.
 
 % Discussion of the metrics
 
@@ -374,10 +388,36 @@ Extensions presented in \note{add references when sections finished} address and
 %% Discussion of short comings of clusterings
 %% Discussion of further benefits of latent space
 
+\paragraph{Concept scores} are generated for each concept produced relating to how meaningful, coherent and important a specific set of concepts are.
+These scores also allow for further exploration of the concept space for a specific model.
+
+\paragraph{Concept purity}
+relates to the coherence of concept within itself can be easily represented as the graph similarity for the subgraphs contained within the concept cluster.
+High concept purity indicates a coherent concept and therefore a likely global concept of the model.
+As concept purity is tied to graph similarity \textit{Magister et al.}\cite{magister2021gcexplainer} suggest using the \emph{graph edit distance} (GED) as the measure of purity.
+The GED is calculated using the following equation
+\begin{equation}
+    \label{eq:GED}
+    \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
+\end{equation}
+where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c$ is the cost of carrying out an edit operation $e_i$.
+Note that this process NP-Hard and so in most cases an exact purity score is not provided.
+
+\paragraph{Concept completeness}
+relates to the importance of the concept determining whether the correct output can be predicted from the concepts alone.
+A high accuracy in classifying the graph according to its concepts indicates that the concepts extracted are important.
+This process is therefore tied to classification, however due to the fact that concepts are created through clustering the resulting space is not easily separable by classifiers such as logistic regressors.
+\textit{Magister et al.}\cite{magister2021gcexplainer} suggest using a decision tree \note{Cite Now you see me (CME)}.
+
 % Detailing why this method was chosen
 
 %% The improvements seen in the paper in regards to visual comparison
 %% The clear metrics for comparison
+
+\paragraph{Comparing concepts} between two models trained on the same dataset can give an indication as to how the two models differ in their inference.
+Furthermore, the differences present between the two models provides further insight into how the models reason about the task.
+For this reason the process of concept extraction and evaluation presented in \textit{Magister et al.}\cite{magister2021gcexplainer} is chosen to compare how SGC and GCN explainer classify graphs given that both models use the same underlying spectral filter.
+This allows for a better analysis of the importance, or lack thereof, of non-linearity in GNNs.  
 
 \section{Datasets}
 
@@ -407,7 +447,7 @@ This dataset forces the model to induce information of relationships between nod
 
 As an extension to my project I extended SGC to apply to graph classification tasks thus allowing for analysis of both the transductive and inductive cases of GNNs as well as node and graph classification.
 
-\subsection{Synthetic Datasets}
+\subsection{Synthetic datasets}
 
 % From GRL and the overview discuss a bottom up approach
 % Discuss how certain properties can be instilled
@@ -415,11 +455,12 @@ As an extension to my project I extended SGC to apply to graph classification ta
 
 To better visualise and analyse concepts for GNNs it is easier to construct graphs with specific properties that produce easy to interpret concepts.
 Because these graphs are generated based on desired properties they are considered synthetic graphs.
-As discussed in \Sref{sec:GCE} there are five synthetic graphs that were used to analyse concepts for a GCN model.
-The construction of these graphs includes a base graph onto which multiple copies of the same \emph{motif} are attached.
-The motifs and the base graph have different classifications and the goal is to correctly classify which classification a node belongs to, that is which graph structure is the node part of.
+To carry out the analysis of the concept extraction and evalution described in \Sref{sec:GCE} five synthetic graphs are used originally proposed in \textit{Ying et al.}\cite{ying2019gnnexplainer}.
 
-\Sref{sec:GCE} describes the idea of motifs that can be recognised by a GNN and used whilst classifying a node or a graph.
+The construction of these graphs includes a base graph onto which multiple copies of the same \emph{motif} are attached.
+A motif is a simple graph structure that should be easily recognised by a GNN and used whilst classifying a node or a graph.
+The motifs and the base graph have different classifications and the goal is to correctly classify which classification a node belongs to, that is which graph structure is the node part of.
+%Note that the class of a node is dependent on the structure the node is part of rather than the features of the nodes.
 
 \paragraph{Motifs} are highly ordered graph structures that are easy to identify and differ from the structure of the base graph.
 \note{Include diagram of the motifs!}
@@ -441,7 +482,7 @@ There is an additional synthetic dataset, BA-Community, which combines two BA-Sh
 
 Node features for all the graphs are all-$1$ vectors of length 10, except in the case of BA-Community where one of the communities has all-$2$ vectors of length 10.
 
-\subsection{Real-World Datasets}
+\subsection{Real-world datasets}
 
 % Linking to motivation and GRL
 % Demonstrating that these techniques are important for real world use
@@ -462,7 +503,7 @@ is a dataset where each graph is a chemical compound where nodes are atoms and e
 The chemical compounds correspond to drugs some of which are mutagens and the rest are not.
 The task is to classify the graphs as to whether or not they are mutagens.
 
-\section{Tools Used}
+\section{Tools used}
 
 % I believe this is stuff like vim
 % Pytorch, pytorch lightning and pytorch geometric
@@ -495,12 +536,12 @@ For scientific computing when analysing concepts I use \texttt{Numpy} and \textt
 
 For unit tests I use Python's own \texttt{unittest} library, to help with software development I use Python's \texttt{typing} library alongside the built in typing functionality of the other libraries. Additionally I use \texttt{tqdm} to visualise progress during concept analysis.
 
-\section{Requirements Analysis}
+\section{Requirements analysis}
 
 % definitely think this is useful
 % to be figured out later
 
-\section{Software Methodology}
+\section{Software methodology}
 
 % Generally waterfall approach to design
 % But iterative when looking at the results and direction forward
@@ -572,7 +613,7 @@ This licensing complies with the licenses of my dependencies.
 
 % Definitely need to research this aspect
 
-\section{Starting Point}
+\section{Starting point}
 
 My starting point is the same as the starting point declared in my proposal except for the additional information that the research paper over the summer has resulted in an acceptance to Learning on Graphs 2022.
 I use the \texttt{PyTorch Geometric} implementation of GCN layers to build the GCN network, as this is just a baseline model. I also rely on the libraries discussed in \Sref{sec:libraries}.
