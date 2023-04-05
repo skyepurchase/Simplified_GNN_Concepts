@@ -17,6 +17,7 @@
 \usepackage{verbatim}
 \usepackage{enumitem}
 \usepackage[table]{xcolor}
+\usepackage{soul}
 \usepackage{wrapfig}
 
 % Mathematics
@@ -52,8 +53,15 @@
 %% Graphs
 %\newcommand\graph{\mathcal{G}(\V, \E, \X)}
 
-% Formatting
+% Referencing
 \newcommand{\Sref}[1]{\S\ref{#1}}
+\newcommand{\Aref}[1]{Appendix \ref{#1}}
+
+% Formatting
+\newcommand{\hlc}[2][yellow]{{
+    \colorlet{foo}{#1}
+    \sethlcolor{foo}\hl{#2}}
+}
 
 % In progress
 \newcommand\note[1]{\textcolor{blue}{\textsc{\textbf{[NB:} #1\textbf{]}}}}
