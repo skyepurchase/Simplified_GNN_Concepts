@@ -1,0 +1,37 @@
+\begin{table}
+    \centering
+    \begin{tabular}{p{0.11\textwidth}|p{0.5\textwidth}|p{0.15\textwidth}|p{0.11\textwidth}}
+        \multicolumn{1}{c}{\textbf{Source}} &
+        \multicolumn{1}{c}{\textbf{Requirement}} &
+        \multicolumn{1}{c}{\textbf{Importance}} &
+        \multicolumn{1}{c}{\textbf{Risk}} \\ 
+        \midrule
+        - & Download Planetoid and TUDatasets & \hlc[red!50]{Essential} & \hlc[green!50]{Low} \\
+        - & Build synthetic datasets & \hlc[red!50]{Essential} & \hlc[red!50]{High} \\
+        - & Implement ML pipeline & \hlc[red!50]{Essential} & \hlc[orange!50]{Medium} \\
+        - & Create model configuration format & \hlc[orange!50]{Preferrable} & \hlc[green!50]{Low} \\
+        S1 & Implementation of SGC & \hlc[red!50]{Essential} & \hlc[orange!50]{Medium} \\
+        S1 & Implement Hyperparameter sweep framework & \hlc[orange!50]{Preferrable} & \hlc[green!50]{Low} \\
+        S1 & Hyperparameter sweep for SGC\tablefootnote{GCN hyperparameters should be sufficient for a well performing SGC model, but for true comparison a full sweep of reasonable parameters should be made.} & \hlc[orange!50]{Preferrable} & \hlc[green!50]{Low} \\
+        S2 & Implementation of GCN & \hlc[red!50]{Essential} & \hlc[green!50]{Low} \\
+        S1, S2 & Match prior performance & \hlc[red!50]{Essential} & \hlc[red!50]{High} \\
+        S1, S2 & Implement model hooks to extract activation space & \hlc[red!50]{Essential} & \hlc[green!50]{Low} \\
+        S1, S2 & Implement clustering for concept extraction & \hlc[red!50]{Essential} & \hlc[green!50]{Low} \\
+        S3 & Implementation of concept purity & \hlc[red!50]{Essential} & \hlc[green!50]{Low} \\
+        S3 & Implementation of concept completeness & \hlc[red!50]{Essential} & \hlc[orange!50]{Medium} \\
+        S1, S2, S3 & Concept visualisation & \hlc[orange!50]{Preferrable} & \hlc[green!50]{Low} \\
+        E & Extend SGC to graph classification & \hlc[green!50]{Optional} & \hlc[orange!50]{Medium} \\
+        E & Improve performance of SGC & \hlc[green!50]{Optional} & \hlc[gray!50]{Unknown} \\
+        E & Combine SGC and GCN & \hlc[green!50]{Optional} & \hlc[gray!50]{Unknown} \\
+        E & Latent space comparison of GCN and SGC & \hlc[green!50]{Optional} & \hlc[gray!50]{Unknown} \\
+    \end{tabular}
+    \caption{Requirements analysis for the project.}
+    \label{tab:requirements}
+\end{table}
+
+%\begin{enumerate}
+%    \item[S1] Implementation of SGC
+%    \item[S2] Implementation of GCN
+%    \item[S3] Implementation of concept evaluation
+%\end{enumerate}
+
