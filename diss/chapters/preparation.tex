@@ -239,12 +239,12 @@ As equation \ref{eq:filter1} requires a learnable parameter for each dimension o
 \textit{Kipf et al.}\cite{kipf2016semi} suggest using $k=1$ in equation \ref{eq:filter} which in turn simplifies equation \ref{eq:graph-conv} and is equivalent to a linear function on the graph Laplacian. To address overfitting the number of learnable parameters can be reduced by defined $\theta = \theta_0 = -\theta_1$. The resulting graph convolution is
 \begin{equation}
     \label{eq:GCN-comp}
-    f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i = \theta(\mI - \mL)\vh_i.
+    f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i = \theta(\mI - \mL)\vh_i.\footnote{$\mU\bm{\Lambda}^j\mU^T = \mU\underbrace{\bm{\Lambda}\cdots\bm{\Lambda}}_j\mU^T = \underbrace{\mU\bm{\Lambda}\mU^T\mU\cdots\mU^T\mU\bm{\Lambda}\mU^T}_j = (\mU\bm{\Lambda}\mU^T)^j$}
 \end{equation}
 
 Computation of the eigendecomposition of $\mL$ may be too expensive for large graphs and so \textit{Hammond et al.}\note{citation needed} suggest using Chebyshev polynomials\note{citation needed? maybe appendix}.
 With the additional assumption that a NN can adapt to scaling we assume that the maximum eigenvalue is approximately $2$.
-This results in the first order Chebyshev polynomial is $\mL - \mI$.
+This results in the first order Chebyshev polynomial as $\mL - \mI$.
 Using the normalised graph Laplacian, $\mL = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$, where $\mD$ is the degree matrix of the graph, equation \ref{eq:GCN-comp} becomes
 \begin{equation}
     \label{eq:no-norm}
@@ -573,6 +573,16 @@ For unit tests I use Python's own \texttt{unittest} library, to help with softwa
 % definitely think this is useful
 % to be figured out later
 
+The success criteria of the project proposal (\Aref{ch:proposal}) three main stages of development each requiring individual and joint requirements.
+Furthermore there are additional requirements to improve reproducibility of the code and desirable requirements for extensions.
+
+Table \ref{tab:requirements} demonstrates the requirements analysis for this project.
+Risk represents how critical a requirements success is given how difficult it will be to implement.
+
+``-'' represents a general requirement for the project to be implemented, ``S'' represents a requirement based on the given success criteria, and ``E'' represents a requirement that is an extension to the core project.
+
+\input{tables/requirements}
+
 \section{Software methodology}
 
 % Generally waterfall approach to design
@@ -612,30 +622,33 @@ The two main models I use, GCN and SGC, directly follow implementations of the w
 
 \section{Licensing}
 
-\begin{wraptable}{r}{8.5cm}
-    \begin{tabular}{cc}
-        \multicolumn{1}{c}{\textbf{Software dependency}} &
-        \multicolumn{1}{c}{\textbf{License}} \\ 
-        \midrule
-        NumPy & \multirow{5}{*}{3-clause BSD} \\
-        scikit-learn & \\
-        NetworkX & \\
-        PyTorch & \\
-        hyperopt \tablefootnote{The license is unnamed by matches the 3-clause BSD license verbatim.} & \\
-        \rowcolor{gray!20} tensorboard & \\
-        \rowcolor{gray!20} Lightning AI &  \multirow{-2}{*}{Apache 2.0}\\
-        matplotlib & \\
-        Python & \multirow{-2}{*}{PSFL}\\
-        \rowcolor{gray!20}
-        PyTorch Geometric & \\
-        \rowcolor{gray!20}
-        tqdm & \multirow{-2}{*}{MIT} \\
-        tqdm & MPL\tablefootnote{tqdm is distributed under both licenses.} \\
-    \end{tabular}
-    \caption{Licenses for the project dependencies}
-    \label{tab:licensing}
-\end{wraptable}
-%\include{tables/licensing}
+%\begin{wraptable}{r}{8.5cm}
+%    \begin{tabular}{cc}
+%        \multicolumn{1}{c}{\textbf{Software dependency}} &
+%        \multicolumn{1}{c}{\textbf{License}} \\ 
+%        \midrule
+%        NumPy & \multirow{5}{*}{3-clause BSD} \\
+%        scikit-learn & \\
+%        NetworkX & \\
+%        PyTorch & \\
+%        hyperopt \tablefootnote{The license is unnamed by matches the 3-clause BSD license verbatim.} & \\
+%        \rowcolor{gray!20} tensorboard & \\
+%        \rowcolor{gray!20} Lightning AI &  \multirow{-2}{*}{Apache 2.0}\\
+%        matplotlib & \\
+%        Python & \multirow{-2}{*}{PSFL}\\
+%        \rowcolor{gray!20}
+%        PyTorch Geometric & \\
+%        \rowcolor{gray!20}
+%        tqdm & \multirow{-2}{*}{MIT} \\
+%        tqdm & MPL\tablefootnote{tqdm is distributed under both licenses.} \\
+%    \end{tabular}
+%    \caption{Licenses for the project dependencies}
+%    \label{tab:licensing}
+%\end{wraptable}
+\include{tables/licensing}
+
+Table \ref{tab:licensing} includes information about the specific licenses for all the software dependencies in my project.
+
 All software dependencies used in my project are under permissive licenses allowing me to use the code with no restrictions.
 Furthermore, I am free to use the Planetoid \note{Cite Zhilin Yang, Revisiting} and TUDataset \cite{Morris+2020} datasets available in \texttt{PyTorch Geometric} library.
 Though some licenses have additional restrictions on source code modification and/or redistribution my project does neither of these actions and only uses the libraries as is.
