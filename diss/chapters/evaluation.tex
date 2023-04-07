@@ -1,8 +1,51 @@
 \chapter{Evaluation}
 
-\section{Success Criteria}
+\section{Success criteria}
+
+\paragraph{Success Criterion}
+The original project proposal (\Aref{ch:proposal}) stated the following three criteria for success:
+\begin{enumerate}
+    \item Implement SGC and extract the concepts used for each of the datasets.
+    \item Implement GCN and extract the concepts to use as a baseline.
+    \item Compare the concepts between SGC and GCN using the metrics of concept completeness and concept purity.
+\end{enumerate}
+
+\emph{I completely meet all three success criteria.}
+In addition to the above project success criteria, and to aid the analysis of SGC compared to GCN, 
+I compare the two models to each other in \emph{accuracy}.
+
+\paragraph{Meeting criterion 1}
+\note{Link to section in which met.}
+
+\paragraph{Meeting criterion 2}
+\note{Link to section in which met.}
+
+\paragraph{Meeting criterion 3}
+\note{Link to section in which met.}
 
 \section{Methodology}
+
+\subsection{Hyperparameters}
+
+\paragraph{Reproduction}
+\textit{Magister et al.}\cite{magister2021gcexplainer} use a GCN model to evaluate their proposed graph concept explainer.
+The paper trains and evaluates the model on the same 5 synthetic node classification datasets described in \Sref{sec:synth} and therefore the same hyperparameters are used for the GCN baseline.
+
+\textit{Wu et al.}\cite{wu2019simplifying} states that the weight decay parameter for the Planetoid datasets was found using \texttt{hyperopt} over 60 iterations.
+This process was repeated for results reproduction however it was found that the hyperparameters for the learning rate were different from those stated.
+
+The hyperparameters for these models is available in Table \error{create the table}.
+
+\paragraph{New models}
+This project proposes multiple new models designed for the different datasets.
+
+\subsection{Model Evaluation}
+
+\subsection{Concept Evaluation}
+
+\subsection{Reproducibility}
+
+\subsection{Specifications}
 
 \section{Results Reproduction}
 
