@@ -5,9 +5,15 @@
 \paragraph{Success Criterion}
 The original project proposal (\Aref{ch:proposal}) stated the following three criteria for success:
 \begin{enumerate}
-    \item Implement SGC and extract the concepts used for each of the datasets.
-    \item Implement GCN and extract the concepts to use as a baseline.
-    \item Compare the concepts between SGC and GCN using the metrics of concept completeness and concept purity.
+    \item 
+        Implement SGC and extract the concepts used for each of the synthetic datasets.
+        \label{crit1}
+    \item 
+        Implement GCN and extract the concepts to use as a baseline.
+        \label{crit2}
+    \item 
+        Compare the concepts between SGC and GCN using the metrics of concept completeness and concept purity.
+        \label{crit3}
 \end{enumerate}
 
 \emph{I completely meet all three success criteria.}
@@ -38,16 +44,43 @@ The hyperparameters for these models is available in Table \error{create the tab
 
 \paragraph{New models}
 This project proposes multiple new models designed for the different datasets.
+The core project defines 5 models based on the SGC architecture as required by criterion \ref{crit1}.
+As the underlying graph operator is the same for both GCN and SGC, as described in \Sref{sec:GCN} and \Sref{sec:SGC} the degree of the SGC model can be assumed to be the same as the GCN model for the same dataset.
+This the same approach that \textit{Wu et al.}\cite{wu2019simplifying} take to creating there SGC models.
+
+The learning rate for SGC models is likely to be different from the GCN models due to the reformulation.
+Furthermore, \textit{Wu et al.}\cite{wu2019simplifying} use weight decay to keep weight values close to $0$ as would be assumed from the multiplication of weight matrices in equation \ref{eq:theta}.
+Rather than use stochastic approaches to finding these hyperparameters a sweep of anticipated values is carried out.
+This allows for a visualisation of the hyperparameter allowing for further exploration if necessary.
+The learning rate is sampled from $\{0.01, 0.001, 0.0001\}$ and the weight decay from $\{1.0, 0.1, 0.01\}$.
+The results of these searches is presented in the tables \note{include the references the hyperparameter surfaces}.
+
+\note{Include table of hyperparameters and some if not all hyperparameter surfaces.}
+
+\paragraph{Datasets}
+The batch sizes for all the datasets match those described in \textit{Ying et al.}\cite{ying2019gnnexplainer} and \textit{Kipf et al.}\cite{kipf2016semi}.
+The number of epochs for each dataset matches those proposed in \textit{Magister et al.}\cite{magister2021gcexplainer} or until convergence for SGC.
 
 \subsection{Model Evaluation}
+
+Criterion \ref{crit3} requires evaluation of the models with respect to concept purity and completeness described in \Sref{sec:GCE}.
 
 \subsection{Concept Evaluation}
 
 \subsection{Reproducibility}
 
 \subsection{Specifications}
+The experiments are not resource-intensive due to the incredibly small datasets and so carrying out the hyperparameter search and multiple final runs can be completed on my personal machine.
+My machine has an AMD Ryzen 7 5700U CPUs @ 1.8GHz with 16 cores wuth 15 Gigabytes of RAM.
+The machine does have an AMD ATI Lucienne GPU but due to the fact that \texttt{PyTorch Geometric}\note{citation needed} did not support RoCM I was unable to utilise this.
+
+To speed up the retrieval of experimental results for extensions I utilised a Google Colab Pro account with 1 hyperthreaded Intel Xeon Processor @ 2.3GHz with 1 core and 12 Gigabytes of Ram.
+The account also has access to a Tesla K80 GPU with 12GB of RAM.
+
+\note{Include figures demonstrating system use later.}
 
 \section{Results Reproduction}
+\label{sec:reproduction}
 
 \section{Comparison of Accuracy}
 

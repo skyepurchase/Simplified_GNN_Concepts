@@ -285,6 +285,7 @@ If the model is used for node classification the standard approach is to use a f
 \end{equation}
 
 \subsection{Simplified graph convolution}
+\label{sec:SGC}
 
 % Motivation behind SGC
 
@@ -305,7 +306,11 @@ Considering the node classification equation, \ref{eq:cls}, becomes
     \hat\mY = \operatorname{softmax}(\mS\cdots\mS\mX\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}),
 \end{equation}
 where the filter is applied $k$ times to allow for the retention of the receptive field.
-As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameter $\bm{\Theta} = \bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}$.
+As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameters
+\begin{equation}
+    \label{eq:theta}
+    \bm{\Theta} = \bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}.
+\end{equation}
 The final linearised model, SGC, is therefore
 \begin{equation}
     \hat\mY = \operatorname{softmax}(\mS^{k}\mX\bm{\Theta}).
@@ -620,7 +625,9 @@ The concept analysis and dataset handling fall into this category.
 These two aspects are therefore verified using unit testing described later. \note{Remember to include reference when complete.}
 
 \paragraph{Reproduction of prior results}
-The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}. The hyperparameters for the GCN model baseline are available in \textit{Magister et al.}\cite{magister2021gcexplainer} where accuracy scores are also published. In \note{Reference the section when complete} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
+The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}.
+The hyperparameters for the GCN model baseline are available in \textit{Magister et al.}\cite{magister2021gcexplainer} where accuracy scores are also published.
+In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
 
 \section{Licensing}
 
