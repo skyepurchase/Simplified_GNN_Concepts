@@ -7,20 +7,14 @@
         \midrule
         BA Shapes       & 95.6\% & 98.0\% $\pm$ 2.2 \\
         BA Grid         & 99.0\% & 99.5\% $\pm$ 0.7 \\
-        BA Community    & 95.7\% & \% $\pm$  \\
+        BA Community    & 95.7\% & 86.3\%\tablefootnote{\label{nb:epochs1}Using the same epochs stated in \textit{Magister et al.}\cite{magister2021gcexplainer}. More epochs yields a closer value.} $\pm$ 3.3 \\
         Tree Cycles     & 96.0\% & 95.8\% $\pm$ 3.2 \\
         Tree Grid       & 95.1\% & 92.5\% $\pm$ 5.4 \\
         \midrule
         REDDIT BINARY   & 89.1\% & 89.1\% $\pm$ 2.2 \\
-        Mutagenicity    & 93.0\% & 79.3\% $\pm$ 1.7 \\
+        Mutagenicity    & 93.0\% & 79.3\%\tablefootnote{See footnote \ref{nb:epochs1}} $\pm$ 1.7 \\
     \end{tabular}
-    \caption{Comparison of test accuracy published by \textit{Magister et al.}\cite{magister2021gcexplainer} and those achieved by myself.}
+    \caption{Reproduction of experiments from table 16 in \textit{Magister et al.}\cite{magister2021gcexplainer}. The mean test accuracy of 10 experiment runs is taken using \textit{Magister et al.}'s hyperparameters.}
     \label{tab:GCN-acc}
 \end{table}
-
-%\begin{enumerate}
-%    \item[S1] Implementation of SGC
-%    \item[S2] Implementation of GCN
-%    \item[S3] Implementation of concept evaluation
-%\end{enumerate}
 

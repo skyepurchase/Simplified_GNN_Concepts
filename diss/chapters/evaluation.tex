@@ -18,13 +18,14 @@ The original project proposal (\Aref{ch:proposal}) stated the following three cr
 
 \emph{I completely meet all three success criteria.}
 In addition to the above project success criteria, and to aid the analysis of SGC compared to GCN, 
-I compare the two models to each other in \emph{accuracy}.
+I compare the two models to each other in mean \emph{test accuracy}.
 
 \paragraph{Meeting criterion 1}
 \note{Link to section in which met.}
 
 \paragraph{Meeting criterion 2}
-\note{Link to section in which met.}
+\note{Link to implementation section.}
+\Sref{sec:reproduction} verifies that the correct implementation of GCN and concept extraction is used. Results from all datasets are achieved with quantitative and qualitative results.
 
 \paragraph{Meeting criterion 3}
 \note{Link to section in which met.}
@@ -82,9 +83,13 @@ The account also has access to a Tesla K80 GPU with 12GB of RAM.
 \section{Results Reproduction}
 \label{sec:reproduction}
 
+\input{tables/SGC-reproduction}
 \input{tables/GCN-acc}
+\input{tables/GCN-concepts}
 
 \section{Comparison of Accuracy}
+
+\input{tables/SGC-acc}
 
 \section{Comparison of Concept Scores}
 
@@ -96,4 +101,3 @@ The account also has access to a Tesla K80 GPU with 12GB of RAM.
 
 \subsection{JumpNet style SGC}
 
-\subsection{Tunable Dataset}
