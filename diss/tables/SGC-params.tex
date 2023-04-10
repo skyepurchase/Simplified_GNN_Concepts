@@ -1,0 +1,19 @@
+\begin{table}
+    \centering
+    \begin{tabular}{c|cccc}
+        \textbf{Dataset} &
+        \textbf{Degree} &
+        \textbf{Learning rate} &
+        \textbf{Weight decay} &
+        \textbf{Epochs} \\
+        \midrule
+        BA Shapes       & 3 & 0.01 & 0.1 & 3000 \\
+        BA Grid         & 3 & 0.01 & 0.1 & 3000 \\
+        BA Community    & 6 & & & 6000 \\
+        Tree Cycles     & 3 & 0.01 & 1.0 & 7000 \\
+        Tree Grid       & 7 & 0.01 & 0.01 & 10000 \\
+    \end{tabular}
+    \caption{SGC hyperparameters based on the corresponding GCN hyperparameters in \ref{tab:GCN-params} and using the results of the hyperparameter search in \note{reference when added}. All models use \texttt{softmax}\note{citation needed?}.}
+    \label{tab:SGC-params}
+\end{table}
+

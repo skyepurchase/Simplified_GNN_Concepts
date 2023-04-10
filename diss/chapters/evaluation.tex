@@ -41,7 +41,10 @@ The paper trains and evaluates the model on the same 5 synthetic node classifica
 \textit{Wu et al.}\cite{wu2019simplifying} states that the weight decay parameter for the Planetoid datasets was found using \texttt{hyperopt} over 60 iterations.
 This process was repeated for results reproduction however it was found that the hyperparameters for the learning rate were different from those stated.
 
-The hyperparameters for these models is available in Table \error{create the table}.
+The hyperparameters for these models are available in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params}.
+
+\input{tables/GCN-params}
+\input{tables/SGC-reproduction-params}
 
 \paragraph{New models}
 This project proposes multiple new models designed for the different datasets.
@@ -54,13 +57,15 @@ Furthermore, \textit{Wu et al.}\cite{wu2019simplifying} use weight decay to keep
 Rather than use stochastic approaches to finding these hyperparameters a sweep of anticipated values is carried out.
 This allows for a visualisation of the hyperparameter allowing for further exploration if necessary.
 The learning rate is sampled from $\{0.01, 0.001, 0.0001\}$ and the weight decay from $\{1.0, 0.1, 0.01\}$.
-The results of these searches is presented in the tables \note{include the references the hyperparameter surfaces}.
+The results of these searches is presented in figures \note{include the references the hyperparameter surfaces}.
+As can be seen for the majority of hyperparameter searches the specific hyperparameters have minimal to no impact on the resulting model and therefore $0.01$ is chosen for learning rate and $0.1$ for weight decay.
+The hyperparameters chosen are presented in table \ref{tab:SGC-params}
 
-\note{Include table of hyperparameters and some if not all hyperparameter surfaces.}
+\input{tables/SGC-params}
 
 \paragraph{Datasets}
 The batch sizes for all the datasets match those described in \textit{Ying et al.}\cite{ying2019gnnexplainer} and \textit{Kipf et al.}\cite{kipf2016semi}.
-The number of epochs for each dataset matches those proposed in \textit{Magister et al.}\cite{magister2021gcexplainer} or until convergence for SGC.
+The number of epochs for each dataset matches those proposed in \textit{Magister et al.}\cite{magister2021gcexplainer} and \textit{Wu et al.}\cite{wu2019simplifying} or until convergence for SGC.
 
 \subsection{Model Evaluation}
 

@@ -1,0 +1,21 @@
+\begin{table}
+    \centering
+    \begin{tabular}{c|ccc}
+        \textbf{Dataset} &
+        \textbf{Layers} &
+        \textbf{Learning rate} &
+        \textbf{Epochs} \\
+        \midrule
+        BA Shapes       & 3 $\times$ 20 & 0.001 & 3000 \\
+        BA Grid         & 3 $\times$ 20 & 0.001 & 3000 \\
+        BA Community    & 6 $\times$ 50 & 0.001 & 6000 \\
+        Tree Cycles     & 3 $\times$ 50 & 0.001 & 7000 \\
+        Tree Grid       & 7 $\times$ 20 & 0.001 & 10000 \\
+        \midrule \\
+        REDDIT BINARY   & 4 $\times$ 40 & 0.005 & 3000 \\
+        Mutagenicity    & 4 $\times$ 30 & 0.005 & 10000 \\
+    \end{tabular}
+    \caption{GCN hyperparameters from table 15 in \textit{Magister et al.}\cite{magister2021gcexplainer}. All models use \texttt{ReLU}\note{citation needed?} activation functions between layers with a single linear layer classifier with \texttt{softmax}\note{citation needed?}.}
+    \label{tab:GCN-params}
+\end{table}
+
