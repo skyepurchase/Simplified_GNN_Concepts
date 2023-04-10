@@ -465,9 +465,8 @@ This allows for a better analysis of the importance, or lack thereof, of non-lin
 To evaluate different GNNs using the metrics described in \Sref{sec:GCE} a trained model needs to be evaluated on specific graphs and concepts extracted from the models inference.
 To train the model the a notion of a graph dataset needs to be defined.
 As described in \Sref{sec:GRL} there three different classification tasks commonly carried out on graphs (though only two are considered) therefore there are three different notions of a graph dataset.
-Node classification datasets assign a class to each node in the dataset, thus each graph has an associated vector, $\vy$, of classifications.
-Comparitively, graph classification datasets assign a single value to the entire graph and so each graph is associated with a single value $y$.
-A graph dataset is therefore described by its collection of graphs and corresponding labels, $\{(\sG, \vy)\}$ in the case of node classification and $\{(\sG, y)\}$ in the case of graph classification.
+Node classification datasets assign a class to each node in the dataset, whereas, graph classification datasets assign a single value to the entire graph.
+A graph dataset is therefore described by its collection of graphs and corresponding classes.
 
 However, node classification datasets generally include a single \emph{connected} graph where, in the undirected case, there exists at least one path from every node to every other node.
 This creates another distinction between two types of graph datasets:
