@@ -21,13 +21,18 @@ In addition to the above project success criteria, and to aid the analysis of SG
 I compare the two models to each other in mean \emph{test accuracy}.
 
 \paragraph{Meeting criterion 1}
-\note{Link to section in which met.}
+\note{reference the implementation.}
+\Sref{sec:reproduction} verifies the correctness of the SGC implementation.
+\Sref{sec:comp-concept} demonstrates concept extraction on the synthetic datasets.
 
 \paragraph{Meeting criterion 2}
-\Sref{sec:reproduction} verifies that the correct implementation of GCN and concept extraction is used. Results from all datasets are achieved with quantitative and qualitative results.
+\note{reference the implementation.}
+\Sref{sec:reproduction} verifies the correctness of the GCN implementation and demonstrates concept extraction.
 
 \paragraph{Meeting criterion 3}
-\note{Link to section in which met.}
+\note{reference the implementation.}
+\Sref{sec:comp-concept} demonstrate the comparison of SGC and GCN using the metrics of concept completeness and purity.
+Additionally, \Sref{sec:comp-acc} demonstrates further comparison between the models using the metric of model accuracy.
 
 \section{Methodology}
 
@@ -79,7 +84,7 @@ On top of the quantitative analysis of the different models concepts lend themse
 the quantitative analysis will also help to infer the differences in how the two models infer labels on the input data.
 
 For qualitative analysis only BA Shapes and Mutagenicity will be covered in detail with brief analysis of the other datasets in Appendix \note{reference when complete}.
-This extends to extensions where only BA Shapes and Mutagenicity are trained on as proof of concepts.
+This extends to extensions where only BA Shapes and Mutagenicity are trained on as proofs of concepts.
 
 It is important to note a number of drawbacks of the GCExplainer in comparing two different models quantitatively.
 \begin{enumerate}
@@ -101,13 +106,13 @@ When reproducing results this is done by comparing the analysis suggested by \te
 Furthermore, a visual comparison of the concepts can be made, such as matching published concepts to reproduced concepts.
 
 \paragraph{Accuracy evaluation}
-Drawback \ref{nb:accuracy} motivates the additional evaluation metric of accuracy as \Sref{sec:comparison} demonstrates that SGC does not meet the desired accuracy.
+Drawback \ref{nb:accuracy} motivates the additional evaluation metric of accuracy as \Sref{sec:comp-acc} demonstrates that SGC does not meet the desired accuracy.
 To evaluate this each synthetic dataset is split into a train and test set using an 80:20 split.
 Note that TUDataset\note{citation needed} and Planetoid\note{citation needed} use there own train/test splits.
 
 The synthetic datasets are generated randomly along with the train/test split and thus each random seed produces a new variation of the synthetic dataset.
 This means that using the same seeds across different models for the experiments results in the same train/test split.
-This also means that although the hyperparameter search evaluates parameters on the test split of the dataset using a different seed to the experiments means this the experiment test splits are unseen.
+This also means that although the hyperparameter search evaluates parameters on the test split of the dataset using a different seed to the experiments means that the experiment test splits are effectively unseen.
 
 \subsection{Confidence intervals}
 \label{sec:reporting}
@@ -139,7 +144,7 @@ I reproduce all of the experiments from \textit{Magister et al.} and the Planeto
 \paragraph{Success criterion}
 \Sref{sec:GCN-reproduction} demonstrates an implementation of GCN trained on the synthetic datasets with concept extraction.
 Tables \ref{tab:GCN-acc} and \ref{tab:GCN-concepts} and figure \ref{fig:GCN-BA-Shapes} demonstrate the results achieved.
-This fulfills the $2^{nd}$ success criterion.
+This fulfills the \ref{crit2}$^{nd}$ success criterion.
 
 \paragraph{Method}
 In both cases across all datasets the hyperparameters presented in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params} are used.
@@ -188,14 +193,6 @@ Due to the the 13 node cut-off and non-deterministic nature of k-Means\note{cita
 
 \fig{Magister-BA-Shapes}{A subset of the BA Shapes concepts discovered in figures 2, 3 and 5 from \textit{Magister et al.}\cite{magister2021gcexplainer} to demonstrate the full range of labels. Each row represents an individual concept, the same colour system is used as fig. \ref{fig:GCN-BA-Shapes}.}
 
-%\begin{figure}[h]
-%    \centering
-%    \includegraphics[width=0.45\textwidth]{figures/Magister-BA-Shapes}
-%    \includegraphics[width=0.45\textwidth]{figures/GCN-BA-Shapes}
-%    \caption{A side-by-side comparison of BA Shapes concepts discovered. The left figure demonstrates the concepts from figures 2, 3 and 5 from \textit{Magister et al.}\cite{magister2021gcexplainer} and the right figure demonstrates the reproductions. Each row represents an individual concept and the concepts are labelled}
-%    \label{fig:test}
-%\end{figure}
-
 Figure \ref{fig:GCN-BA-Shapes} presents a subset of the BA Shapes concepts reproduced by the best performing GCN model.
 For comparison figure \ref{fig:Magister-BA-Shapes} presents those published in \textit{Magister et al.}
 Label 0 is included in both figures to demonstrate that the model does identify the base graph, in this case Barabasi-Albert, but as can be seen this provides little insight into how the model reasons.
@@ -215,12 +212,11 @@ Examples of the other synthetic and real datasets is available in Appendix \note
 \note{There may also be brief comparisons between the figures time permitting.}
 
 \section{Comparison of Accuracy}
-\label{sec:comparison}
-
+\label{sec:comp-acc}
 \input{tables/SGC-acc}
 
 \section{Comparison of Concepts}
-
+\label{sec:comp-concept}
 \input{tables/SGC-concepts}
 
 \section{Extensions}
