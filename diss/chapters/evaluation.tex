@@ -37,6 +37,7 @@ Additionally, \Sref{sec:comp-acc} demonstrates further comparison between the mo
 \section{Methodology}
 
 \subsection{Hyperparameters}
+\label{sec:hyperparameters}
 
 \paragraph{Reproduction}
 \textit{Magister et al.}\cite{magister2021gcexplainer} use a GCN model to evaluate their proposed graph concept explainer.
@@ -214,6 +215,21 @@ Examples of the other synthetic and real datasets is available in Appendix \note
 \section{Comparison of Accuracy}
 \label{sec:comp-acc}
 \input{tables/SGC-acc}
+
+Table \ref{tab:SGC-acc} demonstrates the mean accuracies achieved by each of the SGC models using the hyperparameters in \ref{tab:SGC-params}.
+As a comparison the accuracies achieved by GCN are presented beside them.
+
+Compared to GCN the accuracies achieved by SGC are significantly worse and go against \textit{Wu et al.}'s claim that SGC can match GCN perfomance.
+In the cases of the Tree datasets GCN nearly doubles the accuracy and in the case of BA Community GCN is more than $4\times$ as accurate.
+Only in the case of BA Grid does SGC achieve a good accuracy in comparison to GCN though even here the difference in accuracy is $27.1$\%.
+
+These poor results suggest that the graph structure inference of SGC is far worse than that of GCN as labels are based only on graph structure.
+This is also an explanation for why SGC is able to surpass the accuracy of GCN in the Planetoid\cite{Fey/Lenssen/2019} as these datasets rely heavily on node representations.
+
+Beyond 
+
+These poor results are not due to poor hyperparameter selection as is demonstrated in Appendix \note{reference when complete} and discussed in \Sref{sec:hyperparameters}.
+
 
 \section{Comparison of Concepts}
 \label{sec:comp-concept}
