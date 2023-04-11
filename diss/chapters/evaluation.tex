@@ -102,7 +102,7 @@ The synthetic datasets are generated randomly along with the train/test split an
 This means that using the same seeds across different models for the experiments results in the same train/test split.
 This also means that although the hyperparameter search evaluates parameters on the test split of the dataset using a different seed to the experiments means this the experiment test splits are unseen.
 
-\paragraph{Confidence intervals}
+\subsection{Confidence intervals}
 \label{sec:reporting}
 The mean accuracy across 10 different initiliasations is reported using $\mu = \sum_i\frac{\text{accuracy}_i}{10}$ as an unbiased estimator of the mean.
 The confidence interval of each of the runs uses the unbiased standard deviation estimator $\sigma = \sqrt{\sum_i(\text{accuracy}_i - \mu)/(10 - 1)}$.
@@ -127,11 +127,30 @@ The account also has access to a Tesla K80 GPU with 12GB of RAM.
 \section{Results Reproduction}
 \label{sec:reproduction}
 
-As discussed in \Sref{sec:testing}
+As discussed in \Sref{sec:testing} the testing strategy includes the reproduction of prior results from \textit{Magister et al.}\cite{magister2021gcexplainer} on GCN and \textit{Wu et al.}\cite{wu2019simplifying} on SGC.
+I reproduce all of the experiments from \textit{Magister et al.} and the Planetoid\note{kipf2016semi} from \textit{Wu et al.} as these are most relevant.
 
+\paragraph{Method}
+In both cases across all datasets the hyperparameters presented in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params} are used.
+Each model, dataset experiment is run 10 times with different randomly pre-selected seeds and the mean and confidence interval are presented in accordance with \Sref{sec:reporting}.
+The implementation of SGC is the one presented in \note{reference section when complete} and the implementation of GCN uses the layers provided by \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
+
+\paragraph{SGC}
 \input{tables/SGC-reproduction}
+
+Table \ref{tab:SGC-reproduction} presents the accuracy achieved by my SGC models compared to the accuracy presented in table 2 of \textit{Wu et al.}\cite{wu2019simplifying}.
+As can be seen in both Cora and Citeseer the accuracies are closely correlated, though the accuracy presented by \textit{Wu et al.} are outside of my confidence interval.
+Comparitively Pubmed presents a large discrepancy between the published results and the reproduced results with large variation in the reproduced results.
+These descrepancies are likely due to the uncertainty in hyperparameters as the exact weight decay constant used is unknown.
+Furthermore, the published learning rate of 0.2 yields worse results and so, as demonstrated in table \ref{tab:SGC-reproduction-params}, new learning rates are used.
+Based on these considerations I consider my implementation of SGC to be correct.
+
+\paragraph{GCN}
 \input{tables/GCN-acc}
 \input{tables/GCN-concepts}
+
+Table \ref{tab:GCN-acc} presents the accuracy achieved my GCN models compared to the accuracy published in table 16 of \textit{Magister et al.}\cite{magister2021gcexplainer}.
+As can be seen in the majority of cases the reproduced accuracy matches or exceeds the accuracy presented by \textit{Magister et al.}.
 
 \section{Comparison of Accuracy}
 \label{sec:comparison}
