@@ -90,11 +90,18 @@ It is important to note a number of drawbacks of the GCExplainer in comparing tw
         The number of clusters and the receptive field of the concepts can be arbitrarily manipulated to find the highest score.
         To combat this the new SGC models are compared against the same concept extraction parameters presented in table \note{reference when completed}.
     \item 
+        \label{nb:accuracy}
         \textit{Ying et al.}\cite{ying2019gnnexplainer} only suggest concept extraction for models that achieve an accuracy of atleast $95\%$ on synthetic datasets. 
 \end{enumerate}
 
+The full comparison of concepts requires a qualitative analysis of the extracted concepts.
+The concepts produced by SGC can be analysed in isolation to infer how SGC reasons about graphs.
+These can then be compared to the concepts produced by GCN to highlight the differences in reasoning and which is easier to understand.
+When reproducing results this is done by comparing the analysis suggested by \textit{Magister et al.}\cite{magister2021gcexplainer} to the reproduced concepts.
+Furthermore, a visual comparison of the concepts can be made, such as matching published concepts to reproduced concepts.
+
 \paragraph{Accuracy evaluation}
-The final point motivates the additional evaluation metric of accuracy as \Sref{sec:comparison} demonstrates that SGC does not meet the desired accuracy.
+Drawback \ref{nb:accuracy} motivates the additional evaluation metric of accuracy as \Sref{sec:comparison} demonstrates that SGC does not meet the desired accuracy.
 To evaluate this each synthetic dataset is split into a train and test set using an 80:20 split.
 Note that TUDataset\note{citation needed} and Planetoid\note{citation needed} use there own train/test splits.
 
@@ -106,10 +113,9 @@ This also means that although the hyperparameter search evaluates parameters on 
 \label{sec:reporting}
 The mean accuracy across 10 different initiliasations is reported using $\mu = \sum_i\frac{\text{accuracy}_i}{10}$ as an unbiased estimator of the mean.
 The confidence interval of each of the runs uses the unbiased standard deviation estimator $\sigma = \sqrt{\sum_i(\text{accuracy}_i - \mu)/(10 - 1)}$.
-For runs where very high variance is present outliers are removed based on the median and the interquartile range of the accuracies.\footnote{In the cases where outliers are removed the estimators are adjusted accordingly.}
+For experiments where very high variance is present outliers are removed based on the median, $m$, and the interquartile range, $\text{ITR}$, of the accuracies.\footnote{In the cases where outliers are removed the estimators are adjusted accordingly.}
+An outlier is defining as being outside the range $[m - 1.5 \times \text{ITR}, m + 1.5 \times \text{ITR}]$.
 
-
-%\paragraph{Concept evaluation}
 
 \subsection{Reproducibility}
 \error{Return to at the end to make sure that all aspects are met.}
@@ -130,12 +136,17 @@ The account also has access to a Tesla K80 GPU with 12GB of RAM.
 As discussed in \Sref{sec:testing} the testing strategy includes the reproduction of prior results from \textit{Magister et al.}\cite{magister2021gcexplainer} on GCN and \textit{Wu et al.}\cite{wu2019simplifying} on SGC.
 I reproduce all of the experiments from \textit{Magister et al.} and the Planetoid\cite{kipf2016semi} from \textit{Wu et al.} as these are most relevant.
 
+\paragraph{Success criterion}
+\Sref{sec:GCN-reproduction} demonstrates an implementation of GCN trained on the synthetic datasets with concept extraction.
+Tables \ref{tab:GCN-acc} and \ref{tab:GCN-concepts} and figure \ref{fig:GCN-BA-Shapes} demonstrate the results achieved.
+This fulfills the $2^{nd}$ success criterion.
+
 \paragraph{Method}
 In both cases across all datasets the hyperparameters presented in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params} are used.
 Each model, dataset experiment is run 10 times with different randomly pre-selected seeds and the mean and confidence interval are presented in accordance with \Sref{sec:reporting}.
 The implementation of SGC is the one presented in \note{reference section when complete} and the implementation of GCN uses the layers provided by \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
 
-\paragraph{SGC}
+\subsection{SGC}
 \input{tables/SGC-reproduction}
 
 Table \ref{tab:SGC-reproduction} presents the accuracy achieved by my SGC models compared to the accuracy presented in table 2 of \textit{Wu et al.}\cite{wu2019simplifying}.
@@ -146,6 +157,7 @@ Furthermore, the published learning rate of 0.2 yields worse results and so, as 
 Based on these considerations I consider my implementation of SGC to be correct.
 
 \subsection{GCN}
+\label{sec:GCN-reproduction}
 \paragraph{Accuracy}
 \input{tables/GCN-acc}
 Table \ref{tab:GCN-acc} presents the accuracy achieved my GCN models compared to the accuracy published in table 16 of \textit{Magister et al.}\cite{magister2021gcexplainer}.
@@ -161,17 +173,46 @@ Due to these considerations I consider my implementation of GCN to be correct.
 \paragraph{Concept scores}
 \input{tables/GCN-concepts}
 Table \ref{tab:GCN-concepts} presents the concept scores for each of the top performing GCN models compared to those in tables 4 and 5 in \textit{Magister et al.}.
-Only the mean purity is presented across all the models with the minimum and maximum purity available in table \note{reference when complete}.
+Only the mean purity is presented across all the models with the minimum and maximum purity available in table \note{reference when complete}. As with the accuracy reproduction the values for concept completeness are closely correlated for the majority of the models.
 
-As with the accuracy reproduction the values for concept completeness are closely correlated for the majority of the models.
-\error{Include and analysis of Mutagenicity}
+\fig{erroneous-labels}{A subset of the concepts discovered for Mutagenicity highlighting the erroneous labels. Each row represents a concept and the graphs are coloured according to standard chemical colouring \note{citation needed}.}
+
+Figure \ref{fig:erroneous-labels} demonstrates that the clustering for Mutagenicity focuses on chemical similarity which does not correlate to mutagen similarity.
+This means that the concept completeness is likely to be low as demonstrated in \ref{tab:GCN-concepts} though the actual model accuracy may be high.
 
 The average purity is far more erratic with little correlation between the two results which would suggest that the purity score or concept extraction is incorrect.
-As discussed in \Sref{sec:evaluation} the calculation of purity scores and quantitative analysis are not sufficient when comparing purity scores.
-Due to the the 13 node cut-off and non-deterministic nature of clusters (with no average values provided by \textit{Magister et al.}) the exact concept purity scores are likely to behave erratically as demonstrated.
+However, as discussed in \Sref{sec:evaluation}, the calculation of purity scores and quantitative analysis are not sufficient when comparing purity scores.
+Due to the the 13 node cut-off and non-deterministic nature of k-Means\note{citation needed} clustering (with no average values provided by \textit{Magister et al.}) the exact concept purity scores are likely to behave erratically as demonstrated.
+
+\fig{GCN-BA-Shapes}{A subset of concepts discovered for BA-Shapes from the best perfomring GCN model. Green nodes highlight the node of interest and pink nodes highlight the neighbourhood used for inference. Each row represents an individual concept.}
+
+\fig{Magister-BA-Shapes}{A subset of the BA Shapes concepts discovered in figures 2, 3 and 5 from \textit{Magister et al.}\cite{magister2021gcexplainer} to demonstrate the full range of labels. Each row represents an individual concept, the same colour system is used as fig. \ref{fig:GCN-BA-Shapes}.}
+
+%\begin{figure}[h]
+%    \centering
+%    \includegraphics[width=0.45\textwidth]{figures/Magister-BA-Shapes}
+%    \includegraphics[width=0.45\textwidth]{figures/GCN-BA-Shapes}
+%    \caption{A side-by-side comparison of BA Shapes concepts discovered. The left figure demonstrates the concepts from figures 2, 3 and 5 from \textit{Magister et al.}\cite{magister2021gcexplainer} and the right figure demonstrates the reproductions. Each row represents an individual concept and the concepts are labelled}
+%    \label{fig:test}
+%\end{figure}
+
+Figure \ref{fig:GCN-BA-Shapes} presents a subset of the BA Shapes concepts reproduced by the best performing GCN model.
+For comparison figure \ref{fig:Magister-BA-Shapes} presents those published in \textit{Magister et al.}
+Label 0 is included in both figures to demonstrate that the model does identify the base graph, in this case Barabasi-Albert, but as can be seen this provides little insight into how the model reasons.
+The remaining concepts demonstrate the 3 other labels associated with the house motif, as discussed in \Sref{sec:synth}.
 
 
-\error{Include BA Shapes concepts and those provided by Magister et al. for full comparison.}
+As can be seen all the published concepts have an equivalent concept in the reproduced concepts.
+The same analysis can be made that the edge attaching the house motif to the base graph is important to the classification of the nodes.
+There is also the same distinction in label 1 between a node on the ``inside'' and the ``outside'' where the ``inside'' node has an additional edge attached to the base graph.
+This distinction is present in label 2 as well, given that all the nodes present in both the published and reproduced concepts focus on the ``inside'' node.
+
+In both cases, and as expected given the concept purity scores, the concepts related to the motifs are almost completely pure with the exception of label 1 ``inside'' node.
+Additionally, all the nodes in the house motif have a unique concept where applicable and this leads to the high completeness score.
+
+Given the visual similarity in concepts between the published and reproduced results I consider the implementation of GCN to be accurate.
+Examples of the other synthetic and real datasets is available in Appendix \note{reference when complete}.
+\note{There may also be brief comparisons between the figures time permitting.}
 
 \section{Comparison of Accuracy}
 \label{sec:comparison}
