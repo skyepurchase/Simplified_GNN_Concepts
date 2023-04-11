@@ -187,8 +187,7 @@ Figure \ref{fig:erroneous-labels} demonstrates that the clustering for Mutagenic
 This means that the concept completeness is likely to be low as demonstrated in \ref{tab:GCN-concepts} though the actual model accuracy may be high.
 
 The average purity is far more erratic with little correlation between the two results which would suggest that the purity score or concept extraction is incorrect.
-However, as discussed in \Sref{sec:evaluation}, the calculation of purity scores and quantitative analysis are not sufficient when comparing purity scores.
-Due to the the 13 node cut-off and non-deterministic nature of k-Means\note{citation needed} clustering (with no average values provided by \textit{Magister et al.}) the exact concept purity scores are likely to behave erratically as demonstrated.
+However, the 13 node cut-off and non-deterministic nature of k-Means\note{citation needed} clustering is likely to be the cause rather than an incorrect implementation.
 
 \fig{GCN-BA-Shapes}{A subset of concepts discovered for BA-Shapes from the best perfomring GCN model. Green nodes highlight the node of interest and pink nodes highlight the neighbourhood used for inference. Each row represents an individual concept.}
 
@@ -218,18 +217,28 @@ Examples of the other synthetic and real datasets is available in Appendix \note
 
 Table \ref{tab:SGC-acc} demonstrates the mean accuracies achieved by each of the SGC models using the hyperparameters in \ref{tab:SGC-params}.
 As a comparison the accuracies achieved by GCN are presented beside them.
+The performanace of SGC is very poor and so random guesses are included as well to demonstrate the limited inference of SGC.
 
-Compared to GCN the accuracies achieved by SGC are significantly worse and go against \textit{Wu et al.}'s claim that SGC can match GCN perfomance.
+\paragraph{Compared to GCN}
+the accuracies achieved by SGC are significantly worse and go against \textit{Wu et al.}'s claim that SGC can match GCN perfomance.
 In the cases of the Tree datasets GCN nearly doubles the accuracy and in the case of BA Community GCN is more than $4\times$ as accurate.
 Only in the case of BA Grid does SGC achieve a good accuracy in comparison to GCN though even here the difference in accuracy is $27.1$\%.
 
 These poor results suggest that the graph structure inference of SGC is far worse than that of GCN as labels are based only on graph structure.
 This is also an explanation for why SGC is able to surpass the accuracy of GCN in the Planetoid\cite{Fey/Lenssen/2019} as these datasets rely heavily on node representations.
 
-Beyond 
+\paragraph{Compared to random guesses}
+SGC does not perform much better except in the cases of BA Shapes and BA Grid.
+In the cases of the Tree datasets this can be attributed to the sparsity of the base graph resulting in less information being aggregated in the pre-computation stage.
+Especially in the case of Tree Cycles where the Cycle structure and BST structure share similar sparse connections.
+
+Comparatively the dense BA graph allows for a better distinction between the motifs and the base graph.
+This distinction based on degree is attributed to the degree normalisation demonstrated in equation\ref{eq:GCN-as-GNN}.
+This advantage is not present in BA Community because of the increase in classes, the need to distinguish the two communities and the possibility of a motif having multiple connections to different base graphs.
 
 These poor results are not due to poor hyperparameter selection as is demonstrated in Appendix \note{reference when complete} and discussed in \Sref{sec:hyperparameters}.
-
+Instead the explanation for the poor performance is due to the lack of proper graph structure inference in SGC.
+This is lack of graph structure inference is not in comparison to GCN but rather a fundamental property of SGC.
 
 \section{Comparison of Concepts}
 \label{sec:comp-concept}
