@@ -430,8 +430,8 @@ The GED is calculated using the following equation
     \label{eq:GED}
     \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
 \end{equation}
-where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c$ is the cost of carrying out an edit operation $e_i$.
-Note that this process NP-Hard and so in most cases an exact purity score is not provided.
+where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c$ is the cost of carrying out an edit operation $e_i$.\footnote{This process NP-Hard and so in most cases an exact purity score is infeasible to compute.}
+By this metric a high purity score is represented by a lower number with 0 being completely pure.
 
 \paragraph{Concept completeness}
 relates to the importance of the concept determining whether the correct output can be predicted from the concepts alone.

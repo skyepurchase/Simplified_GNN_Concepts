@@ -26,6 +26,37 @@ class SGC(torch.nn.Module):
                 f'{self.out_channels})')
 
 
+class SGCPlus(torch.nn.Module):
+    def __init__(self,
+                 num_features: int,
+                 num_classes: int) -> None:
+        super().__init__()
+
+        self.lin1 = torch.nn.Linear(num_features, 20)
+        self.lin2 = torch.nn.Linear(20, 20)
+        self.lin3 = torch.nn.Linear(20, 20)
+        self.classifier = torch.nn.Linear(20, num_classes)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.lin1.reset_parameters()
+        self.lin2.reset_parameters()
+        self.lin3.reset_parameters()
+        self.classifier.reset_parameters()
+
+    def forward(self, x: Tensor) -> Tensor:
+        out: Tensor = self.lin1(x)
+        out = F.relu(out)
+        out = self.lin2(out)
+        out = F.relu(out)
+        out = self.lin3(out)
+        out = F.relu(out)
+        out = self.classifier(out)
+
+        return F.softmax(out)
+
+
 class PoolSGC(SGC):
     def __init__(self,
                  num_features: int,

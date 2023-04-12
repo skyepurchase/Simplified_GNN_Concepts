@@ -1,0 +1,17 @@
+\begin{table}
+    \centering
+    \begin{tabular}{c|ccc|c}
+        \multirow{2}{*}{\textbf{Dataset}} &
+        \multicolumn{3}{c}{\textbf{SGC}} & \\
+        & \textbf{Max.} & \textbf{Min.} & \textbf{Mean} & \multirow{-2}{*}{\textbf{GCN}}\\
+        \midrule
+        BA Shapes       & 0.0 & 4.0 & 0.8 (5) & 0.000 (4) \\
+        BA Grid         & 0.0 & 0.0 & 0.0 (2) & 0.000 (2) \\
+        BA Community    & 0.0 & 6.0 & 4.0 (4) & 5.600 (3) \\
+        Tree Cycles     & 0.0 & 6.0 & 1.0 (6) & 4.391 (9) \\
+        Tree Grid       & 0.0 & 7.0 & 3.3 (10) & 1.417 (6) \\
+    \end{tabular}
+    \caption{Concept purity of SGC on each of the synthetic datasets using the hyperparameters in table \ref{tab:SGC-params} compared to the average purity achieved by the equivalent GCN model. The brackets represent the number of concepts considered for purity, as per \Sref{sec:evaluation} these are graphs with less than 13.}
+    \label{tab:SGC-purity}
+\end{table}
+

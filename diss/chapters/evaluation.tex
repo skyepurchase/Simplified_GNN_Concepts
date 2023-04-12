@@ -195,16 +195,16 @@ However, the 13 node cut-off and non-deterministic nature of k-Means\note{citati
 
 Figure \ref{fig:GCN-BA-Shapes} presents a subset of the BA Shapes concepts reproduced by the best performing GCN model.
 For comparison figure \ref{fig:Magister-BA-Shapes} presents those published in \textit{Magister et al.}
-Label 0 is included in both figures to demonstrate that the model does identify the base graph, in this case Barabasi-Albert, but as can be seen this provides little insight into how the model reasons.
+Concept 1 and A are included to demonstrate that the model does identify the base graph, in this case Barabasi-Albert, but as can be seen this provides little insight into how the model reasons.
 The remaining concepts demonstrate the 3 other labels associated with the house motif, as discussed in \Sref{sec:synth}.
-
 
 As can be seen all the published concepts have an equivalent concept in the reproduced concepts.
 The same analysis can be made that the edge attaching the house motif to the base graph is important to the classification of the nodes.
-There is also the same distinction in label 1 between a node on the ``inside'' and the ``outside'' where the ``inside'' node has an additional edge attached to the base graph.
-This distinction is present in label 2 as well, given that all the nodes present in both the published and reproduced concepts focus on the ``inside'' node.
+There is also the same distinction between concepts 2 and 3 as concepts B and C representing ``inside'' and the ``outside'' nodes respectively.
+Notice that in both concept 2 and B the  ``inside'' node clearly attaches to the Barabasi-Albert base graph.
+This distinction is also present in concept 4 and D, with both the published and reproduced concepts focusing on the ``inside'' bottom node.
 
-In both cases, and as expected given the concept purity scores, the concepts related to the motifs are almost completely pure with the exception of label 1 ``inside'' node.
+In both cases, and as expected given the concept purity scores, the concepts related to the motifs are almost completely pure with the exception of concept 1 and B.
 Additionally, all the nodes in the house motif have a unique concept where applicable and this leads to the high completeness score.
 
 Given the visual similarity in concepts between the published and reproduced results I consider the implementation of GCN to be accurate.
@@ -233,16 +233,115 @@ In the cases of the Tree datasets this can be attributed to the sparsity of the 
 Especially in the case of Tree Cycles where the Cycle structure and BST structure share similar sparse connections.
 
 Comparatively the dense BA graph allows for a better distinction between the motifs and the base graph.
-This distinction based on degree is attributed to the degree normalisation demonstrated in equation\ref{eq:GCN-as-GNN}.
+This distinction based on degree is attributed to the degree normalisation demonstrated in equation \ref{eq:GCN-as-GNN}.
 This advantage is not present in BA Community because of the increase in classes, the need to distinguish the two communities and the possibility of a motif having multiple connections to different base graphs.
 
 These poor results are not due to poor hyperparameter selection as is demonstrated in Appendix \note{reference when complete} and discussed in \Sref{sec:hyperparameters}.
 Instead the explanation for the poor performance is due to the lack of proper graph structure inference in SGC.
 This is lack of graph structure inference is not in comparison to GCN but rather a fundamental property of SGC.
 
-\section{Comparison of Concepts}
+\paragraph{Comparison of parameters}
+Given that SGC uses a single linear regressor compared to GCNs multiple layers there is a large discrepancy in number of parameters.
+SGC has ~40 parameters compared to GCN with 1000+ for BA Shapes which is very significant difference.
+However, increasing the parameters for SGC by increasing the node feature size and adding a \emph{multi-layer perceptron}(MLP) with the same hidden layers as the GCN model result in no substantial change to accuracy.
+
+No MLP model is added before the SGC pre-computation step as this defeats the point of SGC to be linear.\footnote{The use of an MLP classifier also introduces non-linearity though in this case the model does not improve. Non-linearity and parameters on there own are not sufficient.}
+This is the main drawback of SGC as it cannot manipulate the node representations beyond simple message passing/filter application.
+\Sref{sec:comp-concept} explores these claims further demonstrating the importance of trainable parameters during message and non-linearity.
+
+\section{Comparison of concepts}
 \label{sec:comp-concept}
-\input{tables/SGC-concepts}
+
+To achieve the \ref{crit1}$^{st}$ and \ref{crit3}$^{rd}$ success criterion concepts need to be extracted from SGC and compared to GCN concepts.
+However, as stated before, concept extraction and analysis is only suggested for models that achieved $95$\% or higher on synthetic datasets by \textit{Ying et al.}\cite{ying2019gnnexplainer}.
+As demonstrated in \Sref{sec:comp-acc} SGC does not reach this value only reaching $72.4$\% in the best case.
+
+However, though the concepts will not be meaningful to explain how SGC reasons they will still provide insight into the claims in \Sref{sec:comp-acc}.
+Furthermore, the concepts highlight the shortcomings of SGC when it comes to graph structure inference.
+For this reason the analysis of the concept scores is limited but the qualitative concept analysis provides insight into where SGC fails.
+
+\paragraph{Success criterion}
+\error{Fill in once section finished.}
+
+\subsection{Quantitative analysis}
+\paragraph{Completeness}
+\input{tables/SGC-completeness}
+
+Table \ref{tab:SGC-completeness} demonstrates the completeness scores achieved by SGC compared to GCN and as expected, by the low accuracy achieved by SGC in \Sref{sec:comp-acc}, they are consistently lower than the equivalent GCN models.
+However, given the accuracies of SGC appears closs to random, the resulting completeness scores aresurprisingly close to the GCN scores except in the case of BA Community.
+
+The high completenes scores are due to the fact that completeness relates to importance of concepts and not the performance of the model.
+The relatively high completeness scores for SGC signify that the concepts that SGC produces have some relevance to the class of a node.
+However, as demonstrated by table \ref{tab:SGC-completeness}, this relevance is not as strong as that in GCN.
+
+\paragraph{Purity}
+\input{tables/SGC-purity}
+
+Table \ref{tab:SGC-purity} demonstrates the purity scores achieved by the best performing SGC model compared to GCN.
+As discussed in \Sref{sec:GCN-reproduction} the values for purity are likely to be very erratic and not well suited for direct comparison.
+Given this erratic behaviour the values for purity between the two approaches are somewhat correlated with SGC achieving fairly pure concepts.
+As demonstrated SGC can identify pure concepts as is the case of BA Grid, which matches GCN in completely pure concepts.\footnote{For subgraphs the contain less than 13 nodes.}
+
+However, the inclusion of the number of concepts considered when calculating purity demonstrates the limitation of this method of comparison.
+Due to the base graphs a number of concepts contain more than 13 nodes and therefore are not considered.
+Thus the pure concepts of BA Grid are not representative of all the concepts extracted.
+
+Overall, this demonstrates that though SGC does not perform as well as GCN it produces concepts that are as coherent as GCN produces.
+
+\subsection{Qualitative analysis}
+\label{sec:concept-analysis}
+
+\paragraph{BA Shapes}
+\fig{SGC-BA-Shapes}{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
+
+Figure \ref{fig:SGC-BA-Shapes} visualises a subset of the concepts extracted for SGC on BA Shapes.
+Concepts 1 to 4 demonstrate the purer concepts extracted for SGC with concepts 5 to 7 representing the more common impure concepts extracted.
+Concept 5 demonstrates a shortcoming of the approach to calculating purity as this is considered a ``pure'' concept as the Barabasi-Albert graphs are not considered when calculating the score. 
+As with GCN, concept 1 demonstrates that SGC is able to identify the base graph consistently but as stated in \Sref{sec:GCN-reproduction} this provides little insight into the behaviour of SGC.
+
+Concepts 2, 3 and 4 demonstrate that SGC can identify pure concepts with important graph structure components.
+These concepts can be directly compared to concepts 3, 2 and 4 in figure \ref{fig:GCN-BA-Shapes} respectively.
+As with GCN the attaching arm is important to the classification of the nodes and there is some distinction in concept 2 and 3 between ``inside'' and ``outside'' middle nodes.
+However, as can be seen in concept 2, this distinction is not as strong as GCN.
+
+Concepts 5, 6 and 7 demonstrate the common impure concepts that are extracted from SGC.
+This is the major shortcoming of SGC even with the large differences in degree if cannot consistently distinguish between the base graph and the motif.
+Given that the nodes of interest in house motif are all consistent across these concepts suggests that there is an element of structure being identified.
+The problem is that SGC is unable to discern between structures that produce similar node representations.
+
+This observation suggests that the main shortcoming of SGC is the lack of learnable influence on node representations.
+In comparison GCN allows for manipulation of the node representations as demonstrated by $\bm{\Theta}^{(l)}$ in equation \ref{eq:GCN1}.
+Though equation \ref{eq:theta} suggests this manipulation should be preserved the reality is that only the final filter output is manipulated.
+This observation leads to the extension presented in \Sref{sec:Jump-SGC} allowing SGC to access individual filter applications.
+
+\paragraph{BA Community}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/SGC-BA-Community}
+    \includegraphics[width=0.75\textwidth]{figures/GCN-BA-Community}
+    \caption{Comparison of SGC and GCN concepts for BA Community demonstrating the poor graph structural inference of SGC. The numbered concepts are a subset of SGC concepts and the lettered concepts are GCN concepts. The colour scheme is the same as fig. \ref{fig:GCN-BA-Shapes}.}
+    \label{fig:BA-Community}
+\end{figure}
+
+Figure \ref{fig:BA-Community} highlights the inability of SGC to accurately discern graph structure where GCN demonstrate accurate graph structure discernment.
+Concepts 1, 2 and 3 demonstrate the purer concepts for SGC trained on BA Community and Concepts A to E represent the equivalent concepts for GCN on BA Community.
+
+As discussed SGC may be able to identify graph structure, as shown in concepts 1 and 2, however concept 1 highlights the fact that SGC cannot determine which part of the graph structure a node is.
+Comparatively concepts A, B and C show a similar situation except consistent labels across the concept.
+
+Furthermore, concept 2 includes a Barabasi-Albert subgraph, this is likely due to the similarity in node features for the second community\footnote{labels 4, 5, 6 and 7.} resulting in SGC treating them as the same.
+In comparison GCN can distinguish between different communities as shown by concepts A and B which represent the same node in the house motif but different communities.
+And GCN is able to discern between members in the same community demonstrated by concepts B and C.
+
+This erroneous behaviour is not standard as concept 3 highlights how the Barabasi-Albert subgraphs from separate communities are grouped together.
+GCN does treat the two communities different regardless of structural similarity which is clear in concepts D and E.
+
+Overall SGC is able to infer basic graph structure or group nodes into communities but is unable to achieve fine-grained inference.
+Though particularly apparent in BA Community these behaviours of SGC are likely to effect the performance on other datasets.
+
+\subsection{Summary}
+The low accuracy of SGC means that the data present in tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} does not carry much meaning.
+However, table \ref{tab:SGC-completeness} does suggest that SGC does not produce useful concepts even though table \ref{tab:SGC-purity} suggests that these concepts are coherent.
 
 \section{Extensions}
 
@@ -251,4 +350,5 @@ This is lack of graph structure inference is not in comparison to GCN but rather
 \subsection{SGC and GCN Mixed Model}
 
 \subsection{JumpNet style SGC}
+\label{sec:Jump-SGC}
 
