@@ -242,8 +242,8 @@ This is lack of graph structure inference is not in comparison to GCN but rather
 
 \paragraph{Comparison of parameters}
 Given that SGC uses a single linear regressor compared to GCNs multiple layers there is a large discrepancy in number of parameters.
-SGC has ~40 parameters compared to GCN with 1000+ for BA Shapes which is very significant difference.
-However, increasing the parameters for SGC by increasing the node feature size and adding a \emph{multi-layer perceptron}(MLP) with the same hidden layers as the GCN model result in no substantial change to accuracy.
+SGC has $\sim40$ parameters compared to GCN with 1000+ for BA Shapes which is very significant difference.
+However, increasing the parameters for SGC by increasing the node feature size and adding a \emph{multi-layer perceptron}(MLP) with the same hidden layers as the GCN model results in no substantial change to accuracy.
 
 No MLP model is added before the SGC pre-computation step as this defeats the point of SGC to be linear.\footnote{The use of an MLP classifier also introduces non-linearity though in this case the model does not improve. Non-linearity and parameters on there own are not sufficient.}
 This is the main drawback of SGC as it cannot manipulate the node representations beyond simple message passing/filter application.
@@ -261,7 +261,12 @@ Furthermore, the concepts highlight the shortcomings of SGC when it comes to gra
 For this reason the analysis of the concept scores is limited but the qualitative concept analysis provides insight into where SGC fails.
 
 \paragraph{Success criterion}
-\error{Fill in once section finished.}
+Table \ref{tab:SGC-acc} demonstrates and implementation of SGC trained on the synthetic datasets with tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} showing concept extraction.
+Figures \ref{fig:SGC-BA-Shapes} and \ref{fig:BA-Community} visualise the extracted concepts from the relevant SGC model. These fulfill the \ref{crit1}$^{st}$ success criterion.
+
+Table \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} also include a comparison to the scores achieved by GCN.
+\Sref{sec:comp-concept} includes a detailed analysis of the concepts extracted for SGC and comparison to those extracted for GCN.
+These fullfil the \ref{crit3}$^{rd}$ success criterion.
 
 \subsection{Quantitative analysis}
 \paragraph{Completeness}
@@ -342,6 +347,13 @@ Though particularly apparent in BA Community these behaviours of SGC are likely 
 \subsection{Summary}
 The low accuracy of SGC means that the data present in tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} does not carry much meaning.
 However, table \ref{tab:SGC-completeness} does suggest that SGC does not produce useful concepts even though table \ref{tab:SGC-purity} suggests that these concepts are coherent.
+
+When looking at the concepts produce it is clear that SGC is not a capable GNN for synthetic datasets.
+Figures \ref{fig:SGC-BA-Shapes} and \ref{fig:BA-Community} highlight how the relatively good purity and completeness scores do not relate to useful concepts.
+The linearisation of GCN clearly does not maintain the graph capabilities of GCN contrary to the results and claims of \textit{Wu et al.}.
+
+Considering the large parameter disparity and adjusting SGC to compensate does not improve the performance.
+This suggests that non-linearity and trainable parameters are important at specific points during inference not on their own.
 
 \section{Extensions}
 
