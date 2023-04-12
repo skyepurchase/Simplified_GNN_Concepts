@@ -285,6 +285,7 @@ If the model is used for node classification the standard approach is to use a f
 \end{equation}
 
 \subsection{Simplified graph convolution}
+\label{sec:SGC}
 
 % Motivation behind SGC
 
@@ -305,7 +306,11 @@ Considering the node classification equation, \ref{eq:cls}, becomes
     \hat\mY = \operatorname{softmax}(\mS\cdots\mS\mX\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}),
 \end{equation}
 where the filter is applied $k$ times to allow for the retention of the receptive field.
-As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameter $\bm{\Theta} = \bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}$.
+As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameters
+\begin{equation}
+    \label{eq:theta}
+    \bm{\Theta} = \bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}.
+\end{equation}
 The final linearised model, SGC, is therefore
 \begin{equation}
     \hat\mY = \operatorname{softmax}(\mS^{k}\mX\bm{\Theta}).
@@ -425,8 +430,8 @@ The GED is calculated using the following equation
     \label{eq:GED}
     \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
 \end{equation}
-where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c$ is the cost of carrying out an edit operation $e_i$.
-Note that this process NP-Hard and so in most cases an exact purity score is not provided.
+where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c$ is the cost of carrying out an edit operation $e_i$.\footnote{This process NP-Hard and so in most cases an exact purity score is infeasible to compute.}
+By this metric a high purity score is represented by a lower number with 0 being completely pure.
 
 \paragraph{Concept completeness}
 relates to the importance of the concept determining whether the correct output can be predicted from the concepts alone.
@@ -460,9 +465,8 @@ This allows for a better analysis of the importance, or lack thereof, of non-lin
 To evaluate different GNNs using the metrics described in \Sref{sec:GCE} a trained model needs to be evaluated on specific graphs and concepts extracted from the models inference.
 To train the model the a notion of a graph dataset needs to be defined.
 As described in \Sref{sec:GRL} there three different classification tasks commonly carried out on graphs (though only two are considered) therefore there are three different notions of a graph dataset.
-Node classification datasets assign a class to each node in the dataset, thus each graph has an associated vector, $\vy$, of classifications.
-Comparitively, graph classification datasets assign a single value to the entire graph and so each graph is associated with a single value $y$.
-A graph dataset is therefore described by its collection of graphs and corresponding labels, $\{(\sG, \vy)\}$ in the case of node classification and $\{(\sG, y)\}$ in the case of graph classification.
+Node classification datasets assign a class to each node in the dataset, whereas, graph classification datasets assign a single value to the entire graph.
+A graph dataset is therefore described by its collection of graphs and corresponding classes.
 
 However, node classification datasets generally include a single \emph{connected} graph where, in the undirected case, there exists at least one path from every node to every other node.
 This creates another distinction between two types of graph datasets:
@@ -480,6 +484,7 @@ This dataset forces the model to induce information of relationships between nod
 As an extension to my project I extended SGC to apply to graph classification tasks thus allowing for analysis of both the transductive and inductive cases of GNNs as well as node and graph classification.
 
 \subsection{Synthetic datasets}
+\label{sec:synth}
 
 % From GRL and the overview discuss a bottom up approach
 % Discuss how certain properties can be instilled
@@ -515,6 +520,7 @@ There is an additional synthetic dataset, BA-Community, which combines two BA-Sh
 Node features for all the graphs are all-$1$ vectors of length 10, except in the case of BA-Community where one of the communities has all-$2$ vectors of length 10.
 
 \subsection{Real-world datasets}
+\label{sec:RWD}
 
 % Linking to motivation and GRL
 % Demonstrating that these techniques are important for real world use
@@ -602,6 +608,7 @@ At each stage I confirm that the implemented requirement integrates with the res
 My extensions do not fit into the Waterfall method as they are research based in nature. I therefore switch to an Agile software development \note{Citation needed} to allow the project to adjust to the experimental results achieved during development.
 
 \section{Testing}
+\label{sec:testing}
 
 % unittest for specific sections of code and infrastructure
 % comparison to paper baselines when dealing with model implementation
@@ -618,7 +625,9 @@ The concept analysis and dataset handling fall into this category.
 These two aspects are therefore verified using unit testing described later. \note{Remember to include reference when complete.}
 
 \paragraph{Reproduction of prior results}
-The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}. The hyperparameters for the GCN model baseline are available in \textit{Magister et al.}\cite{magister2021gcexplainer} where accuracy scores are also published. In \note{Reference the section when complete} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
+The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}.
+The hyperparameters for the GCN model baseline are available in \textit{Magister et al.}\cite{magister2021gcexplainer} where accuracy scores are also published.
+In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
 
 \section{Licensing}
 

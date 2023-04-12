@@ -1,0 +1,20 @@
+\begin{table}
+    \centering
+    \begin{tabular}{c|cc}
+        \multicolumn{1}{c}{\textbf{Dataset}} &
+        \multicolumn{1}{c}{\textbf{Magister et al.}} &
+        \multicolumn{1}{c}{\textbf{My results}} \\
+        \midrule
+        BA Shapes       & 95.6\% & 98.0\% $\pm$ 2.2 \\
+        BA Grid         & 99.0\% & 99.5\% $\pm$ 0.7 \\
+        BA Community    & 95.7\% & 86.3\%\tablefootnote{\label{nb:epochs1}Using the same epochs stated in \textit{Magister et al.}\cite{magister2021gcexplainer}. More epochs yields a closer value.} $\pm$ 3.3 \\
+        Tree Cycles     & 96.0\% & 95.8\% $\pm$ 3.2 \\
+        Tree Grid       & 95.1\% & 92.5\% $\pm$ 5.4 \\
+        \midrule
+        REDDIT BINARY   & 89.1\% & 89.1\% $\pm$ 2.2 \\
+        Mutagenicity    & 93.0\% & 93.8\% $\pm$ 1.6 \\
+    \end{tabular}
+    \caption{Reproduction of experiments from table 16 in \textit{Magister et al.}\cite{magister2021gcexplainer}. The mean test accuracy of 10 experiment runs is taken using \textit{Magister et al.}'s hyperparameters.}
+    \label{tab:GCN-acc}
+\end{table}
+
