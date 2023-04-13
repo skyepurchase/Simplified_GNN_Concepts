@@ -1,5 +1,5 @@
 from .gcn import GCN
-from .sgc import SGC, JumpSGC, PoolSGC, SGCPlus
+from .sgc import SGC, JumpSGC, PoolSGC
 from .layers import Pool
 
 import pickle
