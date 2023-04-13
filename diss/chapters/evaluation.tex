@@ -269,6 +269,7 @@ Table \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} also include a compari
 These fullfil the \ref{crit3}$^{rd}$ success criterion.
 
 \subsection{Quantitative analysis}
+\label{sec:quant}
 \paragraph{Completeness}
 \input{tables/SGC-completeness}
 
@@ -357,12 +358,110 @@ This suggests that non-linearity and trainable parameters are important at speci
 
 \section{Extensions}
 
+\subsection{Evaluation}
+All the extensions I explored focused on improving the ability of SGC or expanding the functionality of the model.
+Therefore to evaluate the success of these attempts the models evaluated using the same techniques used in \ref{sec:evaluation}.
+As these are extensions a smaller subset of the graph datasets are considered looking only at BA Shapes, as the best performing dataset, and BA Community, as the worst.
+
 \subsection{SGC Graph Classification}
+\paragraph{Motivation}
+The datasets present in \textit{Magister et al.}\cite{magister2021gcexplainer} include 2 real world datasets that focus on graph classification.
+As discussed in \Sref{sec:datasets} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
+Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
+
+\paragraph{Prior work and implementation}
+\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network as proposed by \note{name needed}\note{citation needed}.
+However, \textit{Magister et al.} utilise pooling on the graph node representations after GCN to classify graphs. As this latter method is easier to implement and allows for a fairer comparison between SGC and GCN this approach is chosen.
+The resulting model is identical to the standard SGC model with addition of a pooling layer before the classifier.
+
+The only problem posed is to concept extraction as this is done on a node level as suggested by \textit{Magister et al.}.
+This is overcome by broadcasting the graph label to each of the nodes.
+This allows the graphs to be combined into a disconnected forest of graphs and clustering can be carried out on this forest.
+Calculation of concept scores and the visualisation of concept therefore remains the same.
+
+\paragraph{Results}
+\fig{SGC-Mutagenicity}{Concepts from SGC and GCN for Mutagenicity comparing the complexity of the inferred graph structure. The numbered concepts are a subset of SGC concepts and the lettered concepts are a subset of GCN. The colour scheme matches standard chemical colours\note{citation needed}.}
+
+Tables \ref{tab:SGC-acc}, \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} already include the results achieved by SGC.
+The same quantitative analysis presented in \Sref{sec:quant} can be applied to the results achieved by SGC.
+This unfortunately suggests that the source of the graph data is not the issue, even though SGC performed well on Planetoid\cite{Fey/Lenssen/2019}.
+As discussed in \Sref{comp-acc} the cause for the discrepancy is due to Planetoid\cite{Fey/Lenssen/2019} being focused on node representation.
+Comparatively, Mutagenicity is both node representation and graph structure focused due to the nature of molecules.
+
+Figure \ref{fig:SGC-Mutagenicity} further shows why SGC does not match the accuracy achieved by GCN.
+Concepts 1, 2 and 3 focus on the inclusion of a single atom or small molecule structure wheres A, B and C demonstrate complex multi-atom structures.
+Concepts 1 and 2 suggest some form of structure being identified however this is not consistent in comparison to A and B.
+Concept 3 highlights the focus on grouping by atom as the major common component is the inclusion of the chlorine atom.
+In comparison, concept C highlights how GCN is able to identify very large structures, here two cyclic rings are consistently identified.
 
 \subsection{SGC and GCN Mixed Model}
 
-\subsection{JumpNet style SGC}
+\error{Need to implement mutual information to properly analyse compatibility.}
+
+\paragraph{Motivation}
+SGC is directly derived from GCN, the derivation provided in \Sref{sec:SGC}, using the same graph filter.
+The benefit of SGC is to reduce the complexity of GCN and the cost of training by pre-computing the graph operation.
+Though for the presented datasets in \Sref{sec:datasets} the improvement on cost and reduction in parameters is not significant larger datasets may create a larger benefit.
+However, due to the low accuracy of SGC some aspects of GCN must required for high accuracy, therefore a mixture of both should yield a high accuracy model with pre-computation.
+
+\paragraph{Implementation}
+
+\paragraph{Results}
+
+\subsection{JumpKnowledge style SGC}
 \label{sec:Jump-SGC}
 
+\paragraph{Motivation}
+As discussed in \Sref{sec:concept-analysis} SGC does not have influence on the node representations during message passing.
+SGC, of degree $k$, therefore has to infer graph structure from the aggregated node representations of all neighbouring nodes within $k$ hops.
+Therefore the reason for the low accuracy and poor graph structure awareness may not be due to the linearity.
+GCN is able to manipulate node representations between graph convolutions and can therefore further distinguish graph structure by potentially amplifying or damping differences between nodes.
+
+For these reasons I propose \emph{jump-SGC}(JSGC) which provides the classifier with node representations from each degree of the pre-computation.
+A fully-connected layer is added before the classifier to reduce the concatenated node representations into a single node representation.
+This allows for JSGC to effectively manipulate the node representations though these manipulations do not have an impact on the application of the graph filter.
+This idea mimics the \emph{jumping knowledge networks} (JCNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
+
+\paragraph{Prior work and Implementation}
+\textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing a nodes neighbourhood.
+It specifically identifies the effect on graph structure awareness this has making the method ideal for SGC.
+The motivation for JCNs is the node aggregation methods used resulted in neighbourhood influence similar to a random walk rather than a uniform influence.
+As a solution they propose aggregating the the node representations after successive neighbourhood aggregation layers together.
+Three main methods of aggregation are proposed but given the small size of the datasets the proposed concatenation method is best suited.
+
+By concatenating successive neighbourhood aggregations and then reducing the dimensionality to a single node representation uniform influence can be achieved.
+This is because detail present in the closer neighbourhoods can be combined with the wider awareness of the more receptive neighbourhoods.
+Rather than missing larger structure awareness or missing detail JCNs allow for an analysis of both.
+
+For JSGC this leads to two changes to the model and pre-computation.
+During pre-computation successive applications of the normalised filter are concatenated together.
+A fully-connected layer is then added to the standard SGC to reduce this concatenated representation space to the standard representation space.
+During this stage JSGC is able to infer more complex graph structure than SGC.
+To combine this with the classifier a single non-linear rectified linear unit layer is introduced.
+This non-linearity remains constant regardless of how the model scales and therefore the added potential benefits of the single non-linear layer is deemed negligible.
+
+\paragraph{Results}
+
 \input{tables/JSGC-acc}
+\input{tables/JSGC-completeness}
+\input{tables/JSGC-purity}
+
+Tables \ref{tab:JSGC-acc}, \ref{tab:JSGC-completeness} and \ref{tab:JSGC-purity} show the results achieved by JSGC on the datasets analysed in \Sref{sec:comp-concept}.
+Overall these demonstrate that JSGC does outperform SGC significantly and is more comparable to GCN.
+The accuracy achieved by JSGC is still lower than the the 95\% suggested by \textit{Ying et al.}\cite{ying2019gnnexplainer} but significantly better.
+This improvement is seen in table \ref{tab:JSGC-completeness} as the completeness scores are closer to 1 with BA Community producing better performing concepts than GCN.\footnote{This is partially a result of the concept parameters used. The high score signifies that good concepts are being utilised by the model but in this case the model still does not appear to be quite capable enough.}
+The purity presented in table \ref{tab:JSGC-purity} is higher though more concepts were considered and BA Community is a very complex graph.
+
+\fig{JSGC-BA-Community}{A subset of concepts from JSGC for BA Community demonstrating the improved graph structure awareness. The concepts are chosen to represent the GCN concepts presented in \ref{fig:BA-Community}. The colour scheme is the same as fig \ref{fig:GCN-BA-Shapes}.}
+
+Figure \ref{fig:JSGC-BA-Community} highlights the improvements that JSGC has made compared to SGC.
+Comparing these concepts to those achieved by GCN presented in figure \ref{fig:BA-Community} shows a clear improvement.
+Concepts 1 to 5 in fig. \ref{fig:JSGC-BA-Community} can be directly mapped to A to E in fig. \ref{fig:JSGC-BA-Community}.\footnote{A similar direct mapping was also achieved for BA Shapes.}
+JSGC is now able to distinguish between the two communities highlighted by concepts 1 \& 2 and 3 \& 4.
+Furthermore, within a community JSGC correctly distinguishes between the different nodes as concept 2, 3 and 4 show.
+Most importantly all concepts, except for concept 1, show consistent labelling throughout, particularly in concept 3 where all nodes are ``outside''\footnote{See \Sref{sec:concept-analysis}.} nodes.
+
+Clearly JSGC has comparable graph structure awareness as GCN and does not require the non-linearity of GCN to achieve this.
+The lower accuracy of JSGC still suggests that there are elements of GCN that are important to its success and generally GRL.
+However, further studies into the importance of non-linearity in GRL is required.
 
