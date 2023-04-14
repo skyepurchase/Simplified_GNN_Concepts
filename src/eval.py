@@ -71,7 +71,7 @@ def main(args: Namespace,
     else:
         temp = dataset[0]
         if isinstance(temp, Data):
-            data = temp
+           data = temp
         else:
             raise ValueError(f'Expected dataset at index zero to be type {Data} received type {type(temp)}')
 
