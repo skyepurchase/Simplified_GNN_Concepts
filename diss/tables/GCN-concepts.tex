@@ -1,0 +1,25 @@
+\begin{table}
+    \centering
+    \begin{tabular}{c|cccc}
+        \multirow{2}{*}{\textbf{Dataset}} &
+        \multicolumn{2}{c}{\textbf{Magister et al.}} &
+        \multicolumn{2}{c}{\textbf{My results}} \\
+        &
+        \textbf{Completeness} & 
+        \textbf{Purity} & 
+        \textbf{Completeness} & 
+        \textbf{Purity} \\
+        \midrule
+        BA Shapes       & 0.964 & 3.375 & 0.929 & 0.000 \\
+        BA Grid         & 1.000 & 4.923 & 1.000 & 0.000 \\
+        BA Community    & 0.678 & 0.000 & 0.623 & 5.600 \\
+        Tree Cycles     & 0.949 & 1.167 & 0.970 & 4.391\\
+        Tree Grid       & 0.965 & 3.100 & 0.951 & 1.417\\
+        \midrule
+        REDDIT BINARY   & 0.713 & 6.968 & 0.746 & 1.429 \\
+        Mutagenicity    & 0.967 & 5.400 & 0.626 & 0.375 \\
+    \end{tabular}
+    \caption{Reproduction of experiments from tables 4 and 5 in \textit{Magister et al.}\cite{magister2021gcexplainer}. The activation space for each experiment selected from the best performing model is used with the mean purity score presented.}
+    \label{tab:GCN-concepts}
+\end{table}
+
