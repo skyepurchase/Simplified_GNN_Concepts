@@ -95,10 +95,16 @@ def main(experiment: str,
                 trainer.fit(pl_model, loaders[0])
 
             # Check if there are activations from Jump SGC aggregation layer
-            if "aggr" in get_activation():
+            if ("aggr" in get_activation()):
                 save_activation(osp.join(DIR,
                                          "../activations",
                                          f'{save_filename}_concat.pkl'))
+            # Or if this is in fact a SGCN model
+            if (config["model"]["name"] == "gcn"):
+                save_activation(osp.join(DIR,
+                                         "../activations",
+                                         f'{save_filename}_gcn.pkl'))
+                
         else:
             assert len(loaders) == 3
             graph: Data = next(iter(loaders[2]))

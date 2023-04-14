@@ -171,12 +171,22 @@ def plot_latent_space(latent_data_list: List[NDArray],
  
     fig: FigureBase
     fig, axes = plt.subplots(1, len(latent_data_list), dpi=200)
-    fig.suptitle(f'Latent space of {",".join(names)}')
+    fig.suptitle(f'Latent space of {", ".join(names)}')
 
     name: Iterable = iter(names)
     for ax, data in zip(axes, latent_data_list):
         ax.scatter(data[:,0], data[:,1], c=labels, cmap='rainbow')
         ax.set_title(next(name))
+
+    # For easier comparison keep the axes the same width and height
+    x_min = min([ax.get_xlim()[0] for ax in axes])
+    x_max = max([ax.get_xlim()[1] for ax in axes])
+    y_min = min([ax.get_ylim()[0] for ax in axes])
+    y_max = max([ax.get_ylim()[1] for ax in axes])
+
+    for ax in axes:
+        ax.set_xlim(x_min, x_max)
+        ax.set_ylim(y_min, y_max)
 
     plt.savefig(osp.join(save_path, f"latent_space.png"))
 

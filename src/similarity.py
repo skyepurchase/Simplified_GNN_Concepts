@@ -99,12 +99,15 @@ def main(args: Namespace,
             mutual_info += mutual_info_i
 
         print(f"{name1}: {mutual_info}")
-        mutual_file.write(f"{name1} adjusted MI: {mutual_info}")
+        mutual_file.write(f"{name1} adjusted MI: {mutual_info}\n")
 
         if mutual_info >= best_MI:
             # Want latest layer possible so equality is desired
             best_MI = mutual_info
             best_layer = (name1, name2)
+
+    print(f"best layers: {best_layer}")
+    mutual_file.write(f"best layers for join: {best_layer}\n")
 
     # t-SNE dimensionality reduction to visualise the latent space
     latent_data = tsne_reduction([activation_list1[best_layer[0]], activation_list2[best_layer[1]]], 2)
