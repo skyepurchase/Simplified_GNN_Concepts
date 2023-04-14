@@ -14,7 +14,7 @@ from matplotlib.pyplot import FigureBase
 from numpy.typing import NDArray
 from sklearn.cluster import KMeans
 from torch import Tensor
-from typing import Tuple, Union
+from typing import Iterable, Tuple, Union, List
 
 
 def _get_subgraphs(top_indices: NDArray,
@@ -155,4 +155,28 @@ def plot_samples(clustering_model: KMeans,
     plt.savefig(osp.join(save_path, f'{layer_name}_{clustering_type}_{clusters}k_{hops}n_{num_graphs_viewable}_view.png'))
 
     return sample_graphs
+
+
+def plot_latent_space(latent_data_list: List[NDArray],
+                      labels: Tensor,
+                      save_path: str,
+                      names: List[str]) -> None:
+    """Plot the 2D dimensionality reductions to visualise the latent space of different models and layers.
+    INPUT
+        latent_data     : The list of DR data
+        data            : The labels for the dataset
+        save_path       : The path to save the figures
+    OUTPUT
+        None"""
+ 
+    fig: FigureBase
+    fig, axes = plt.subplots(1, len(latent_data_list), dpi=200)
+    fig.suptitle(f'Latent space of {",".join(names)}')
+
+    name: Iterable = iter(names)
+    for ax, data in zip(axes, latent_data_list):
+        ax.scatter(data[:,0], data[:,1], c=labels, cmap='rainbow')
+        ax.set_title(next(name))
+
+    plt.savefig(osp.join(save_path, f"latent_space.png"))
 
