@@ -72,16 +72,16 @@ def main(args: Namespace,
         if ("lin" in name1) or ("lin" in name2):
             continue
 
-        prob_U: List[int] = []      # Probability that a random node falls into concept i
-        prob_V: List[int] = []      # Same as above
-        prob_UV: List[List[int]] = []     # Probability that a random node falls into the same concept in both models
+        prob_U: List[float] = []      # Probability that a random node falls into concept i
+        prob_V: List[float] = []      # Same as above
+        prob_UV: List[List[float]] = []     # Probability that a random node falls into the same concept in both models
         for i in range(args.clusters):
             prob_U.append(np.sum(pred1 == i) / total)
             prob_V.append(np.sum(pred2 == i) / total)
            
-            prob_UV_i: List[int] = []
+            prob_UV_i: List[float] = []
             for j in range(args.clusters):
-                nodes = np.where(pred1 == i, np.where(pred2 == j, 1, 0), 0)
+                nodes: NDArray = np.where(pred1 == i, np.where(pred2 == j, 1, 0), 0)
                 prob_UV_i.append(np.sum(nodes) / total)
 
             prob_UV.append(prob_UV_i)
