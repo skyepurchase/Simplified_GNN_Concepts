@@ -9,61 +9,114 @@ The synthetic datasets discussed in \Sref{sec:synth} are proposed by \textit{Yin
 Though downloadable versions of these datasets are available from their github and \texttt{PyTorch Geometric} provide limited versions of a small subset I decide to implement them myself.
 This allows for more rigorous testing of both the datasets and the SGC precomputation later described in \Sref{sec:testing-imp}.
 
-Though the datasets are very simple they need to be compliant with \textit{PyTorch Geometric} to be used correctly during training.
-\textit{PyTorch Geometric} provides an \texttt{InMemoryDataset} abstract class for datasets that are small enough to be generated and stored within RAM.
+Though the datasets are very simple they need to be compliant with \texttt{PyTorch Geometric} to be used correctly during training.
+\texttt{PyTorch Geometric} provides an \texttt{InMemoryDataset} abstract class for datasets that are small enough to be generated and stored within RAM.
 
 \error{Finish this!}
 
 \section{Models}
+\label{sec:models}
 
 \section{Testing}
 \label{sec:testing-imp}
 
 \section{Machine Learning Pipeline}
 
+The ML pipeline is the infrastructure that links the datasets, pre-computation, dataloaders, and models together to train and evaluate the models.
+This allows for specific experiment configurations to be run changing each component individually or together.
+As the main aspect of this project is concept extraction, evaluation, and interpretation I use \texttt{PyTorch Lightning}\note{citation needed} as the main component of the pipeline.
+
+\texttt{PyTorch Lightning} provides \texttt{Lightning Modules} that act as wrappers around standard \texttt{PyTorch} (and therefore \texttt{PyTorch Geometric}) modules and carry out all the required training, validation and testing loops.
+Unfortunately, for the purposes of the core project and extensions a single wrapper is not possible.
+This is because the wrappers need to behave differently for SGC\note{Discuss earlier why SGC does not need adjacency} and GCN as GCN needs additional adjacency information.
+Additionally the real-world graph classification datasets require one-hot encoding when calculating loss whereas the synthetic datasets do not.
+Therefore the project implements 5 different wrappers to accomodate these differences.
+
+The datasets, pre-computation and dataloaders discussed in \Sref{sec:datasets-imp}, the models described in \Sref{sec:models} and the wrappers are then instantiated, run and results saved in a single \texttt{main.py} file.
+To run a single experiment the specific model build, dataset, seed, save destinations, etc. need to be passed to this function.
+To reduce this overhead multiple bash scripts can be dynamically created to run single quick experiments or full experiments which test the model on prechosen random seeds.
+
 \subsection{Reproducibility}
+\label{sec:reproducibility}
+It is important that the results that are achieved by the models, especially in regards to model accuracy, can be replicated later.
+This is both for the results presented in this dissertation but also for results found during experimentation in the extension phase.
+
+To achieve this every single experiment must set a seed value which is saved along with the results.
+This way when running the same configuration again using the same seed the expected outcome should be the same within very small bounds.
+
+Furthermore, the results achieved should be linked to specific model build that identifies all the hyperparameters used.
+The model build specifies every aspect of the model so that the exact same model can be replicated in a completely different ML pipeline.
+Thus the build files need to be human readable and easily expandable.
+
+To achieve these two requirements I use YAML which mimics python in its syntax and is therefore very readable but also links well with the rest of the pipeline.
+Each build has a unique YAML file with the filename following the convention \texttt{<model>.<dataloader>.<dataset>.<version>.yml}.
+Storing the YAML filename, seed and timestamp with every set of results allows for the reproduction of almost every result that was achieved throughout the project.
 
 \subsection{Experimentation}
+The infrastructure used in \Sref{sec:reproducibility} also add in experimentation but linking interesting or desired results to the specific configuration that produced them.
+This is particularly desirable during the extension phase where the exact method that will produce the best results is unknown.
+
+Beyond quick iteration in models during the exploratory extensions finding the optimal hyperparameters is essential.
+Incorrect hyperparameters can lead to artificially low performance and thus invalid the interpretation of the models based on results.
+I therefore implement \texttt{sweep.py} which takes a set of different hyperparameters values to test for each hyperparameter and runs a short evaluation of the performance.
+To properly evaluate models it is important that this evaluation does not use nodes that are in the final test set.
+As discussed in \Sref{sec:datasets-imp} choosing different seeds to the final run effectively means that nodes in the prechosen random seeds test set are always unseen.
 
 \section{Concept Extraction and Evaluation}
 
 \subsection{Extraction}
+\label{sec:extraction}
 
 \subsection{Evaluation}
+\label{sec:concept-eval}
 
 \subsection{Visualisation}
+\label{sec:vis}
 
 \section{Extensions}
-\note{Include a short preamble.}
+After completing the core project my extensions focus on improving the low performance demonstrated by SGC in \Sref{sec:comp-acc}.
+The motivation for some of my extensions develops from the results and analysis of the core project however the implementation details are non-trivial.
+This section outlines the three extensions completed, the motivation for each and the implementation details.
 The evaluation of my extensions is presented in \Sref{sec:extension-eval}.
 
 \subsection{SGC graph classification}
-\error{Make sure this makes sense to flow.}
 \paragraph{Motivation}
 The datasets present in \textit{Magister et al.}\cite{magister2021gcexplainer} include 2 real world datasets that focus on graph classification.
-As discussed in \Sref{sec:datasets} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
+As discussed in \Sref{sec:datasets-theory} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
 Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
 
-\paragraph{Prior work and implementation}
+\paragraph{Prior work}
 \textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network as proposed by \note{name needed}\note{citation needed}.
-However, \textit{Magister et al.} utilise pooling on the graph node representations after GCN to classify graphs. As this latter method is easier to implement and allows for a fairer comparison between SGC and GCN this approach is chosen.
+However, \textit{Magister et al.} carry out graph classification using GCN in a different way.
+Instead they utilise pooling on the graph node representations from a GCN on each graph in the dataset.
+The label of the entire graph can then be inferred from this single representation.
+As this latter method is easier to implement and allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.} this approach is chosen.
 The resulting model is identical to the standard SGC model with addition of a pooling layer before the classifier.
 
-The only problem posed is to concept extraction as this is done on a node level as suggested by \textit{Magister et al.}.
-This is overcome by broadcasting the graph label to each of the nodes.
+\paragraph{Implementation}
+The only problem posed is concept extraction as this is done on the node level, as suggested by \textit{Magister et al.}, rather than the graph level.
+Each graph has a single label with no labels for the node, therefore the method proposed in \Sref{sec:concept-eval}, does not work.
+This is overcome by broadcasting the graph label to each of the nodes in the graph.
+To achieve this additional information about the batch identifier of each node and each label is used to match labels to nodes.
+
 This allows the graphs to be combined into a disconnected forest of graphs and clustering can be carried out on this forest.
-Calculation of concept scores and the visualisation of concept therefore remains the same.
+Calculation of concept scores and the visualisation of concept therefore remains the same as that presented in \Sref{sec:concept-eval} and \Sref{sec:vis}.
 
 \subsection{SGC and GCN mixed model}
 \error{Make sure this makes sense to flow.}
 \paragraph{Motivation}
-SGC is directly derived from GCN, the derivation provided in \Sref{sec:SGC}, using the same graph filter.
-The benefit of SGC is to reduce the complexity of GCN and the cost of training by pre-computing the graph operation.
-Though for the presented datasets in \Sref{sec:datasets} the improvement on cost and reduction in parameters is not significant larger datasets may create a larger benefit.
-However, due to the low accuracy of SGC some aspects of GCN must required for high accuracy, therefore a mixture of both should yield a high accuracy model with pre-computation.
-This combined model, \textit{SGC+GCN} (SGCN), maintains the same hyperparameters as the SGC and GCN models with the additional hyperparameter of whether a layer is SGC or GCN.
+The derivation in \Sref{sec:SGC} shows that SGC is directly derived from GCN using the same graph filter.
+Therefore, though the two models use this filter differently they should be interchangeable to some extent.
+
+Futhermore the benefit of SGC is to reduce the complexity of GCN and the cost of training by pre-computing the graph operation.
+Even though for the very small datasets in \Sref{sec:datasets} the improvement on cost and reduction in parameters is not significant larger datasets may create a larger benefit.
+
+However, due to the low accuracy of SGC seen in \Sref{sec:comp-acc} some properties of GCN must required for high accuracy 
+A mixture of both should therefore yield a high accuracy model with fast pre-computation.
+This model will be referred to as SGCN.
 
 \paragraph{Implementation}
+\note{A more detailed explanation is now possible}
 For simplicity and to utilise the power of pre-computation SGCN starts with SGC layers and then transitions to GCN layers.
 For a fairer comparison the total number of layers must remain the same as the corresponding SGC and GCN layers.
 This reduces the problem to finding where SGC and GCN agree the most in regards to their concepts.
@@ -81,17 +134,18 @@ These can then be compared to see why a specific layer has the most mutual infor
 \subsection{Jumping knowledge SGC}
 \error{Make sure this makes sense to flow.}
 \paragraph{Motivation}
-As discussed in \Sref{sec:concept-analysis} SGC does not have influence on the node representations during message passing.
-SGC, of degree $k$, therefore has to infer graph structure from the aggregated node representations of all neighbouring nodes within $k$ hops.
-Therefore the reason for the low accuracy and poor graph structure awareness may not be due to the linearity.
-GCN is able to manipulate node representations between graph convolutions and can therefore further distinguish graph structure by potentially amplifying or damping differences between nodes.
+\Sref{sec:concept-analysis} discusses the limited influence SGC has on node representations during message passing.
+An SGC model, of degree $k$, can only infer graph structure from the aggregated node representations of all neighbouring nodes within $k$ hops.
+In comparison GCN is able to manipulate node representations between graph convolutions and can therefore learn to amplify or dampen differences between node representations which SGC cannot do.
+Therefore a potential reason for the low accuracy (seen in \Sref{sec:comp-acc}) and poor graph structure awareness (seen in \Sref{sec:comp-concept}) may not be due to the linearity.
 
 For these reasons I propose \emph{jump-SGC}(JSGC) which provides the classifier with node representations from each degree of the pre-computation.
-A fully-connected layer is added before the classifier to reduce the concatenated node representations into a single node representation.
-This allows for JSGC to effectively manipulate the node representations though these manipulations do not have an impact on the application of the graph filter.
-This idea mimics the \emph{jumping knowledge networks} (JCNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
+This larger node representation is reduced before the classifier to maintain the same parameter size of the classifier.
+This allows for JSGC to effectively manipulate the node representations though these manipulations do not have an impact on the successive application of the graph filter.
+This idea mimics \emph{jumping knowledge networks} (JCNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
 
 \paragraph{Prior work and Implementation}
+\note{A more detailed discussion is possible.}
 \textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing a nodes neighbourhood.
 It specifically identifies the effect on graph structure awareness this has making the method ideal for SGC.
 The motivation for JCNs is the node aggregation methods used resulted in neighbourhood influence similar to a random walk rather than a uniform influence.
@@ -108,7 +162,5 @@ A fully-connected layer is then added to the standard SGC to reduce this concate
 During this stage JSGC is able to infer more complex graph structure than SGC.
 To combine this with the classifier a single non-linear rectified linear unit layer is introduced.
 This non-linearity remains constant regardless of how the model scales and therefore the added potential benefits of the single non-linear layer is deemed negligible.
-
-\section{Pytorch Geometric}
 
 \section{Repository}
