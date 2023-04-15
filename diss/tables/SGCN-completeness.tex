@@ -1,0 +1,14 @@
+\begin{table}
+    \centering
+    \begin{tabular}{c|c|cc}
+        \textbf{Model} & \textbf{Layer 1} & \textbf{Layer 2} & \textbf{Layer 3} \\
+        \midrule
+        GCN     & 0.736 & 0.743 & 0.926 \\
+        SGC     & \underline{0.800} & 0.757 & 0.700 \\
+        \midrule
+        SGCN    & \underline{0.800} & \textbf{0.764} & \textbf{0.971} \\
+    \end{tabular}
+    \caption{Completeness scores for each of the layers of SGCN trained on BA Shapes where the first layer is SGC precomputaion and the remaining two layers are GCN layers. The results achieved by SGC and GCN run for the same number of epochs are added as comparison.}
+    \label{tab:SGCN-completeness}
+\end{table}
+
