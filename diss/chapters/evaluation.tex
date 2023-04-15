@@ -396,17 +396,54 @@ In comparison, concept C highlights how GCN is able to identify very large struc
 
 \subsection{SGC and GCN Mixed Model}
 
-\note{Complete after mutual information to properly analyse compatibility.}
-
 \paragraph{Motivation}
 SGC is directly derived from GCN, the derivation provided in \Sref{sec:SGC}, using the same graph filter.
 The benefit of SGC is to reduce the complexity of GCN and the cost of training by pre-computing the graph operation.
 Though for the presented datasets in \Sref{sec:datasets} the improvement on cost and reduction in parameters is not significant larger datasets may create a larger benefit.
 However, due to the low accuracy of SGC some aspects of GCN must required for high accuracy, therefore a mixture of both should yield a high accuracy model with pre-computation.
+This combined model, \textit{SGC+GCN} (SGCN), maintains the same hyperparameters as the SGC and GCN models with the additional hyperparameter of whether a layer is SGC or GCN.
 
 \paragraph{Implementation}
+For simplicity and to utilise the power of pre-computation SGCN starts with SGC layers and then transitions to GCN layers.
+For a fairer comparison the total number of layers must remain the same as the corresponding SGC and GCN layers.
+This reduces the problem to finding where SGC and GCN agree the most in regards to their concepts.
+
+This is achieved using mutual information between the two models by using the probability of a node appearing in a specific cluster from either model.
+This gives a measure for the dependence of the models clusters and therefore how similar the models are.
+However, this does not take into account random chance of two nodes appearing in the same cluster.
+Therefore the mutual information is adjusted for this chance resulting in a number in the range $[0, 1]$ where $1$ is identical.
+This is known as \emph{adjusted mutual information}(AMI).
+
+To better visualise these results the dimensionality of the activations from the models are reduced using \emph{t-distributed stochastic neighbor embedding} (t-SNE)\note{citation needed} into 2 dimensions.
+This clusters similar representations together and keeps different representations apart which acts as a visual proxy to viewing all the concepts of a model.
+These can then be compared to see why a specific layer has the most mutual information and how the join effects the resulting model.
 
 \paragraph{Results}
+
+\fig{SGC-GCN-latent-space}{The 2D t-SNE reduced latent space of the first layer where SGC and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
+\fig{SGCN-SGC-latent-space}{The 2D t-SNE reduced latent space of the second layer where SGCN and SGC activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
+\fig{SGCN-GCN-latent-space}{The 2D t-SNE reduced latent space of the final (third) layer where SGCN and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
+\input{tables/SGCN-acc}
+\input{tables/SGCN-completeness}
+
+As the process of finding the optimal model, training and then evaluating said model requires many steps only BA Shapes is considered.
+Figures \ref{fig:SGC-GCN-latent-space}, \ref{fig:SGCN-SGC-latent-space} and \ref{fig:SGCN-GCN-latent-space} show the t-SNE reduced latent space of the different models.
+Tables \ref{tab:SGCN-acc} and \ref{tab:SGCN-completeness} demonstrate the results achieved by SGCN in both accuracy and concept completeness.
+
+Figure \ref{fig:SGC-GCN-latent-space} demonstrates the first layer which is the most similar between GCN and SGC according to AMI.
+The similarity is not very high but is significantly higher than the similarity between SGC and GCN for the remaining layers.
+This presents the major issue with this technique which is that unfortunately SGC and GCN do represent the nodes very differently.
+
+Figure \ref{fig:SGCN-SGC-latent-space} demonstrates that the second layer of SGCN is very similar to that of SGC.
+This makes sense as the previous layer was an SGC layer and so the GCN layer is working from a different feature space.
+Notice the spread out \note{Include the labels please!!} which is also present in the GCN layers in \ref{fig:SGC-GCN-latent-space} and \ref{fig:SGCN-GCN-latent-space}.
+Figure \ref{fig:SGCN-GCN-latent-space} shows that by the third and final layer of SGCN is very similar to that of GCN.
+Given the increase in performance by SGCN demonstrated in table \ref{tab:SGCN-acc} this likely to be a more optimal space.
+
+Though SGCN does not surpass the performance of GCN as shown in table \ref{tab:SGCN-acc} it is able to surpass it in completeness score highlighted in table \ref{tab:SGCN-completeness}.
+This happens across all layers (noting that the first layer is identical to the SGC layer) and highlights a major benefit of the model.
+GCN takes all 3 layers to reach the high completeness score above $0.9$ comparatively SGC starts high but then continues to decrease as more layers are added.
+By combining the layers after SGC begins to decrease this allows for the completeness score to remain high throughout.
 
 \subsection{JumpKnowledge style SGC}
 \label{sec:Jump-SGC}
