@@ -457,7 +457,7 @@ For this reason the process of concept extraction and evaluation presented in \t
 This allows for a better analysis of the importance, or lack thereof, of non-linearity in GNNs.  
 
 \section{Datasets}
-\label{sec:datasets}
+\label{sec:datasets-theory}
 
 % Continue the concepts in GRL subchapter
 % There may be more details about implementation
@@ -527,9 +527,16 @@ Node features for all the graphs are all-$1$ vectors of length 10, except in the
 % Demonstrating that these techniques are important for real world use
 % Discussions of the short comings of this approach
 
+\textit{Wu et al.}\cite{wu2019simplifying} evaluate the performance of SGC on a variety of datasets including Cora, Citeseer and PubMed\cite{citation}.
+These three datasets match the size of the datasets that are used in \textit{Magister et al.} and therefore are used for results reproduction.
+Each graph represents a citation network where nodes are articles and edges are citations.
+The node features are bag of word embeddings of the article abstracts or the entire article.
+\note{Better description of the citation networks}
+These datasets are available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} under the Planetoid\cite{planetoid} datasets.
+
 As an extension and to produce meaningful results that reflect real-world applications of GNNs two real world datasets are also tested against.
 These two datasets are graph classification datasets and therefore inductive datasets compared to the transductive synthetic datasets.
-These datasets are part of TUDataset \cite{Morris+2020} available through \texttt{PyTorch Geometric}.
+These datasets are part of TUDataset \cite{Morris+2020} available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
 
 \paragraph{REDDIT BINARY}
 is a dataset where each graph represents a discussion on Reddit with nodes being users and an edge represents one user responding to anothers comment.
@@ -631,30 +638,6 @@ The hyperparameters for the GCN model baseline are available in \textit{Magister
 In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
 
 \section{Licensing}
-
-%\begin{wraptable}{r}{8.5cm}
-%    \begin{tabular}{cc}
-%        \multicolumn{1}{c}{\textbf{Software dependency}} &
-%        \multicolumn{1}{c}{\textbf{License}} \\ 
-%        \midrule
-%        NumPy & \multirow{5}{*}{3-clause BSD} \\
-%        scikit-learn & \\
-%        NetworkX & \\
-%        PyTorch & \\
-%        hyperopt \tablefootnote{The license is unnamed by matches the 3-clause BSD license verbatim.} & \\
-%        \rowcolor{gray!20} tensorboard & \\
-%        \rowcolor{gray!20} Lightning AI &  \multirow{-2}{*}{Apache 2.0}\\
-%        matplotlib & \\
-%        Python & \multirow{-2}{*}{PSFL}\\
-%        \rowcolor{gray!20}
-%        PyTorch Geometric & \\
-%        \rowcolor{gray!20}
-%        tqdm & \multirow{-2}{*}{MIT} \\
-%        tqdm & MPL\tablefootnote{tqdm is distributed under both licenses.} \\
-%    \end{tabular}
-%    \caption{Licenses for the project dependencies}
-%    \label{tab:licensing}
-%\end{wraptable}
 \include{tables/licensing}
 
 Table \ref{tab:licensing} includes information about the specific licenses for all the software dependencies in my project.
