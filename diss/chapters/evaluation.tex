@@ -43,7 +43,7 @@ Additionally, \Sref{sec:comp-acc} demonstrates further comparison between the mo
 \textit{Magister et al.}\cite{magister2021gcexplainer} use a GCN model to evaluate their proposed graph concept explainer.
 The paper trains and evaluates the model on the same 5 synthetic node classification datasets described in \Sref{sec:synth} and therefore the same hyperparameters are used for the GCN baseline.
 
-\textit{Wu et al.}\cite{wu2019simplifying} states that the weight decay parameter for the Planetoid datasets was found using \texttt{hyperopt} over 60 iterations.
+\textit{Wu et al.}\cite{wu2019simplifying} states that the weight decay parameter for the Planetoid\cite{kipf2016semi} datasets was found using \texttt{hyperopt} over 60 iterations.
 This process was repeated for results reproduction however it was found that the hyperparameters for the learning rate were different from those stated.
 
 The hyperparameters for these models are available in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params}.
@@ -109,7 +109,7 @@ Furthermore, a visual comparison of the concepts can be made, such as matching p
 \paragraph{Accuracy evaluation}
 Drawback \ref{nb:accuracy} motivates the additional evaluation metric of accuracy as \Sref{sec:comp-acc} demonstrates that SGC does not meet the desired accuracy.
 To evaluate this each synthetic dataset is split into a train and test set using an 80:20 split.
-Note that TUDataset\note{citation needed} and Planetoid\note{citation needed} use there own train/test splits.
+Note that TUDataset\note{citation needed} and Planetoid\cite{kipf2016semi} use there own train/test splits.
 
 The synthetic datasets are generated randomly along with the train/test split and thus each random seed produces a new variation of the synthetic dataset.
 This means that using the same seeds across different models for the experiments results in the same train/test split.
@@ -225,7 +225,7 @@ In the cases of the Tree datasets GCN nearly doubles the accuracy and in the cas
 Only in the case of BA Grid does SGC achieve a good accuracy in comparison to GCN though even here the difference in accuracy is $27.1$\%.
 
 These poor results suggest that the graph structure inference of SGC is far worse than that of GCN as labels are based only on graph structure.
-This is also an explanation for why SGC is able to surpass the accuracy of GCN in the Planetoid\cite{Fey/Lenssen/2019} as these datasets rely heavily on node representations.
+This is also an explanation for why SGC is able to surpass the accuracy of GCN in the Planetoid\cite{kipf2016semi} datasets as these datasets rely heavily on node representations.
 
 \paragraph{Compared to random guesses}
 SGC does not perform much better except in the cases of BA Shapes and BA Grid.
@@ -357,35 +357,20 @@ Considering the large parameter disparity and adjusting SGC to compensate does n
 This suggests that non-linearity and trainable parameters are important at specific points during inference not on their own.
 
 \section{Extensions}
-
+\label{sec:extension-eval}
 \subsection{Evaluation}
 All the extensions I explored focused on improving the ability of SGC or expanding the functionality of the model.
 Therefore to evaluate the success of these attempts the models evaluated using the same techniques used in \ref{sec:evaluation}.
 As these are extensions a smaller subset of the graph datasets are considered looking only at BA Shapes, as the best performing dataset, and BA Community, as the worst.
 
-\subsection{SGC Graph Classification}
-\paragraph{Motivation}
-The datasets present in \textit{Magister et al.}\cite{magister2021gcexplainer} include 2 real world datasets that focus on graph classification.
-As discussed in \Sref{sec:datasets} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
-Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
-
-\paragraph{Prior work and implementation}
-\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network as proposed by \note{name needed}\note{citation needed}.
-However, \textit{Magister et al.} utilise pooling on the graph node representations after GCN to classify graphs. As this latter method is easier to implement and allows for a fairer comparison between SGC and GCN this approach is chosen.
-The resulting model is identical to the standard SGC model with addition of a pooling layer before the classifier.
-
-The only problem posed is to concept extraction as this is done on a node level as suggested by \textit{Magister et al.}.
-This is overcome by broadcasting the graph label to each of the nodes.
-This allows the graphs to be combined into a disconnected forest of graphs and clustering can be carried out on this forest.
-Calculation of concept scores and the visualisation of concept therefore remains the same.
-
-\paragraph{Results}
+\subsection{SGC graph classification}
+\label{SGC-graph}
 \fig{SGC-Mutagenicity}{Concepts from SGC and GCN for Mutagenicity comparing the complexity of the inferred graph structure. The numbered concepts are a subset of SGC concepts and the lettered concepts are a subset of GCN. The colour scheme matches standard chemical colours\note{citation needed}.}
 
 Tables \ref{tab:SGC-acc}, \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} already include the results achieved by SGC.
 The same quantitative analysis presented in \Sref{sec:quant} can be applied to the results achieved by SGC.
 This unfortunately suggests that the source of the graph data is not the issue, even though SGC performed well on Planetoid\cite{Fey/Lenssen/2019}.
-As discussed in \Sref{comp-acc} the cause for the discrepancy is due to Planetoid\cite{Fey/Lenssen/2019} being focused on node representation.
+As discussed in \Sref{sec:comp-acc} the cause for the discrepancy is due to Planetoid\cite{Fey/Lenssen/2019} being focused on node representation.
 Comparatively, Mutagenicity is both node representation and graph structure focused due to the nature of molecules.
 
 Figure \ref{fig:SGC-Mutagenicity} further shows why SGC does not match the accuracy achieved by GCN.
@@ -394,32 +379,8 @@ Concepts 1 and 2 suggest some form of structure being identified however this is
 Concept 3 highlights the focus on grouping by atom as the major common component is the inclusion of the chlorine atom.
 In comparison, concept C highlights how GCN is able to identify very large structures, here two cyclic rings are consistently identified.
 
-\subsection{SGC and GCN Mixed Model}
-
-\paragraph{Motivation}
-SGC is directly derived from GCN, the derivation provided in \Sref{sec:SGC}, using the same graph filter.
-The benefit of SGC is to reduce the complexity of GCN and the cost of training by pre-computing the graph operation.
-Though for the presented datasets in \Sref{sec:datasets} the improvement on cost and reduction in parameters is not significant larger datasets may create a larger benefit.
-However, due to the low accuracy of SGC some aspects of GCN must required for high accuracy, therefore a mixture of both should yield a high accuracy model with pre-computation.
-This combined model, \textit{SGC+GCN} (SGCN), maintains the same hyperparameters as the SGC and GCN models with the additional hyperparameter of whether a layer is SGC or GCN.
-
-\paragraph{Implementation}
-For simplicity and to utilise the power of pre-computation SGCN starts with SGC layers and then transitions to GCN layers.
-For a fairer comparison the total number of layers must remain the same as the corresponding SGC and GCN layers.
-This reduces the problem to finding where SGC and GCN agree the most in regards to their concepts.
-
-This is achieved using mutual information between the two models by using the probability of a node appearing in a specific cluster from either model.
-This gives a measure for the dependence of the models clusters and therefore how similar the models are.
-However, this does not take into account random chance of two nodes appearing in the same cluster.
-Therefore the mutual information is adjusted for this chance resulting in a number in the range $[0, 1]$ where $1$ is identical.
-This is known as \emph{adjusted mutual information}(AMI).
-
-To better visualise these results the dimensionality of the activations from the models are reduced using \emph{t-distributed stochastic neighbor embedding} (t-SNE)\note{citation needed} into 2 dimensions.
-This clusters similar representations together and keeps different representations apart which acts as a visual proxy to viewing all the concepts of a model.
-These can then be compared to see why a specific layer has the most mutual information and how the join effects the resulting model.
-
-\paragraph{Results}
-
+\subsection{SGC and GCN mixed model}
+\label{sec:SGCN}
 \fig{SGC-GCN-latent-space}{The 2D t-SNE reduced latent space of the first layer where SGC and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
 \fig{SGCN-SGC-latent-space}{The 2D t-SNE reduced latent space of the second layer where SGCN and SGC activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
 \fig{SGCN-GCN-latent-space}{The 2D t-SNE reduced latent space of the final (third) layer where SGCN and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
@@ -445,39 +406,8 @@ This happens across all layers (noting that the first layer is identical to the 
 GCN takes all 3 layers to reach the high completeness score above $0.9$ comparatively SGC starts high but then continues to decrease as more layers are added.
 By combining the layers after SGC begins to decrease this allows for the completeness score to remain high throughout.
 
-\subsection{JumpKnowledge style SGC}
+\subsection{Jumping knowledge SGC}
 \label{sec:Jump-SGC}
-
-\paragraph{Motivation}
-As discussed in \Sref{sec:concept-analysis} SGC does not have influence on the node representations during message passing.
-SGC, of degree $k$, therefore has to infer graph structure from the aggregated node representations of all neighbouring nodes within $k$ hops.
-Therefore the reason for the low accuracy and poor graph structure awareness may not be due to the linearity.
-GCN is able to manipulate node representations between graph convolutions and can therefore further distinguish graph structure by potentially amplifying or damping differences between nodes.
-
-For these reasons I propose \emph{jump-SGC}(JSGC) which provides the classifier with node representations from each degree of the pre-computation.
-A fully-connected layer is added before the classifier to reduce the concatenated node representations into a single node representation.
-This allows for JSGC to effectively manipulate the node representations though these manipulations do not have an impact on the application of the graph filter.
-This idea mimics the \emph{jumping knowledge networks} (JCNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
-
-\paragraph{Prior work and Implementation}
-\textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing a nodes neighbourhood.
-It specifically identifies the effect on graph structure awareness this has making the method ideal for SGC.
-The motivation for JCNs is the node aggregation methods used resulted in neighbourhood influence similar to a random walk rather than a uniform influence.
-As a solution they propose aggregating the the node representations after successive neighbourhood aggregation layers together.
-Three main methods of aggregation are proposed but given the small size of the datasets the proposed concatenation method is best suited.
-
-By concatenating successive neighbourhood aggregations and then reducing the dimensionality to a single node representation uniform influence can be achieved.
-This is because detail present in the closer neighbourhoods can be combined with the wider awareness of the more receptive neighbourhoods.
-Rather than missing larger structure awareness or missing detail JCNs allow for an analysis of both.
-
-For JSGC this leads to two changes to the model and pre-computation.
-During pre-computation successive applications of the normalised filter are concatenated together.
-A fully-connected layer is then added to the standard SGC to reduce this concatenated representation space to the standard representation space.
-During this stage JSGC is able to infer more complex graph structure than SGC.
-To combine this with the classifier a single non-linear rectified linear unit layer is introduced.
-This non-linearity remains constant regardless of how the model scales and therefore the added potential benefits of the single non-linear layer is deemed negligible.
-
-\paragraph{Results}
 
 \input{tables/JSGC-acc}
 \input{tables/JSGC-completeness}
