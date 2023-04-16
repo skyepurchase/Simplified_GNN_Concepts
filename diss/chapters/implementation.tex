@@ -32,7 +32,7 @@ The majority of SGC is the pre-computation
 \end{equation}
 of equation \ref{eq:SGC} where $\mS$ is the filter defined in equations \ref{eq:op} and \ref{eq:norm}.
 As $\mS$ is defined in terms of the adjacency matrix which does not change during training equation \ref{eq:pre-comp} can be applied before training.
-This process is achieved with three functions that calculated the normalised filter $\mS$ by computing the required matrices and multiplications, convert the resultant matrix from coordinate form to t a sparse tensor and then successively apply the filter to the node representations.
+This process is achieved with three functions that calculated the normalised filter $\mS$ by computing the required matrices and multiplications, convert the resultant matrix from coordinate form to sparse tensor form and then successively apply the filter to the node representations.
 
 This process results in a new feature matrix which can be substituted for the \texttt{Data} object used by the synthetic datasets.
 This means the SGC model does not need any adjacency matrix and can instead be implemented as a classifier.
@@ -44,17 +44,20 @@ This also allows for implementation of the SGC and GCN mixed model proposed in \
 \section{Models}
 \label{sec:models}
 
-\texttt{PyTorch Geometric} provides an abstract \texttt{MessagePassing} class which defines a generic GNN.
+\texttt{PyTorch Geometric} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
 Beyond the standard \texttt{forward} method of \texttt{PyTorch}\note{citation needed} an addition \texttt{message\_passing} method is also present.
 This method is called during the \texttt{forward} method providing the node representations and associated neighbourhood nodes.
 This method allows the implementation of the function
 \begin{equation}
-    f(\vh_i^{(l)}, \mA) = \frac1{d_i + 1}\vh_i^{(l)} + \sum_j^{N}\frac{\mA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{(l)},
+    \mH^{(l+1)} = \mS\mH^{(l)}\bm{\Theta}^{(l)},
 \end{equation}
-described in \ref{sec:GCN} as equation \ref{eq:GCN-as-GNN}.
+described in \ref{sec:GCN} as equation \ref{eq:GCN1}.
+During the \texttt{message\_passing} method the normalised adjacency $\mS$ is applied to the node representations $\mH^{(l)}$.
+Then a linear layer is applied to the resulting representations in the \texttt{forward} method.
 
-\section{Testing}
-\label{sec:testing-imp}
+These GCN layers can then be combined with ReLU non-linearity to form a GCN model.
+The GCN model additionally includes a single linear layer for classification.
+In comparison SGC needs only to be a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
 
 \section{Machine Learning Pipeline}
 
@@ -64,7 +67,7 @@ As the main aspect of this project is concept extraction, evaluation, and interp
 
 \texttt{PyTorch Lightning} provides \texttt{Lightning Modules} that act as wrappers around standard \texttt{PyTorch} (and therefore \texttt{PyTorch Geometric}) modules and carry out all the required training, validation and testing loops.
 Unfortunately, for the purposes of the core project and extensions a single wrapper is not possible.
-This is because the wrappers need to behave differently for SGC\note{Discuss earlier why SGC does not need adjacency} and GCN as GCN needs additional adjacency information.
+This is because the wrappers need to behave differently for SGC and GCN as GCN needs additional adjacency information.
 Additionally the real-world graph classification datasets require one-hot encoding when calculating loss whereas the synthetic datasets do not.
 Therefore the project implements 5 different wrappers to accomodate these differences.
 
@@ -109,6 +112,9 @@ As discussed in \Sref{sec:datasets-imp} choosing different seeds to the final ru
 
 \subsection{Visualisation}
 \label{sec:vis}
+
+\section{Testing}
+\label{sec:testing-imp}
 
 \section{Extensions}
 After completing the core project my extensions focus on improving the low performance demonstrated by SGC in \Sref{sec:comp-acc}.
@@ -180,7 +186,7 @@ Therefore a potential reason for the low accuracy (seen in \Sref{sec:comp-acc}) 
 For these reasons I propose \emph{jump-SGC}(JSGC) which provides the classifier with node representations from each degree of the pre-computation.
 This larger node representation is reduced before the classifier to maintain the same parameter size of the classifier.
 This allows for JSGC to effectively manipulate the node representations though these manipulations do not have an impact on the successive application of the graph filter.
-This idea mimics \emph{jumping knowledge networks} (JCNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
+This idea mimics \emph{jumping knowledge networks} (JKNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
 
 \paragraph{Prior work and Implementation}
 \note{A more detailed discussion is possible.}
@@ -192,7 +198,7 @@ Three main methods of aggregation are proposed but given the small size of the d
 
 By concatenating successive neighbourhood aggregations and then reducing the dimensionality to a single node representation uniform influence can be achieved.
 This is because detail present in the closer neighbourhoods can be combined with the wider awareness of the more receptive neighbourhoods.
-Rather than missing larger structure awareness or missing detail JCNs allow for an analysis of both.
+Rather than missing larger structure awareness or missing detail JKNs allow for an analysis of both.
 
 For JSGC this leads to two changes to the model and pre-computation.
 During pre-computation successive applications of the normalised filter are concatenated together.
@@ -202,3 +208,44 @@ To combine this with the classifier a single non-linear rectified linear unit la
 This non-linearity remains constant regardless of how the model scales and therefore the added potential benefits of the single non-linear layer is deemed negligible.
 
 \section{Repository}
+
+\dirtree{%
+.1 \myfolder{black}{}.
+.2   \myfolder{red}{README.md}.
+.2   \myfolder{red}{requirements.txt}.
+.2  \myfolder{blue}{activations.................................extracted activation space}.
+.2  \myfolder{blue}{checkpoints..........................................model checkpoints}.
+.2  \myfolder{blue}{data...............................................downloaded datasets}.
+.2  \myfolder{blue}{output...............................model accuracy and concept output}.
+.3  \myfolder{blue}{GCN-BA-Shapes.........................results from this combination}.
+.3  \myfolder{blue}{...}.
+.2  \myfolder{blue}{run}.
+.3 \myfolder{green}{GCN-BA-Shapes.sh..............................experiment run script}.
+.3 \myfolder{green}{...}.
+.2  \myfolder{blue}{scripts}.
+.3 \myfolder{green}{mk\_expr.sh..................................experiment build script}.
+.3 \myfolder{green}{...}.
+.2  \myfolder{blue}{src}.
+.3   \myfolder{red}{eval.py..........................................concept evaluation}.
+.3   \myfolder{red}{main.py.........................................ML pipeline control}.
+.3   \myfolder{red}{optimise.py.........................................hyperopt script}.
+.3   \myfolder{red}{sweep.py......................................hyperparameter sweeps}.
+.3  \myfolder{blue}{configs...................................experiment configurations}.
+.3  \myfolder{blue}{concepts}.
+.4   \myfolder{red}{cluster.py.................................clustering algorithms}.
+.4   \myfolder{red}{metrics.py....................completeness and purity algorithms}.
+.4   \myfolder{red}{plotting.py..............................visualisation functions}.
+.4  \myfolder{blue}{tests}.
+.3  \myfolder{blue}{datasets}.
+.4   \myfolder{red}{synthetic.py.............................synthetic dataset class}.
+.4  \myfolder{blue}{tests}.
+.3  \myfolder{blue}{loaders}.
+.4   \myfolder{red}{utils.py...............................pre-computation functions}.
+.4  \myfolder{blue}{tests}.
+.3  \myfolder{blue}{models}.
+.4   \myfolder{red}{gcn.py.................................................GCN model}.
+.4   \myfolder{red}{sgc.py.................................................SGC model}.
+.4   \myfolder{red}{activation\_classifier.py................decision tree classifier}.
+.4  \myfolder{blue}{layers.............................................custom layers}.
+.3  \myfolder{blue}{wrappers.................................pytorch lightning wrappers}.
+}

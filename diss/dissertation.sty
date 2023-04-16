@@ -5,6 +5,7 @@
 
 % Graphics
 \usepackage{graphicx}
+\usepackage{dirtree}
 
 % Layout
 \usepackage{changepage}
@@ -72,6 +73,10 @@
         \label{fig:#1}
     \end{figure}
 }
+
+% Folders
+\newcommand\myicon[1]{{\color{#1}\rule{2ex}{2ex}}}
+\newcommand{\myfolder}[2]{\myicon{#1}\ {#2}}
 
 % In progress
 \newcommand\note[1]{\textcolor{blue}{\textsc{\textbf{[NB:} #1\textbf{]}}}}
