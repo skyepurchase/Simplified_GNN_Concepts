@@ -409,7 +409,7 @@ The concepts can still satisfy the above desiderata as meaningfulness relates to
 %% Link in ideas from GNNExplainer
 
 \emph{Graph concept explainer} (GCExplainer) proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} focuses on unsupervised concept extraction putting the human in the loop to achieve meaningulness and coherency.
-GCExplainer automates concept extraction by clustering the activation space of different layers throughout the network mapping each cluster to a concept.
+GCExplainer automates concept extraction by clustering the node representations of different layers throughout the network mapping each cluster to a concept.
 GCExplainer is designed to provide global explanations for a specific class to provide better insight into the model.
 
 % Discussion of the metrics
@@ -446,7 +446,7 @@ This process is therefore tied to classification, however due to the fact that c
 %% The clear metrics for comparison
 
 \paragraph{Concept extraction}
-uses $k$-Means clustering\note{Citation needed} on the activation space of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
+uses $k$-Means clustering\note{Citation needed} on the node representations of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
 This clusters nodes by the similarity of the representations as this is equivalent to the model treating these nodes as the same concept.
 Concept subgraphs are then generating by taking the $n$-hop neighbourhood of nodes closest to a clusters centre representing the quintessential subgraphs of a concept.
 Both $k$ and $n$ are tunable parameters where concept completeness and purity guide the choice in values.
