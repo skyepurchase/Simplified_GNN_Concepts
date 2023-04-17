@@ -3,10 +3,10 @@
 % Short introduction giving a full overview
 
 \emph{
-This dissertation explores the effect that simplifying graph neural network architecture has on the explainability of the trained model.
-Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the which label is chosen.
+This dissertation explores the effect that linearising graph neural network architectures has on the explainability of the trained model.
+Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the choice in label.
 These concepts are compared to the original Graph Convolution Network (GCN) using the metrics of concept purity and completeness proposed in \textit{Magister et al.} \cite{magister2021gcexplainer}.
-The specific simplified model chosen is the Simplified Graph Convolution (SGC) proposed in \textit{Wu et al.} \cite{wu2019simplifying} due to claims that it matches the performance of GCN.
+The specific linear model chosen is the Simplified Graph Convolution (SGC) proposed in \textit{Wu et al.} \cite{wu2019simplifying} due to claims that it matches the performance of GCN.
 %Further studies are conducted extending the basic architecture of SGC, whilst keeping with the theme of simplified graph neural networks, to see the effect on the accuracy and concept scores.
 }
 
@@ -25,8 +25,8 @@ Though standard NNs are in the mainstream spotlight there is increasing requirem
 %The mainstream advancements result in increasingly larger \emph{neural network} (NN) models focusing on text and image based input.
 %This development makes sense from the perspective of human interaction however these are limited datastructures especially in the ever increasing interaction of digital information.
 %Data present in social networks, computational biology, and systems such as smart cities have multiple predefined connections between each data point.
-In Theses the connected structure is important to classification of the individual data-points leading to the concept of \emph{graph data} and the idea of the \emph{graph neural network} (GNN).
-But criticisms of the deep learning (DL) approach of multiple layers has resulted in \emph{Simplified GNNs} (SGNNs) that remove non-linearity and focus on the additional information provided by the graph connections.
+In These systems the connected structure is important to classification of the individual data-points leading to the concept of \emph{graph data} and the idea of the \emph{graph neural network} (GNN).
+But criticisms of the deep learning (DL) approach to GNNs has resulted in \emph{Simplified GNNs} (SGNNs) that remove non-linearity and focus on the additional information provided by the graph connections.
 How do these SGNNs compare to GNNs in how they infer labels for graph data?
 Are there potential insights into how graph structure can be better utilised?
 This dissertation answers these questions by evaluating an SGNN within an explanability framework and provides new methods of utilising graph data in SGNNs.
