@@ -5,6 +5,8 @@ import numpy as np
 import os.path as osp
 from os import mkdir
 from numpy.typing import NDArray
+from sklearn.metrics.cluster._expected_mutual_info_fast import expected_mutual_information
+from sklearn.metrics import adjusted_mutual_info_score
 
 from concepts.cluster import kmeans_cluster, tsne_reduction
 from concepts.plotting import plot_latent_space
@@ -51,6 +53,7 @@ def main(args: Namespace,
     activation_list2: Dict[str, Tensor]
     with open(osp.join(DIR, "..", args.activations[0]), "rb") as file:
         activation_list1 = pickle.loads(file.read())
+        activation_list1 = dict(filter(lambda x: x[0] != "layers.0", activation_list1.items()))
 
     with open(osp.join(DIR, "..", args.activations[1]), "rb") as file:
         activation_list2 = pickle.loads(file.read())
@@ -72,38 +75,58 @@ def main(args: Namespace,
         if ("lin" in name1) or ("lin" in name2):
             continue
 
-        prob_U: List[float] = []      # Probability that a random node falls into concept i
-        prob_V: List[float] = []      # Same as above
-        prob_UV: List[List[float]] = []     # Probability that a random node falls into the same concept in both models
-        for i in range(args.clusters):
-            prob_U.append(np.sum(pred1 == i) / total)
-            prob_V.append(np.sum(pred2 == i) / total)
-           
-            prob_UV_i: List[float] = []
-            for j in range(args.clusters):
-                nodes: NDArray = np.where(pred1 == i, np.where(pred2 == j, 1, 0), 0)
-                prob_UV_i.append(np.sum(nodes) / total)
+        bins: List[int] = [i for i in range(args.clusters + 1)]
+       
+        # Number of nodes in each models concept
+        num_nodes1: NDArray = np.unique(pred1, return_counts=True)[1]
+        num_nodes2: NDArray = np.unique(pred2, return_counts=True)[1]
 
-            prob_UV.append(prob_UV_i)
+        # Probability that a random node falls into a models concept
+        prob_U: NDArray = num_nodes1 / total
+        prob_V: NDArray = num_nodes2 / total
 
-        mutual_info: float = 0
-        for i in range(args.clusters):
-            mutual_info_i: float = 0
-            for j in range(args.clusters):
-                if prob_UV[i][j] == 0:
-                    # given the multiplication by prob_UV the value does not matter
-                    log_prob: float = 0
-                else:
-                    log_prob: float = math.log(prob_UV[i][j] / (prob_U[i] * prob_V[j]))
-                mutual_info_i += prob_UV[i][j] * log_prob
-            mutual_info += mutual_info_i
+        cluster: NDArray = np.where(pred1 == 0, pred2, -1)
+        
+        # Number of nodes in model 1 concepts that are also in model 2 concepts
+        contingency_matrix: NDArray = np.histogram(cluster, bins=bins)[0]
+        for i in range(args.clusters - 1):
+            cluster = np.where(pred1 == i+1, pred2, -1)
+            contingency_matrix = np.vstack((contingency_matrix,
+                                            np.histogram(cluster, bins=bins)[0]))
 
-        print(f"{name1}: {mutual_info}")
-        mutual_file.write(f"{name1} adjusted MI: {mutual_info}\n")
+        # Probability of a node being in model 1 concept i and model 2 concept j
+        prob_UV: NDArray = contingency_matrix / total
+        log_prob_UV: NDArray = np.where(prob_UV > 0, np.log2(prob_UV), 0)
 
-        if mutual_info >= best_MI:
+        norm_prob: NDArray = np.matmul(np.expand_dims(prob_U, 1),
+                                       np.expand_dims(prob_V, 1).T)
+        log_prob_norm: NDArray = np.where(norm_prob > 0, np.log2(norm_prob), 0)
+
+        # Based on mutual information equation
+        mutual_info_matrix: NDArray = np.multiply(prob_UV,
+                                                  log_prob_UV - log_prob_norm)
+        mutual_info: float = mutual_info_matrix.sum()
+
+        # Based on entropy equation
+        log_prob_U: NDArray = np.where(prob_U > 0, np.log2(prob_U), 0)
+        entropy_U_matrix: NDArray = np.multiply(prob_U, log_prob_U)
+        entropy_U: float = -entropy_U_matrix.sum()
+
+        log_prob_V: NDArray = np.where(prob_V > 0, np.log2(prob_V), 0)
+        entropy_V_matrix: NDArray = np.multiply(prob_V, log_prob_V)
+        entropy_V: float = -entropy_V_matrix.sum()
+
+        # Due to complexity of calculation expected mutual information is done by sklearn
+        EMI: float = expected_mutual_information(contingency_matrix, args.clusters)
+
+        AMI: float = (mutual_info - EMI) / (max(entropy_U, entropy_V) - EMI)
+
+        print(f"{name1}: {AMI}")
+        mutual_file.write(f"{name1} adjusted MI: {AMI}\n")
+
+        if AMI >= best_MI:
             # Want latest layer possible so equality is desired
-            best_MI = mutual_info
+            best_MI = AMI 
             best_layer = (name1, name2)
 
     print(f"best layers: {best_layer}")
