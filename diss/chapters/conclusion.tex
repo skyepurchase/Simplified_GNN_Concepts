@@ -1,7 +1,51 @@
 \chapter{Conclusion}
 
-%summary
+\section{Summary}
+This dissertation set out to answer the question of how linearising GNN architectures is able to match the performance of their non-linear counterparts.
+Furthermore, to understand how graph structure can be better utilised by analysing the differences between these two models.
+To answer these questions graph concepts where extracted from GCN and the linearised version, SGC, and compaired.
+Additionally, three extensions where proposed to further explore the effect of linearity on graph concepts and determine whether SGC can be improved.
 
-%lessons learned
+As \Sref{sec:comp-acc} unfortunately demonstrated that linearisation of GNN architectures does not in fact match the performance of non-linear models where graph structure awareness is required.
+\Sref{sec:comp-concept} highlights the shortcomings of SGC graph structure awareness suggesting that non-linearity is key to structural awareness.
+Extending SGC to graph classification also shows the same lack of graph structure awareness.
 
-%future work
+With these observations two extensions to SGC are proposed to improve the performance.
+The first is to combine SGC and GCN to utilise the benefits of both approaches.
+However, though this is successfull the use of SGC is very limited and the results suggest that GCN the GCN layers carry out the majority of the inference.
+As a final test of the effect of linearisation SGC is presented with the intermediate node representations through the technique of JKNs\note{citation needed}.
+The results in \Sref{sec:Jump-SGC} does show a significant improvement and clearly demonstrates graph structure awareness akin to GCN.
+Importantly, this model is negligibly non-linear with a single non-linear layer regardless of the scale of the model.
+This important discovery demonstrates that graph structure awareness is possible within a linear architecture.
+
+\section{Lessons learned}
+The key skill learnt during the project was time management including careful planning allowing for unforeseen setbacks.
+Quick adaptation throughout was key as the majority of the project was research focused requiring exploration based on results.
+Maintaining good software practices and results loggin allowed for easier pivoting throughout the project.
+
+Saving all of the results that I had achieved throughout the project in a presentable format both helped quickly identify interesting results but also speed up the writing process.
+This is also true for keeping all the configuration files including those during experimentation as I was able to review past experiments when more knowledge was gained.
+Keeping notes on all the papers I read was also very useful however in future I would keep a better log of thoughts throughout the project.
+
+NN models are very sensitive to the hyperparameters used which can have a large impact on the apparent performance.
+The process of finding hyperparameters is very tedious as a large search space needs to be explored to verify that the chosen hyperparameters are optimal within that space.
+automating this process was very useful however I completed this process late in my project to verify the results that I had achieved are the best possible configuration.
+Though carrying out hyperparameter sweeps on all of my models did not effect the final analysis in future I will complete this step much earlier.
+
+\section{Future work}
+\paragraph{Other GNN architectures}
+The results of SGC are surprising given the comparable performance demonstrated in \textit{Wu et al.}\cite{wu2019simplifying}.
+There have been multiple other GNN architectures that have been proposed since the inception of GNNs.
+Though these achieve high performance on a number of graph datasets this may not mean they have good graph structure awareness, as seen with SGC.
+If these methods do demonstrate good graph structure awareness it is still important that how they reason is understood.
+
+\paragraph{JSGC}
+Graph structure awareness has been shown within a near linear model suggesting that the current approach to GNN architecture may be overly complex.
+The capabilities and limitations of JSGC have not been explored fully in this dissertation but the results in \Sref{sec:Jump-SGC} are worthy of further consideration.
+Though the accuracy of JSGC is not as high as GCN it is important to note that JSGC uses only 450 parameters compared to GCN's 1000+ on BA Shapes.
+
+\paragraph{AMI mixed models}
+To combine SGC and GCN the concepts that can be extracted are compared using AMI to determine where the two approaches are most similar.
+As demonstrated in \Sref{sec:SGCN} in figures \ref{fig:SGCN-SGC-latent-space} and \ref{fig:SGCN-GCN-latent-space} the resulting model retains the influence of both models.
+\textit{Shchur et al.}\cite{shchur2018pitfalls} and \textit{Purchase et al.}\note{citation needed} demonstrate the best performing GNN is highly dependent on training setup and dataset.
+By combining the best GNN models in these different environments using the AMI approach it may be possible to overcome these limitations.
