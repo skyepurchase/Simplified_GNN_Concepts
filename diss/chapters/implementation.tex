@@ -45,7 +45,7 @@ This also allows for implementation of the SGC and GCN mixed model proposed in \
 \label{sec:models}
 
 \texttt{PyTorch Geometric} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
-Beyond the standard \texttt{forward} method of \texttt{PyTorch}\note{citation needed} an addition \texttt{message\_passing} method is also present.
+Beyond the standard \texttt{forward} method of \texttt{PyTorch}\cite{paszke2019pytorch} an addition \texttt{message\_passing} method is also present.
 This method is called during the \texttt{forward} method providing the node representations and associated neighbourhood nodes.
 This method allows the implementation of the function
 \begin{equation}
@@ -64,7 +64,7 @@ In comparison SGC needs only to be a classifier as explained in \Sref{sec:datase
 
 The ML pipeline is the infrastructure that links the datasets, pre-computation, dataloaders, and models together to train and evaluate the models.
 This allows for specific experiment configurations to be run changing each component individually or together.
-As the main aspect of this project is concept extraction, evaluation, and interpretation I use \texttt{PyTorch Lightning}\note{citation needed} as the main component of the pipeline.
+As the main aspect of this project is concept extraction, evaluation, and interpretation I use \texttt{PyTorch Lightning} as the main component of the pipeline.
 
 \texttt{PyTorch Lightning} provides \texttt{Lightning Modules} that act as wrappers around standard \texttt{PyTorch} (and therefore \texttt{PyTorch Geometric}) modules and carry out all the required training, validation and testing loops.
 Unfortunately, for the purposes of the core project and extensions a single wrapper is not possible.
@@ -119,15 +119,15 @@ The simpler case is SGC where the node representations from each successive filt
 This process allows for multiple layers to be analysed without having to train the SGC model, this in turn can be used to optimise SGC before training though this is not explored.
 
 In comparison GCN requires an additional function during the forward pass of the model to save the node representations to a permanent store.
-\texttt{PyTorch}\note{citation needed} provides this functionality through \emph{hooks} which are functions that can be attached to modules within a model.
+\texttt{PyTorch}\cite{paszke2019pytorch} provides this functionality through \emph{hooks} which are functions that can be attached to modules within a model.
 This function will then run whenever the modules \texttt{forward} method is run and \texttt{PyTorch} will pass the input, output and module to the function.
 Thus a simple hook function is created which updates saves the modules output (which are the node representations) to a dictionary of module identifier, activation pairs.
 This dictionary is written out to a file after testing is complete this means that the activations represent the final model.
 
 \paragraph{clustering}
-The described activation dictionaries can be loaded and for each of the layers the node representations are clustered using k-means\note{citation needed}.
+The described activation dictionaries can be loaded and for each of the layers the node representations are clustered using k-means.
 K-means is chosen for clustering as this is the best performing clustering approach as demonstrated in \textit{Magister et al.}\cite{magister2021gcexplainer}.
-Rather than implement my own k-means algorithm I utilise the algorithm already present within \texttt{scikit learn}\note{citation needed}.
+Rather than implement my own k-means algorithm I utilise the algorithm already present within \texttt{scikit learn}\cite{scikit-learn}.
 
 The clustering is parameterised by a tunable number of clusters.
 The concept scores in \Sref{sec:GCE} can then motivate the choice of this value though focusing on maximising the completeness and purity will not lead necessarily to better concepts.
@@ -147,7 +147,7 @@ The theory behind the two concept metrics of completeness and purity are outline
 
 \paragraph{Completeness}
 As discussed in \Sref{sec:GCE} completeness is determined by whether the extracted concepts can be used to infer the resulting class of a node.
-This is achieved by fitting a decision tree\note{citation needed} as proposed by\note{citation needed} to the concept data and labels.
+This is achieved by fitting a decision tree\cite{kazhdan2020now} as proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} to the concept data and labels.
 the accuracy of this decision tree on a held out test set then represents the completeness of the concepts extracted.
 
 \note{I think this needs rewriting.}
@@ -178,11 +178,11 @@ This does mean that the visual results may appear contradictory to the purity sc
 For the synthetic graphs the subgraphs are coloured with two colours, green indicating the node of interest and pink indicating neighbouring nodes.
 In some instances on concept may contain a node of interest of an other visualised concept, in this case the subgraph is visualised with mutliple green nodes.
 This represents the fact that the model does not distinguish between these nodes within the graph structure.
-This process is also used for REDDIT-BINARY\note{citation needed}.
+This process is also used for REDDIT-BINARY\cite{Morris+2020}.
 
-In the case of the Mutagenicity\note{citation needed} dataset there already exists a standard chemical colour scheme for atoms\note{citation needed}.
+In the case of the Mutagenicity\cite{Morris+2020} dataset there already exist standard chemical colour schemes for atoms.
 \textit{Magister et al.}\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept which means that between concepts the colour scheme does not match.
-Instead, I define pre-determined values for each atom based on the chemical colour scheme\note{citation needed} giving a better comparison across concepts.
+Instead, I define pre-determined values for each atom based on a chemical colour scheme giving a better comparison across concepts.
 
 In all cases each subgraph is titled by the label of the node of interest.
 This provides additional information about the coherence of the concepts which purity does consider which is whether all the nodes have the same label.
@@ -196,19 +196,19 @@ Where modules are not implemented dummy data or functions are used instead.
 \paragraph{Unit testing}
 Three components of the software follow traditional software development and therefore unit tests are used to verify implementation
 \begin{itemize}
-    \item 
-        \textbf{Synthetic datasets} 
+    \item[] 
+        \smalltitle{Synthetic datasets} 
         These have strict defining properties based on the parameters passed during initialisation.
         Verification of the datasets can be done with hard-coded tensors for small initialisations to verify the correct motif is used or base graph.
         For larger instances of the graphs more general properties such as the expected number of nodes, number of classes, and number of nodes within a given class can be used to verify that the correct procedure was taken.
-    \item 
-        \textbf{Pre-computation}
+    \item[] 
+        \smalltitle{Pre-computation}
         This is a theoretical calculation where the specific matrix multiplications have already been verified through the derivation in \Sref{sec:GCN} and \Sref{sec:SGC}.
         However, to verify that these are correctly implemented and that the application of the filter is correct small test graphs are generated.
         In these cases the expected result can be calculated by hand or external matrix calculators.
-    \item 
-        \textbf{Concept evaluation}
-        Though parts of this implementation use algorithms provided by \texttt{scikit learn}\note{citation needed} the results of these functions needs to be verified in the new context.
+    \item[] 
+        \smalltitle{Concept evaluation}
+        Though parts of this implementation use algorithms provided by \texttt{scikit learn}\cite{scikit-learn} the results of these functions needs to be verified in the new context.
         By providing small graphs with precise node representations specific clusters are expected and can be verified by comparing the predicted clusters to the expected clusterings.
         In the case of purity the motifs themselves can be passed to verify that they are completely pure, as well as isomorphic graphs and non-isomorphic of known GED.
 \end{itemize}
@@ -229,7 +229,7 @@ As discussed in \Sref{sec:datasets-theory} these graph classification datasets a
 Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
 
 \paragraph{Prior work}
-\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network as proposed by \note{name needed}\note{citation needed}.
+\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network as proposed by \textit{Zhang et al.}\cite{zhang2018end}.
 However, \textit{Magister et al.} carry out graph classification using GCN in a different way.
 Instead they utilise pooling on the graph node representations from a GCN on each graph in the dataset.
 The label of the entire graph can then be inferred from this single representation.
@@ -259,7 +259,6 @@ A mixture of both should therefore yield a high accuracy model with fast pre-com
 This model will be referred to as SGCN.
 
 \paragraph{Implementation}
-\note{A more detailed explanation is now possible}
 For simplicity and to utilise the power of pre-computation SGCN starts with SGC layers and then transitions to GCN layers.
 For a fairer comparison the total number of layers must remain the same as the corresponding SGC and GCN layers.
 This reduces the problem to finding where SGC and GCN agree the most in regards to their concepts.
@@ -270,7 +269,7 @@ However, this does not take into account the random chance of two nodes appearin
 Therefore the mutual information is adjusted for this chance resulting in a number in the range $[0, 1]$ where $1$ is identical.
 This measure limits the artificial inflation of mutual information based on increasing the number of clusters.
 
-To better visualise these results the dimensionality of the activations from the models are reduced using \emph{t-distributed stochastic neighbor embedding} (t-SNE)\note{citation needed} into 2 dimensions.
+To better visualise these results the dimensionality of the activations from the models are reduced using \emph{t-distributed stochastic neighbor embedding} (t-SNE) into 2 dimensions.
 This clusters similar representations together and keeps different representations apart which acts as a visual proxy to viewing all the concepts of a model.
 These can then be compared to see why a specific layer has the most mutual information and how the join effects the resulting model.
 
@@ -349,7 +348,7 @@ This non-linearity remains constant regardless of how the model scales and there
 }
 
 The repository structure for my projecy.
-The structure loosely follows ML project structures such as those provided by \texttt{cookiecutter} but is mainly driven by the requirements of \texttt{PyTorch Lighntning}\note{citation needed}.
+The structure loosely follows ML project structures such as those provided by \texttt{cookiecutter} but is mainly driven by the requirements of \texttt{PyTorch Lighntning}.
 Data folders are kept at the top level including folders for bash scripts allowing the scripts to access all the source code and folders necessary.
 the \texttt{src} folder contains all the python code with top level python files such as \texttt{main.py} and \texttt{eval.py} acting as control code for the algorithms in the subfolders.
 \hlc[blue!50]{blue} icons represent directories, \hlc[red!50]{red} icons represent files, and \hlc[green!50]{green} icons represent executables.

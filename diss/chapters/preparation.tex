@@ -242,7 +242,7 @@ As equation \ref{eq:filter1} requires a learnable parameter for each dimension o
     f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i = \theta(\mI - \mL)\vh_i.\footnote{$\mU\bm{\Lambda}^j\mU^T = \mU\underbrace{\bm{\Lambda}\cdots\bm{\Lambda}}_j\mU^T = \underbrace{\mU\bm{\Lambda}\mU^T\mU\cdots\mU^T\mU\bm{\Lambda}\mU^T}_j = (\mU\bm{\Lambda}\mU^T)^j$}
 \end{equation}
 
-Computation of the eigendecomposition of $\mL$ may be too expensive for large graphs and so \textit{Hammond et al.}\note{citation needed} suggest using Chebyshev polynomials\note{citation needed? maybe appendix}.
+Computation of the eigendecomposition of $\mL$ may be too expensive for large graphs and so \textit{Hammond et al.}\cite{hammond2011wavelets} suggest using Chebyshev polynomials\note{maybe appendix}.
 With the additional assumption that a NN can adapt to scaling we assume that the maximum eigenvalue is approximately $2$.
 This results in the first order Chebyshev polynomial as $\mL - \mI$.
 Using the normalised graph Laplacian, $\mL = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$, where $\mD$ is the degree matrix of the graph, equation \ref{eq:GCN-comp} becomes
@@ -365,7 +365,7 @@ Furthermore, as GNNs utilise both graph structure and node features concepts can
 
 A concept can be considered an ``interpretable'' high-level units which are more understandable to a human than the standard input units such as inidividual features, pixels or characters.
 A precise definition of a concept in the general sense is hard to formalise.
-\textit{Ghorbani et al.}\note{Cite Towards automatic concept-based explanations} instead propose the following desired properties
+\textit{Ghorbani et al.}\cite{ghorbani2019towards} instead propose the following desired properties
 \begin{itemize}
     \item[]
         \smalltitle{Meaningfulness}
@@ -438,7 +438,7 @@ By this metric a high purity score is represented by a lower number with 0 being
 relates to the importance of the concept determining whether the correct output can be predicted from the concepts alone.
 A high accuracy in classifying the graph according to its concepts indicates that the concepts extracted are important.
 This process is therefore tied to classification, however due to the fact that concepts are created through clustering the resulting space is not easily separable by classifiers such as logistic regressors.
-\textit{Magister et al.}\cite{magister2021gcexplainer} suggest using a decision tree \note{Cite Now you see me (CME)}.
+\textit{Magister et al.}\cite{magister2021gcexplainer} suggest using a decision tree \cite{kazhdan2020now}.
 
 % Detailing why this method was chosen
 
@@ -446,7 +446,7 @@ This process is therefore tied to classification, however due to the fact that c
 %% The clear metrics for comparison
 
 \paragraph{Concept extraction}
-uses $k$-Means clustering\note{Citation needed} on the node representations of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
+uses $k$-Means clustering on the node representations of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
 This clusters nodes by the similarity of the representations as this is equivalent to the model treating these nodes as the same concept.
 Concept subgraphs are then generating by taking the $n$-hop neighbourhood of nodes closest to a clusters centre representing the quintessential subgraphs of a concept.
 Both $k$ and $n$ are tunable parameters where concept completeness and purity guide the choice in values.
@@ -501,9 +501,10 @@ A motif is a simple graph structure that should be easily recognised by a GNN an
 The motifs and the base graph have different classifications and the goal is to correctly classify which classification a node belongs to, that is which graph structure is the node part of.
 %Note that the class of a node is dependent on the structure the node is part of rather than the features of the nodes.
 
-\paragraph{Motifs} are highly ordered graph structures that are easy to identify and differ from the structure of the base graph.
-\note{Include diagram of the motifs!}
-The five motifs can be seen in the figure \note{reference the figure}.
+\paragraph{Motifs}
+\input{tables/motifs.tex}
+are highly ordered graph structures that are easy to identify and differ from the structure of the base graph.
+The four motifs can be seen in figure \ref{tab:motifs}.
 As these motifs are also very simple they speed up the intensive process of calculating concept purity.
 
 The following two graphs are used as base graphs:
@@ -568,13 +569,13 @@ And to allow for easier reproducibility and iteration I utilise YAML files to st
 \paragraph{Software development}
 
 I use \texttt{NeoVim} to develop my code as this has high customisability allowing me to include specific linters to highlight bugs, typing errors and general static code analysis.
-Additionally I use a local \texttt{Tensorboard} instance to visualise and analyse progress of my experiments in realtime, \texttt{Git} and \texttt{Github} \note{Citation needed?}for version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup of experiment results.
+Additionally I use a local \texttt{Tensorboard} instance to visualise and analyse progress of my experiments in realtime, \texttt{Git} and \texttt{Github} for version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup of experiment results.
 I occasionally used \texttt{Google Colab} for compute units to run the large experiment batches.
 
 \paragraph{Libraries}
 \label{sec:libraries}
 
-The major libraries I used where the two ML libraries \texttt{PyTorch} \note{Citation needed} and \texttt{PyTorch Geometric} \cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
+The major libraries I used where the two ML libraries \texttt{PyTorch} \cite{paszke2019pytorch} and \texttt{PyTorch Geometric} \cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
 \texttt{PyTorch} was chosen over Tensorflow as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
 To help with running experiments, logging results and reproducibility I use \texttt{Lightning AI} which handles the underlying training and testing loop while integrating with Tensorboard.
 \texttt{Hyperopt} is also used as \textit{Wu et al.}\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
@@ -604,7 +605,7 @@ Risk represents how critical a requirements success is given how difficult it wi
 % But iterative when looking at the results and direction forward
 % sprint work style between meetings
 
-For the core of my project I adopt a Waterfall method \note{Citation needed} for my project:
+For the core of my project I adopt a Waterfall method \cite{royce1970managing} for my project:
 
 \begin{equation*}
     \textit{Requirements analysis} \longrightarrow \textit{Design} \longrightarrow \textit{Implementation} \longrightarrow \textit{Testing} \longrightarrow \textit{Evaluation}
@@ -614,7 +615,7 @@ During the \textit{Design} phase I start with a skeleton implementation of the M
 At each stage I confirm that the implemented requirement integrates with the rest of the project using a combination of predetermined dummy data, dummy models and dummy concept analysis where these aspects where not yet implemented.
 \textit{Evaluation} stage includes all the experiment runs and concept analysis required to meet my success criteria replacing \textit{Operations} which is not required for my project.
 
-My extensions do not fit into the Waterfall method as they are research based in nature. I therefore switch to an Agile software development \note{Citation needed} to allow the project to adjust to the experimental results achieved during development.
+My extensions do not fit into the Waterfall method as they are research based in nature. I therefore switch to an Agile software development \cite{beck2001manifesto} to allow the project to adjust to the experimental results achieved during development.
 
 \section{Testing}
 \label{sec:testing}
@@ -631,7 +632,7 @@ However, my project does include software that follows traditional software deve
 \paragraph{Unit testing}
 is suitable for traditional software development where a specific result is required for specific input.
 The concept analysis and dataset handling fall into this category.
-These two aspects are therefore verified using unit testing described later. \note{Remember to include reference when complete.}
+These two aspects are therefore verified using unit testing described in \Sref{sec:testing-imp}.
 
 \paragraph{Reproduction of prior results}
 The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}.
@@ -644,7 +645,7 @@ In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pi
 Table \ref{tab:licensing} includes information about the specific licenses for all the software dependencies in my project.
 
 All software dependencies used in my project are under permissive licenses allowing me to use the code with no restrictions.
-Furthermore, I am free to use the Planetoid \note{Cite Zhilin Yang, Revisiting} and TUDataset \cite{Morris+2020} datasets available in \texttt{PyTorch Geometric} library.
+Furthermore, I am free to use the Planetoid \cite{planetoid} and TUDataset \cite{Morris+2020} datasets available in \texttt{PyTorch Geometric} library.
 Though some licenses have additional restrictions on source code modification and/or redistribution my project does neither of these actions and only uses the libraries as is.
 
 I license my source code under the MIT license to support further developers and researchers.

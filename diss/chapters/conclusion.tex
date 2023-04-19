@@ -13,7 +13,7 @@ Extending SGC to graph classification also shows the same lack of graph structur
 With these observations two extensions to SGC are proposed to improve the performance.
 The first is to combine SGC and GCN to utilise the benefits of both approaches.
 However, though this is successfull the use of SGC is very limited and the results suggest that GCN the GCN layers carry out the majority of the inference.
-As a final test of the effect of linearisation SGC is presented with the intermediate node representations through the technique of JKNs\note{citation needed}.
+As a final test of the effect of linearisation SGC is presented with the intermediate node representations through the technique of JKNs\cite{xu2018representing}.
 The results in \Sref{sec:Jump-SGC} does show a significant improvement and clearly demonstrates graph structure awareness akin to GCN.
 Importantly, this model is negligibly non-linear with a single non-linear layer regardless of the scale of the model.
 This important discovery demonstrates that graph structure awareness is possible within a linear architecture.
@@ -47,5 +47,5 @@ Though the accuracy of JSGC is not as high as GCN it is important to note that J
 \paragraph{AMI mixed models}
 To combine SGC and GCN the concepts that can be extracted are compared using AMI to determine where the two approaches are most similar.
 As demonstrated in \Sref{sec:SGCN} in figures \ref{fig:SGCN-SGC-latent-space} and \ref{fig:SGCN-GCN-latent-space} the resulting model retains the influence of both models.
-\textit{Shchur et al.}\cite{shchur2018pitfalls} and \textit{Purchase et al.}\note{citation needed} demonstrate the best performing GNN is highly dependent on training setup and dataset.
+\textit{Shchur et al.}\cite{shchur2018pitfalls} and \textit{Purchase et al.}\cite{purchase2022revisiting} demonstrate the best performing GNN is highly dependent on training setup and dataset.
 By combining the best GNN models in these different environments using the AMI approach it may be possible to overcome these limitations.
