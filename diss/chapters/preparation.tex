@@ -144,7 +144,7 @@ The definition of such functions is still an active area of research and so for 
 
 \subsubsection{As a GNN}
 
-The \emph{graph convolutional network} (GCN) is the simplest implementation of the formulation of GNNs outlined above.
+The GCN is the simplest implementation of the formulation of GNNs outlined above.
 The principle is to add the edge weighted sum of a node's neighbour representations to the current node representation.
 This maintains the graph function equivariance constraint as sum is equivariant, however, nodes with a high degree are overly represented and so each term is normalised by the degree of the connecting nodes.
 This results in the common representation of GCN as
@@ -202,7 +202,7 @@ Thus a standard GCN layer can be interpretted as a graph operator and parameteri
 \label{sec:conv}
 \note{This section needs a lot of rewriting and potentially to be scrapped entirely.}
 
-To motivate the idea of the simple graph convolution (SGC) it is important to think of $\mS$ from a different perspective, as a graph operator first.
+To motivate the idea of the SGC it is important to think of $\mS$ from a different perspective, as a graph operator first.
 
 The idea behind a convolution is a multiplication of two functions together, in this case a signal, represented by the node representation $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
 \footnote{The signal is a function $\vh : \sV \to \R^n$ however as the nodes are fixed each signal can be represented as a vector using the notation $\vh_i \equiv \vh(v_i)$.}
@@ -509,7 +509,7 @@ As these motifs are also very simple they speed up the intensive process of calc
 
 The following two graphs are used as base graphs:
 
-\paragraph{Barabasi-Albert}
+\paragraph{Barabasi-Albert (BA)}
 a densely connected graph where nodes are probabilisitically connected to each other.
 The probability of a node connecting to another depends on the existing degree of the node thus keeping limiting the maximum degree of a node in the graph.
 
