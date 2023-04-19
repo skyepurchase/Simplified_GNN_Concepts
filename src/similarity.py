@@ -134,7 +134,19 @@ def main(args: Namespace,
 
     # t-SNE dimensionality reduction to visualise the latent space
     latent_data = tsne_reduction([activation_list1[best_layer[0]], activation_list2[best_layer[1]]], 2)
-    plot_latent_space(latent_data, labels, save_path, save_name.split("-")[:-2])
+
+    if dataset_name == "BA-Shapes":
+        plot_latent_space(latent_data,
+                          labels,
+                          ["BA", "ceiling", "floor", "roof"],
+                          save_path,
+                          save_name.split("-")[:-2])
+    else:
+        plot_latent_space(latent_data,
+                          labels,
+                          ["base", "motif"],
+                          save_path,
+                          save_name.split("-")[:-2])
 
 
 if __name__=='__main__':

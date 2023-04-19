@@ -4,6 +4,7 @@ import os.path as osp
 from torch_geometric.data import Data
 from tqdm import tqdm
 
+import torch
 from torch import argmax
 
 import matplotlib.pyplot as plt
@@ -159,11 +160,13 @@ def plot_samples(clustering_model: KMeans,
 
 def plot_latent_space(latent_data_list: List[NDArray],
                       labels: Tensor,
+                      label_names: List[str],
                       save_path: str,
                       names: List[str]) -> None:
     """Plot the 2D dimensionality reductions to visualise the latent space of different models and layers.
     INPUT
         latent_data     : The list of DR data
+        label_names     : Names for the labels
         data            : The labels for the dataset
         save_path       : The path to save the figures
     OUTPUT
@@ -172,10 +175,15 @@ def plot_latent_space(latent_data_list: List[NDArray],
     fig: FigureBase
     fig, axes = plt.subplots(1, len(latent_data_list), dpi=200)
     fig.suptitle(f'Latent space of {", ".join(names)}')
+    colors = ["tab:blue", "tab:orange", "tab:green", "tab:red"]
 
     name: Iterable = iter(names)
     for ax, data in zip(axes, latent_data_list):
-        ax.scatter(data[:,0], data[:,1], c=labels, cmap='rainbow')
+        for i in range(torch.max(labels) + 1):
+            ax.scatter(data[labels == i,0],
+                       data[labels == i,1],
+                       c=colors[i],
+                       label=label_names[i])
         ax.set_title(next(name))
 
     # For easier comparison keep the axes the same width and height
@@ -188,5 +196,6 @@ def plot_latent_space(latent_data_list: List[NDArray],
         ax.set_xlim(x_min, x_max)
         ax.set_ylim(y_min, y_max)
 
+    axes[1].legend()
     plt.savefig(osp.join(save_path, f"latent_space.png"))
 

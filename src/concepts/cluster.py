@@ -46,10 +46,10 @@ def tsne_reduction(activation_list: list[torch.Tensor],
     OUTPUT
         components          : A list of the latent spaces"""
     latent_data: List[NDArray] = []
-    tsne_model: TSNE = TSNE(n_components=components)
 
     for activations in activation_list:
         activation: NDArray = torch.squeeze(activations).detach().numpy()
+        tsne_model: TSNE = TSNE(n_components=components)
         data = tsne_model.fit_transform(activation)
         latent_data.append(data)
 
