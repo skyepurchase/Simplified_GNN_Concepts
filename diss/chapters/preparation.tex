@@ -329,7 +329,7 @@ This directly corresponds to the receptive field of the model where a $k$-degree
 \note{\textit{Chanpuriya et al.}\cite{chanpuriya2022simplified} does not explicitly suggest this, I thought I had seen it somewhere but maybe not}
 of SGC include vanishing/exploding values in $\bm{\Theta}$ as the degree of the model increases and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of the graphs nodes.}.
 However, for the purposes of this project the main issue is the fact that SGC has a fixed feature extraction step where the model cannot influence the resulting node representations.
-Extensions presented in \note{add references when sections finished} address and aim to fix this issue.
+Extensions presented in \Sref{sec:extensions-imp} and \Sref{sec:extension-eval} address and aim to fix this issue.
 
 %The fomulation in equation \ref{GCN-as-GNN} highlights that at after each layer each node representation includes a representation of its immediate neighbours.
 %This means that the $k^{th}$-layer node representations are influenced by the node representations at most $k$-hops away. 
@@ -401,7 +401,6 @@ The concepts can still satisfy the above desiderata as meaningfulness relates to
 
 \subsection{Graph concept explainer}
 \label{sec:GCE}
-\note{Diagrams are required for better explanation.}
 
 % The motivation for the paper
 
@@ -640,7 +639,31 @@ The hyperparameters for the GCN model baseline are available in \textit{Magister
 In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
 
 \section{Licensing}
-\include{tables/licensing}
+%%\include{tables/licensing}
+\begin{table}
+    \centering
+    \begin{tabular}{cc}
+        \multicolumn{1}{c}{\textbf{Software dependency}} &
+        \multicolumn{1}{c}{\textbf{License}} \\ 
+        \midrule
+        NumPy & \multirow{5}{*}{3-clause BSD} \\
+        scikit-learn & \\
+        NetworkX & \\
+        PyTorch & \\
+        hyperopt \tablefootnote{The license is unnamed but matches the 3-clause BSD license verbatim.} & \\
+        \rowcolor{gray!20} tensorboard & \\
+        \rowcolor{gray!20} Lightning AI &  \multirow{-2}{*}{Apache 2.0}\\
+        matplotlib & \\
+        Python & \multirow{-2}{*}{PSFL}\\
+        \rowcolor{gray!20}
+        PyTorch Geometric & \\
+        \rowcolor{gray!20}
+        tqdm & \multirow{-2}{*}{MIT} \\
+        tqdm & MPL\tablefootnote{tqdm is distributed under both licenses.} \\
+    \end{tabular}
+    \caption{Licenses for the project dependencies}
+    \label{tab:licensing}
+\end{table}
 
 Table \ref{tab:licensing} includes information about the specific licenses for all the software dependencies in my project.
 
