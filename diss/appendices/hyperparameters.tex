@@ -1,0 +1,30 @@
+\chapter{Hyperparameters}
+\section{Hyperparameters}
+\input{tables/GCN-params}
+\input{tables/SGC-reproduction-params}
+\input{tables/SGC-params}
+\input{tables/GCN-concept-params}
+\input{tables/JSGC-params}
+
+\section{Hyperparameter surfaces}
+\label{sec:surfaces}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures/SGC-BA-Community-surface}
+    \includegraphics[width=0.45\textwidth]{figures/SGC-BA-Grid-surface}
+    \includegraphics[width=0.45\textwidth]{figures/SGC-BA-Shapes-surface}
+    \includegraphics[width=0.45\textwidth]{figures/SGC-Tree-Cycles-surface}
+    \includegraphics[width=0.45\textwidth]{figures/SGC-Tree-Grid-surface}
+    \caption{SGC hyperparameter surfaces for learning rates in $\{0.01, 0.001, 0.0001\}$ and weight decay constants in $\{1, 0.1, 0.01\}$. In the case of Tree Cycles enough of an improvement is seen to warrant the additional weight decay constant $10$.}
+    \label{fig:SGC-surfaces}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures/JSGC-BA-Community-surface}
+    \includegraphics[width=0.45\textwidth]{figures/JSGC-BA-Shapes-surface}
+    \caption{JSGC hyperparameter surfaces for learning rates in $\{0.01, 0.001, 0.0001\}$ and weight decay constants in $\{1, 0.1, 0.01\}$. In the case of BA Shapes enough of an improvement is seen to warrant the additional weight decay constant $10$.}
+    \label{fig:JSGC-surfaces}
+\end{figure}
+

@@ -1,0 +1,16 @@
+\begin{table}
+    \centering
+    \begin{tabular}{c|cccc}
+        \textbf{Dataset} &
+        \textbf{Degree} &
+        \textbf{Learning rate} &
+        \textbf{Weight decay} &
+        \textbf{Epochs} \\
+        \midrule
+        BA Shapes       & 3 & 0.001 & 0.01 & 1200 \\
+        BA Community    & 6 & 0.001 & 0.01 & 1400 \\
+    \end{tabular}
+    \caption{JSGC hyperparameters based on the corresponding SGC hyperparameters in \ref{tab:SGC-params} and using the results of the hyperparameter searchs in figure \ref{fig:JSGC-surfaces}. All models use \texttt{softmax} and \texttt{ReLU} between the aggregation of jumping knowledge and the classifier.}
+    \label{tab:JSGC-params}
+\end{table}
+

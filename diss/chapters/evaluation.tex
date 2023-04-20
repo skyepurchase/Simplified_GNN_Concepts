@@ -64,7 +64,7 @@ Rather than use stochastic approaches to finding these hyperparameters a sweep o
 This allows for a visualisation of the hyperparameter allowing for further exploration if necessary.
 The learning rate is sampled from $\{0.01, 0.001, 0.0001\}$ and the weight decay from $\{1.0, 0.1, 0.01\}$.
 
-The results of these searches is presented in figures \note{include the references the hyperparameter surfaces}.
+The results of these searches is presented in figures \ref{fig:SGC-surfaces} and \ref{fig:JSGC-surfaces}.
 As can be seen for the majority of hyperparameter searches the specific hyperparameters have minimal to no impact on the resulting model accuracy and therefore $0.01$ is chosen for learning rate and $0.1$ for weight decay.
 The hyperparameters chosen are presented in table \ref{tab:SGC-params}
 
@@ -237,7 +237,7 @@ Comparatively the dense BA graph allows for a better distinction between the mot
 This distinction based on degree is attributed to the degree normalisation demonstrated in equation \ref{eq:GCN-as-GNN}.
 This advantage is not present in BA Community because of the increase in classes, the need to distinguish the two communities and the possibility of a motif having multiple connections to different base graphs.
 
-These poor results are not due to poor hyperparameter selection as is demonstrated in Appendix \note{reference when complete} and discussed in \Sref{sec:hyperparameters}.
+These poor results are not due to poor hyperparameter selection as is demonstrated in \Aref{sec:surfaces} and discussed in \Sref{sec:hyperparameters}.
 Instead the explanation for the poor performance is due to the lack of proper graph structure inference in SGC.
 This is lack of graph structure inference is not in comparison to GCN but rather a fundamental property of SGC.
 
