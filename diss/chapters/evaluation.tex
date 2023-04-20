@@ -83,7 +83,7 @@ These metrics are discussed in \ref{sec:GCE} and implementation is described in 
 On top of the quantitative analysis of the different models concepts lend themselves to qualitative analysis which will mainly focus on visual similarities between the two models.
 the quantitative analysis will also help to infer the differences in how the two models infer labels on the input data.
 
-For qualitative analysis only BA Shapes and Mutagenicity will be covered in detail with brief analysis of the other datasets in Appendix \note{reference when complete}.
+For qualitative analysis only BA Shapes and Mutagenicity will be covered in detail; brief analysis of the other datasets is presented in \Aref{app:concepts}.
 This extends to extensions where only BA Shapes and Mutagenicity are trained on as proofs of concepts.
 
 It is important to note a number of drawbacks of the GCExplainer in comparing two different models quantitatively.
@@ -173,13 +173,11 @@ For the real-world datasets the expectation is above 85\% as suggested by \texti
 
 BA Community is a significant outlier in the results neither reaching the suggested 95\% or reaching a value close to 100\%.
 If the model is allowed to train for more than the defined 6000 epochs an accuracy closer to 95\% is achieved.
-%A likely cause for this discrepancy is the uncertainty in the construction of the community dataset discussed in \note{reference when complete}.
 Due to these considerations I consider my implementation of GCN to be correct.
 
 \paragraph{Concept scores}
 \input{tables/GCN-concepts}
 Table \ref{tab:GCN-concepts} presents the concept scores for each of the top performing GCN models compared to those in tables 4 and 5 in \textit{Magister et al.}.
-%Only the mean purity is presented across all the models with the minimum and maximum purity available in table \note{reference when complete}.
 As with the accuracy reproduction the values for concept completeness are closely correlated for the majority of the models.
 
 \fig{erroneous-labels}{A subset of the concepts discovered for Mutagenicity highlighting the erroneous labels. Each row represents a concept and the graphs are coloured according to standard chemical colouring.}
@@ -209,8 +207,7 @@ In both cases, and as expected given the concept purity scores, the concepts rel
 Additionally, all the nodes in the house motif have a unique concept where applicable and this leads to the high completeness score.
 
 Given the visual similarity in concepts between the published and reproduced results I consider the implementation of GCN to be accurate.
-Examples of the other synthetic and real datasets is available in Appendix \note{reference when complete}.
-\note{There may also be brief comparisons between the figures time permitting.}
+Examples of the other datasets is available in \Aref{app:concepts}.
 
 \section{Comparison of Accuracy}
 \label{sec:comp-acc}

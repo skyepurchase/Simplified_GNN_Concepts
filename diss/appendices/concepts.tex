@@ -1,0 +1,47 @@
+\chapter{Concepts}
+\label{app:concepts}
+
+\section{SGC concepts}
+
+\fig{BA-Grid}{Comparison of SGC and GCN concepts for BA Grid further demonstrating the poor graph structural inference of SGC. The numbered concepts are a subset of SGC concepts and the lettered concepts are GCN concepts. The colour scheme is the same as fig. \ref{fig:SGC-BA-Shapes}}
+\fig{Tree-Cycles}{Comparison of SGC and GCN concepts for Tree Cycles further demonstrating the poor graph structural inference of SGC. The numbered concepts are a subset of SGC concepts and the lettered concepts are GCN concepts. The colour scheme is the same as fig. \ref{fig:SGC-BA-Shapes}}
+\fig{Tree-Grid}{Comparison of SGC and GCN concepts for Tree Grid further demonstrating the poor graph structural inference of SGC. The numbered concepts are a subset of SGC concepts and the lettered concepts are GCN concepts. The colour scheme is the same as fig. \ref{fig:SGC-BA-Shapes}}
+
+Figure \ref{fig:BA-Grid} represents a sample of concepts from SGC and GCN on BA Grid to demonstrate the differences.
+SGC is able to discern between the Barabasi-Albert graph as shown by concepts 1, 2 and 3, but in comparison to GCN these are not as detailed.
+Concepts 1 and 2 dmeonstrate an inconsistent node of interest within the grid structure compared to concepts A, B and C.
+Concepts A, B and C demonstrate that the central, edge and connecting nodes are distinct and important to the classification used by GCN.
+This demonstrates a higher level of graph structure awareness from GCN compared to SGC.
+
+Figure \ref{fig:Tree-Cycles} represents a sample of concepts from SGC and GCN on Tree Cycles to demonstrate the differences.
+Of the graph concepts SGC matches GCN the closest on Tree Cycles even though this is one of the poorly performing datasets as shown in table \ref{tab:SGC-acc}.
+Concepts 1 and 2 match concepts A and B in regards to position on the motif and general shape.
+Concept C has limited presence in the concepts extracted from SGC and in comparison to concept D concept 3 shows limited awareness of the full structure of the BST.
+
+Figure \ref{fig:Tree-Grid} represents a sample of concepts from SGC and GCN on Tree Grid to demonstrate the differences.
+In comparison to SGC in figure \ref{fig:BA-Grid} the instances of the grid are more pronounced however in this case there a limited and less pure.
+Concept 1 shows the major problem that SGC faces with tree based synthetic graphs as it cannot discern the tree structure from the grid (or circle) motif.
+In this case concept 3 shows better structural awareness of the BST.
+Concepts A to D demonstrate a similar structural awareness to GCN in figure \ref{fig:BA-Grid}.
+The only deviation is in concept D as the base graph is different.
+
+\section{SGCN concepts}
+
+\fig{SGCN-BA-Shapes}{Subset of SGCN concepts for BA Shapes demonstrating the improved graph concepts with aspects of both SGC and GCN. Concepts are extracted from the final GCN layer only. The colour scheme is the same as fig. \ref{fig:SGC-BA-Shapes}}
+
+Figure \ref{fig:SGCN-BA-Shapes} represents a sample of concepts from SGCN on BA Shapes to demonstrate the differences.
+The concepts are a great improvement on those presented in figure \ref{fig:SGC-BA-Shapes} and match those produced in figure \ref{fig:GCN-BA-Shapes}.
+Note however in concept 2 that there is no distinction between the ``inside'' and ``outside''\footnote{See \Sref{}} node that is demonstrated by either SGC or GCN.
+This oddity may be due to GCN relearning the node representations but unable to properly distinguish between the ``inside'' and ``outside'' nodes presented by SGC.
+Given the lower accuracy of SGCN compared to GCN demonstrated in table \ref{tab:SGCN-acc} suggests that the distinction may be important.
+
+\section{JSGC concepts}
+
+\fig{JSGC-BA-Shapes}{Subset of JSGC for BA Shapes further demonstrating the improved graph structural awareness of JSGC. The concepts are chosen to match those in fig. \ref{fig:GCN-BA-Shapes} to demonstrate that the graph structure awareness is the same. The colour scheme is the same as fig. \ref{fig:GCN-BA-Shapes}}
+
+Figure \ref{fig:JSGC-BA-Shapes} represents a sample of concepts from JSGC on BA Shapes to demonstrate the differences.
+The subset of concepts directly map to those discovered in \ref{fig:GCN-BA-Shapes}.
+In the case of concept 2 in figure \ref{fig:JSGC-BA-Shapes} the probabilistic Barabasi-Albert graph means that they will not match concept 2 in figure \ref{fig:GCN-BA-Shapes}.
+This demonstrates that JSGC has almost the same graph structure awareness that GCN does.
+As discussed in \Sref{sec:Jump-SGC} and shown in table \ref{tab:JSGC-acc} there are still lacking elements.
+It is hypothesised that this is due to the limited classifier in JSGC where GCN acts an MLP as well as carrying out GRL.
