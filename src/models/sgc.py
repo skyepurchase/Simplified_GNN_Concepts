@@ -54,5 +54,6 @@ class JumpSGC(SGC):
 
     def forward(self, x: Tensor) -> Tensor:
         x_aggr = self.aggr(x)
+        x_aggr = F.relu(x_aggr)
         return super().forward(x_aggr)
 
