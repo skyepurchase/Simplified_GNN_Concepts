@@ -59,60 +59,24 @@ Comparitively graph classification aggregates all of the node representations an
 
 %% The idea of invariants, equivariants and approaches
 
-To produce updated node representations consider a matrix valued function, $F$, which acts on a graph taking the input features, $\mX$, and adjacency matrix, $\mA$, and producing a new feature matrix $F(\mX, \mA)$.
-If this function where to be given instead a different permutation of the graph it is important that the resulting output is permuted the same way.
-That is given some permutation, $\mP$, the following must hold
+The updated node representations should depend on the local neighbourhood of each node.
+If the same local neighbourhood representations were to be permuted the updated representation should remain the same as the neighbourhood topology is the same.
+Therefore consider a vector valued function, $\vf$, taking neighbourhood representations, $\mX_{\sN_i}$, and adjacency matrix, $\mA$, and producing a neighbourhood representation $\vf(\mX_{\sN_i}, \mA)$.
+Given some permutation, $\mP$, $\vf(\mP\mX_{\sN_i}, \mP\mA\mP^T) \equiv \vf(\mX_{\sN_i}, \mA)$.\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the premultiplication transposed to permute the columns.}
 
-\begin{equation}
-    \label{eq:equivar}
-    F(\mP\mX, \mP\mA\mP^T) \equiv \mP F(\mX, \mA).\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the premultiplication transposed to permute the columns.}
-\end{equation}
+Furthermore, if the node features are permutated then the updated node representations should be as well.
+Thus consider a matrix valued function, $F$, taking the input representations and adjacency matrix, and producing a new representation matrix.
+It must be the case that $F(\mP\mX, \mP\mA\mP^T) \equiv \mP F(\mX, \mA)$.
 
-This principle is known as \emph{equivariance} as the output varies in the same way as the input.
+For the node representation update function, $F$, to be equivarient it suffices for the neighbourhood representation function to be invariant, \Aref{app:perm}.
+For the neighbourhood representation to be invariant an invariant aggregation function, $\bigoplus$, combines updated neighbourhood representations.
+Thus a neighbour representation\footnote{Multiple formulations exist and is an area of active research.} for $\vx_i$ is $\bigoplus_{\vx_j \in \mX_{\sN_i}}c_{ij}\bm{\psi(\vx_j)}$.
+Where $\bm{\psi}$ is an individual node representation update function.
+This leads to a general invariant node representation update function
 
-It is also important to consider \emph{invariance} where the result of a function is the same regardless of the permutation. In this case consider the real valued function, $f$, where $f(\mX, \mA)$ is a single real value.
-
-\begin{equation}
-    \label{eq:invar}
-    f(\mP\mX, \mP\mA\mP^T) \equiv f(\mX, \mA).
-\end{equation}
-
-To prevent problems with noise and distortions propagating the function should adhere to locality, that is the representation of a specific node only depends on neighbours.
-That is some function
-
-\begin{equation}
-    \label{eq:phi}
-    \bm{\phi}(\vx_i, \mX_{\sN_i}).
-\end{equation}
-
-\ref{eq:phi} gives a definition for $F$ as
-
-\begin{equation}
-    F(\mX, \mA) = \begin{bmatrix}\bm{\phi}(\vx_1, \mX_{\sN_1}) \\ \vdots \\ \bm{\phi}(\vx_N, \mX_{\sN_N})\end{bmatrix}.
-\end{equation}
-
-\paragraph{Lemma.}
-If $\bm{\phi}$ is permutation invariant in $\mX_{\sN_i}$ then $F(\mX, \mA)$ is equivariant.
-
-\paragraph{Proof.}
-Let $\pi$ be a permutation of $\sV$, the set of nodes, and $\mP$ the corresponding permutation matrix.
-Given $\mX = \begin{bmatrix}\vx_1 \\ \vdots \\ \vx_n\end{bmatrix}$, $\mP\mX = \begin{bmatrix}\vx_{\pi(1)} \\ \vdots \\ \vx_{\pi(N)}\end{bmatrix}$ noting that each node $v_i$ has the same neighbours, $\sN_i$, however the feature matrix of the neighbours is now $\mP\mX_{\sN_i}$. Therefore $F(\mX, \mA) = \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mP\mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mP\mX_{\sN_{\pi(N)}})\end{bmatrix}$. As $\bm{\phi}$ is permutation invariant in $\mX_{\sN_i}$, $\bm{\phi}(\vx_{\pi(i)}, \mP\mX_{\sN_{\pi(i)}}) = \bm{\phi}(\vx_{\pi(i)}, \mX_{\sN_{\pi(i)}})$.
-
-Thus 
-\begin{align*}
-    F(\mP\mX, \mP\mA\mP^T) &= \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mP\mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mP\mX_{\sN_{\pi(N)}})\end{bmatrix} \\ 
-        &= \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mX_{\sN_{\pi(N)}})\end{bmatrix} \\
-        &= \mP\begin{bmatrix}\bm{\phi}(\vx_1, \mX_{\sN_1}) \\ \vdots \\ \bm{\phi}(\vx_N, \mX_{\sN_N})\end{bmatrix} \\
-        &= \mP F(\mX, \mA).
-\end{align*}
-
-Therefore a GNN layer requires a local permutation-invariant function $\bm{\phi}$.
-specifically, the function can be broken down into an ``update'' function, $\bm{\varphi}$, applied to the current node and a permutation-invariant operation on the neighbourhood as this holds the permutation-invariance property.
-A further function, $\bm{\psi}$, is also introduced to act on the neighbour node representations.
-The definition of such functions is still an active area of research and so for the purposes of this dissertation only the convolutional approach is considered:
 \begin{equation}
     \label{eq:conv-def}
-    \bm{\phi}(\vx_i, \mX_{\sN_i}) = \bm{\varphi}(\vx_i, \bigoplus_{\vx_j \in \mX_{\sN_i}}c_{ij}\bm{\psi}(\vx_j))
+    \bm{\phi}(\vx_i, \mX_{\sN_i}) = \bm{\varphi}(\vx_i, \bigoplus_{\vx_j \in \mX_{\sN_i}}c_{ij}\bm{\psi}(\vx_j)).
 \end{equation}
 
 %This function can be described by a function, $f$, which acts on a single node, $v_i$, using the feature vector, $\vx_i$, and neighbours, $\sN_i$.

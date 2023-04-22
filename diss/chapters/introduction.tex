@@ -41,8 +41,8 @@ This dissertation answers these questions by evaluating an SGNN within an explan
 %More complex graph data may also include attributes associated with the connections which can be simple scalars or multidimensional vectors.
 %For these reasons graph data is a highly flexible and versatile datastructure promoting complex inference.
 
-\paragraph{Graph neural networks} 
-GNNs are designed to handle graph data where the connections between data points is an important aspect as the data itself.
+\paragraph{Graph neural networks (GNNs)} 
+are designed to handle graph data where the connections between data points is an important aspect as the data itself.
 The standard form of a GNN 
 %\note{make sure this is valid here!}
 consists of multiple layers connected together by a non-linearity step.
@@ -124,8 +124,8 @@ The idea of explainability is to provide different methods of visualising how a 
 %% Provides clear metrics to compare models in regards to concepts
 
 This project is based on the recent work by \textit{Magister et al.} \cite{magister2021gcexplainer} which proposes a new method of graph concepts.
-The paper introduces two concept metrics to guide a human in picking optimal parameters for concept extraction.
-It is using these metrics that I compare a SGNN to a GNN as well as confirming that performance matches.
+The paper introduces two concept metrics to guide the choice in optimal parameters for concept extraction.
+It is using these metrics that I compare an SGNN to a GNN as well as confirming that performance matches.
 
 % Simplifying Graph Convolutional Networks
 
@@ -153,7 +153,7 @@ This project identifies a further issue with SGC when working with highly synthe
 
 % Basic contributions with extending SGC in new ways
 
-This project extends the work of \textit{Magister et al.} \cite{magister2021gcexplainer} to SGC \cite{wu2019simplifying} to help answer the questions posed in \ref{sec:motivation}.
+This project extends the work of \textit{Magister et al.} \cite{magister2021gcexplainer} to SGC \cite{wu2019simplifying} to help answer the questions posed in \Sref{sec:motivation}.
 These techniques of concept extraction are applied to an implementation of SGC from \textit{Wu et al.} designed for the dataset.
 To achieve a full comparison between the two systems SGC is modified to graph classification tasks. 
 This extension uses a simpler approach than the one proposed in the original paper.
