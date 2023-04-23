@@ -220,37 +220,35 @@ Examples of the other datasets are available in \Aref{app:concepts}.
 
 Table \ref{tab:SGC-acc} demonstrates the mean accuracies achieved by each of the SGC models using the hyperparameters in \ref{tab:SGC-params}.
 As a comparison the accuracies achieved by GCN are presented beside them.
-The performanace of SGC is very poor and so random guesses are included as well to demonstrate the limited inference of SGC.
+The performanace of SGC is very poor and so random guesses are included to demonstrate this.
 
 \paragraph{Compared to GCN}
 the accuracies achieved by SGC are significantly worse and go against \textit{Wu et al.}'s claim that SGC can match GCN perfomance.
-In the cases of the Tree datasets GCN nearly doubles the accuracy and in the case of BA Community GCN is more than $4\times$ as accurate.
-Only in the case of BA Grid does SGC achieve a good accuracy in comparison to GCN though even here the difference in accuracy is $27.1$\%.
+In the majority of cases the accuracy achieved by SGC is roughly $50\%$ less than that achieved by GCN.
+BA Grid, the highest performing dataset, achieves $72.4\%$ accuracy which is still $27.1\%$ less than GCN.
+%does SGC achieve a good accuracy in comparison to GCN though even here the difference in accuracy is $27.1$\%.
 
-These poor results suggest that the graph structure inference of SGC is far worse than that of GCN as labels are based only on graph structure.
+These poor results suggest that the graph structure awareness of SGC is far worse than that of GCN as labels are based only on graph structure.
 This is also an explanation for why SGC is able to surpass the accuracy of GCN in the Planetoid\cite{kipf2016semi} datasets as these datasets rely heavily on node representations.
 
 \paragraph{Compared to random guesses}
-SGC does not perform much better except in the cases of BA Shapes and BA Grid.
-In the cases of the Tree datasets this can be attributed to the sparsity of the base graph resulting in less information being aggregated in the pre-computation stage.
-Especially in the case of Tree Cycles where the Cycle structure and BST structure share similar sparse connections.
+SGC does not perform significantly better except in the cases of BA Shapes and BA Grid.
+In the cases of the Tree datasets this can be attributed to the sparsity of the base graph where the motif structure and BST structure share similar connectivity.
 
-Comparatively the dense BA graph allows for a better distinction between the motifs and the base graph.
-This distinction based on degree is attributed to the degree normalisation demonstrated in equation \ref{eq:GCN-as-GNN}.
-This advantage is not present in BA Community because of the increase in classes, the need to distinguish the two communities and the possibility of a motif having multiple connections to different base graphs.
+In comparison the dense BA graph allows for a better distinction between the motifs and the base graph.
+This distinction is attributed to the degree normalisation demonstrated in equation \ref{eq:GCN-as-GNN}.
+This advantage is not present in BA Community the two communities and the possibility of a motif having multiple connections to different base graphs.
 
-These poor results are not due to poor hyperparameter selection as is demonstrated in \Aref{app:hyperparameters} and discussed in \Sref{sec:hyperparameters}.
-Instead the explanation for the poor performance is due to the lack of proper graph structure inference in SGC.
-This is lack of graph structure inference is not in comparison to GCN but rather a fundamental property of SGC.
+These results are not due to poor hyperparameter selection as demonstrated in \Aref{app:hyperparameters} and discussed in \Sref{sec:hyperparameters}.
+Instead the explanation for the poor performance is due to the lack of proper graph structure awareness.
 
 \paragraph{Comparison of parameters}
-Given that SGC uses a single linear regressor compared to GCNs multiple layers there is a large discrepancy in number of parameters.
-SGC has $\sim40$ parameters compared to GCN with 1000+ for BA Shapes which is very significant difference.
-However, increasing the parameters for SGC by increasing the node feature size and adding a \emph{multi-layer perceptron}(MLP) with the same hidden layers as the GCN model results in no substantial change to accuracy.
+Given that SGC uses a single classifier layer compared to GCNs multiple layers there is a large discrepancy in the number of parameters\footnote{SGC has roughly 40 parameters compared to GCN with $>$1000 for BA Shapes.}.
+However, increasing the parameters for SGC by either increasing the node feature size or adding a \emph{multi-layer perceptron}(MLP)\footnote{The use of an MLP classifier also introduces non-linearity though in this case the model does not improve. Non-linearity and parameters on there own are not sufficient.} with the same hidden layers as the GCN model results in no substantial change to accuracy.
 
-No MLP model is added before the SGC pre-computation step as this defeats the point of SGC to be linear.\footnote{The use of an MLP classifier also introduces non-linearity though in this case the model does not improve. Non-linearity and parameters on there own are not sufficient.}
-This is the main drawback of SGC as it cannot manipulate the node representations beyond simple message passing/filter application.
-\Sref{sec:comp-concept} explores these claims further demonstrating the importance of trainable parameters during message and non-linearity.
+No MLP model is added before the SGC pre-computation step as this defeats the point of linearisation.
+This is the main drawback of SGC as it cannot manipulate the node representations except through filter application.
+These claims are further explored in \Sref{sec:comp-concept}.
 
 \section{Comparison of concepts}
 \label{sec:comp-concept}
@@ -260,7 +258,7 @@ However, as stated before, concept extraction and analysis is only suggested for
 As demonstrated in \Sref{sec:comp-acc} SGC does not reach this value only reaching $72.4$\% in the best case.
 
 However, though the concepts will not be meaningful to explain how SGC reasons they will still provide insight into the claims in \Sref{sec:comp-acc}.
-Furthermore, the concepts highlight the shortcomings of SGC when it comes to graph structure inference.
+Furthermore, the concepts highlight the shortcomings of SGC when it comes to graph structure awareness.
 For this reason the analysis of the concept scores is limited but the qualitative concept analysis provides insight into where SGC fails.
 
 \paragraph{Success criterion}
