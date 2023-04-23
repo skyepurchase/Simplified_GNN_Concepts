@@ -7,22 +7,32 @@ The inductive datasets discussed in \Sref{sec:RWD} are already packaged and avai
 
 \paragraph{Synthetic datasets}
 The synthetic datasets discussed in \Sref{sec:synth} are proposed by \textit{Ying et al.}\cite{ying2019gnnexplainer} are available pre-built in their github and \texttt{PyTorch Geometric} provide limited versions of a small subset I decide to implement them myself.
-This allows for more rigorous testing of both the datasets and the SGC precomputation later described in \Sref{sec:testing-imp}.
+This allows for more rigorous testing 
+%of both the datasets and the SGC precomputation later 
+described in \Sref{sec:testing-imp}.
 
-The motifs described in \Sref{sec:synth} are simple enough to be hard-coded, each motif is therefore an adjacency matrix (in coordinate form) and a label vector.
-When generating the dataset the base graph adjacency is generated with a label vector assigning every node to class 0.
-The Barabasi-Albert graph is generated probabilistically adding one node at a time and connecting each node to the existing graph based on the degree of the nodes currently in the graph.
-Then for each motif required the hard-coded tensors are adjusted and appended to the on going adjacency matrix and label vector.
-This adjustment includes adding an additional bidirectional connection between a random node in the base graph and a predetermined node of the motif.
+The motifs described in \Sref{sec:synth} can be hard-coded.
+%each motif is therefore an adjacency matrix (in coordinate form) and a label vector.
+When generating the dataset the base graph adjacency is generated first. 
+%with a label vector assigning every node to class 0.
+%The Barabasi-Albert graph is generated probabilistically adding one node at a time and connecting each node to the existing graph based on the degree of the nodes currently in the graph.
+Then each motif required is 
+%the hard-coded tensors are adjusted and 
+appended to the on going adjacency matrix and label vector by connecting
+%This adjustment includes adding an additional bidirectional connection between 
+a random node in the base graph to a predetermined node of the motif.
 
-Though the datasets are very simple they need to be compliant with \texttt{PyTorch Geometric} to be used correctly during training.
+The datasets need to be compliant with \texttt{PyTorch Geometric} to be used correctly during training.
 \texttt{PyTorch Geometric} provides an \texttt{InMemoryDataset} abstract class for datasets that are small enough to be generated and stored within RAM.
-As these are transductive datasets as described in \Sref{sec:datasets-theory} a single graph \texttt{Data} object is created that is then accessed through a dataloader.
+%As these are transductive datasets as described in \Sref{sec:datasets-theory} 
+Each dataset contains a single graph \texttt{Data} object is created that is then accessed through a dataloader.
 
-The \texttt{Data} object includes train and test split masks randomly assigning nodes to achieve an 80:20 ratio.
-This random assignment is based on the seed value for the experiment discussed in \Sref{sec:reproducibility}.
-This randomness also applies to the generation of the graph creating significantly different graphs each generation.
-This means that nodes for one seed value are effectively unseen for another seed value.
+The \texttt{Data} object includes train and test split masks randomly assigning nodes to achieve an 80:20 ratio based on seed value.
+%This random assignment is based on the seed value for the experiment discussed in \Sref{sec:reproducibility}.
+This 
+%randomness also applies to the generation of the graph 
+creates significantly different graphs each generation
+meaning that nodes for one seed value are effectively unseen for another seed value.
 
 \paragraph{SGC}
 The majority of SGC is the pre-computation
@@ -31,15 +41,18 @@ The majority of SGC is the pre-computation
     \mS^k\mX
 \end{equation}
 of equation \ref{eq:SGC} where $\mS$ is the filter defined in equations \ref{eq:op} and \ref{eq:norm}.
-As $\mS$ is defined in terms of the adjacency matrix which does not change during training equation \ref{eq:pre-comp} can be applied before training.
-This process is achieved with three functions that calculated the normalised filter $\mS$ by computing the required matrices and multiplications, convert the resultant matrix from coordinate form to sparse tensor form and then successively apply the filter to the node representations.
+As $\mS$ 
+%is defined in terms of the adjacency matrix which 
+does not change during training equation \ref{eq:pre-comp} can be applied before training.
+This process is achieved with three functions that calculate the normalised filter $\mS$,
+%by computing the required matrices and multiplications, 
+convert the matrix form and successively apply the filter to the node representations.
 
-This process results in a new feature matrix which can be substituted for the \texttt{Data} object used by the synthetic datasets.
-This means the SGC model does not need any adjacency matrix and can instead be implemented as a classifier.
-
+This results in a new feature matrix which replaces the \texttt{Data} object features.
+Thus the SGC model does not need any adjacency matrix and can instead be implemented as a classifier.
 For the sake of consistency and to aid the concept evaluation functions in \Sref{sec:concepts} the adjacency matrix is keep.
-A new \texttt{Data} object is created copying the labels, data splits and adjacency of the input graph but with the pre-computation matrix as the feature matrix.
-This also allows for implementation of the SGC and GCN mixed model proposed in \Sref{sec:SGCN}.
+%A new \texttt{Data} object is created copying the labels, data splits and adjacency of the input graph but with the pre-computation matrix as the feature matrix.
+The \texttt{Data} object is copied with updated features allowing for the implementation of the SGC and GCN mixed model proposed in \Sref{sec:SGCN}.
 
 \section{Models}
 \label{sec:models}
