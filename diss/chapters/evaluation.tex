@@ -345,16 +345,20 @@ Overall SGC is able to infer basic graph structure or group nodes into communiti
 Though particularly apparent in BA Community these behaviours of SGC effect the performance on other datasets.
 
 \subsection{Summary}
-\note{I think this can be better worded, more detailed summary with a link back to introduction questions.}
-The low accuracy of SGC means that the data present in tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} does not carry much meaning.
-However, table \ref{tab:SGC-completeness} does suggest that SGC does not produce useful concepts even though table \ref{tab:SGC-purity} suggests that these concepts are coherent.
+%The low accuracy of SGC means that the data present in tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} does not carry much meaning.
+%However, table \ref{tab:SGC-completeness} does suggest that SGC does not produce useful concepts even though table \ref{tab:SGC-purity} suggests that these concepts are coherent.
 
-When looking at the concepts produce it is clear that SGC is not a capable GNN for synthetic datasets.
-Figures \ref{fig:SGC-BA-Shapes} and \ref{fig:BA-Community} highlight how the relatively good purity and completeness scores do not relate to useful concepts.
-The linearisation of GCN clearly does not maintain the graph capabilities of GCN contrary to the results and claims of \textit{Wu et al.}.
+SGC is not as capabale as GCN when dealing with synthetic datasets where graph structure is important.
+Table \ref{tab:SGC-acc} demonstrates poor performance across the full range of synthetic datasets and tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} show the corresponding low concept scores.
+Attempts to improve the performance by increasing the parameters of SGC have resulted in no substantial improvement to accuracy or concept score.
 
-Considering the large parameter disparity and adjusting SGC to compensate does not improve the performance.
-This suggests that non-linearity and trainable parameters are important at specific points during inference not on their own.
+The concepts extracted from SGC across the datasets demonstrate a lack of graph structure awareness which is a key feature of any GNN.
+Figures \ref{fig:SGC-BA-Shapes} and \ref{fig:BA-Community} highlight the impure and unstructured concepts typical of SGC.
+These results suggest that the linearisation of GCN clearly does not maintain the graph capabilities of GCN contrary to the results and claims of \textit{Wu et al.}.
+
+However, as discussed in \Sref{sec:comp-acc}, the lack of influence that SGC has on node representations is likely the cause for low performance.
+SGC can only manipulated the final convolution node representations which provide limited insight into the structure of the graph.
+Extensions described in \Sref{sec:extension-imp} and evaluated in \Sref{sec:extension-eval} aim to combat this to provide a fairer comparison between the two models.
 
 \section{Extensions}
 \label{sec:extension-eval}
