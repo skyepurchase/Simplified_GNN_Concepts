@@ -92,28 +92,29 @@ To reduce this overhead multiple bash scripts can be dynamically created to run 
 \subsection{Reproducibility}
 \label{sec:reproducibility}
 It is important that the results that are achieved by the models, especially in regards to model accuracy, can be replicated later.
-This is both for the results presented in this dissertation but also for results found during experimentation in the extension phase.
-
+%This is both for the results presented in this dissertation but also for results found during experimentation in the extension phase.
 To achieve this every single experiment must set a seed value which is saved along with the results.
-This way when running the same configuration again using the same seed the expected outcome should be the same within very small bounds.
-
-Furthermore, the results achieved should be linked to specific model build that identifies all the hyperparameters used.
-The model build specifies every aspect of the model so that the exact same model can be replicated in a completely different ML pipeline.
+%This way when running the same configuration again using the same seed the expected outcome should be the same within very small bounds.
+Furthermore, the results achieved are linked to the model build 
+%that identifies all the hyperparameters used.
+%The model build 
+which specifies details of the model so that it can be replicated.
+%in a completely different ML pipeline.
 Thus the build files need to be human readable and easily expandable.
 
-To achieve these two requirements I use YAML which mimics python in its syntax and is therefore very readable but also links well with the rest of the pipeline.
-Each build has a unique YAML file with the filename following the convention \texttt{<model>.<dataloader>.<dataset>.<version>.yml}.
-Storing the YAML filename, seed and timestamp with every set of results allows for the reproduction of almost every result that was achieved throughout the project.
+To achieve these two requirements YAML files used as they are very readable and integrate with the rest of the pipeline.
+Each build has a unique YAML file following the convention \texttt{<model>.<dataloader>.<dataset>.<version>.yml}.
+Storing the YAML filename, seed and timestamp with every set of results allows for accurate reproduction.
 
 \subsection{Experimentation}
-The infrastructure used in \Sref{sec:reproducibility} also add in experimentation but linking interesting or desired results to the specific configuration that produced them.
-This is particularly desirable during the extension phase where the exact method that will produce the best results is unknown.
+The infrastructure used in \Sref{sec:reproducibility} also aids experimentation by linking results to configurations.
+This is particularly desirable during the extension phase where the best method is unknown.
 
-Beyond quick iteration in models during the exploratory extensions finding the optimal hyperparameters is essential.
-Incorrect hyperparameters can lead to artificially low performance and thus invalid the interpretation of the models based on results.
-I therefore implement \texttt{sweep.py} which takes a set of different hyperparameters values to test for each hyperparameter and runs a short evaluation of the performance.
+Beyond quick iteration finding the optimal hyperparameters is essential.
+Incorrect hyperparameters can lead to low performance and thus invalidate the interpretation of the models.
+To find hyperparameters \texttt{sweep.py} takes a set of different hyperparameter values and runs a short evaluation of the performance.
 To properly evaluate models it is important that this evaluation does not use nodes that are in the final test set.
-As discussed in \Sref{sec:datasets-imp} choosing different seeds to the final run effectively means that nodes in the prechosen random seeds test set are always unseen.
+As discussed in \Sref{sec:datasets-imp} choosing different seeds means that nodes in the evaluation test set are unseen.
 
 \section{Concept Extraction and Evaluation}
 \label{sec:concepts}
