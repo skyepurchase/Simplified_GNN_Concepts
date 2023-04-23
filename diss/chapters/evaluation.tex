@@ -166,48 +166,53 @@ Based on these considerations I consider my implementation of SGC to be correct.
 \label{sec:GCN-reproduction}
 \paragraph{Accuracy}
 \input{tables/GCN-acc}
-Table \ref{tab:GCN-acc} presents the accuracy achieved my GCN models compared to the accuracy published in table 16 of \textit{Magister et al.}\cite{magister2021gcexplainer}.
+Table \ref{tab:GCN-acc} presents the accuracy achieved the reproduced GCN models compared to the accuracy published in table 16 of \textit{Magister et al.}\cite{magister2021gcexplainer}.
 As can be seen in the majority of cases the reproduced accuracy matches or exceeds the accuracy presented by \textit{Magister et al.}.
-Given the small size of the synthetic datasets it is expected that close to 100\% accuracy is achieved which is demonstrated in all but BA Community.
+Given the small size of the synthetic datasets it is expected that near 100\% accuracy is achieved.
 For the real-world datasets the expectation is above 85\% as suggested by \textit{Ying et al.}\cite{ying2019gnnexplainer}.
 
-BA Community is a significant outlier in the results neither reaching the suggested 95\% or reaching a value close to 100\%.
-If the model is allowed to train for more than the defined 6000 epochs an accuracy closer to 95\% is achieved.
+BA Community is a significant outlier in the results reaching neither near 100\% or the suggested 95\%.
+However, if the model is allowed to train for more than the defined 6000 epochs an accuracy closer to 95\% is achieved.
 Due to these considerations I consider my implementation of GCN to be correct.
 
 \paragraph{Concept scores}
 \input{tables/GCN-concepts}
 Table \ref{tab:GCN-concepts} presents the concept scores for each of the top performing GCN models compared to those in tables 4 and 5 in \textit{Magister et al.}.
 As with the accuracy reproduction the values for concept completeness are closely correlated for the majority of the models.
+%\fig{erroneous-labels}{A subset of the concepts discovered for Mutagenicity highlighting the erroneous labels. Each row represents a concept and the graphs are coloured according to standard chemical colouring.}
+%
+%Figure \ref{fig:erroneous-labels} demonstrates that the clustering for Mutagenicity focuses on chemical similarity which does not necessarily correlate to mutagen similarity.
+%This means that the concept completeness is likely to be low as demonstrated in \ref{tab:GCN-concepts} though the actual model accuracy may be high.
+However, average purity has little correlation between the two results which is due to the 13 node cut-off and non-deterministic nature of $k$-Means clustering.
+%rather than an incorrect implementation.
 
-\fig{erroneous-labels}{A subset of the concepts discovered for Mutagenicity highlighting the erroneous labels. Each row represents a concept and the graphs are coloured according to standard chemical colouring.}
 
-Figure \ref{fig:erroneous-labels} demonstrates that the clustering for Mutagenicity focuses on chemical similarity which does not necessarily correlate to mutagen similarity.
-This means that the concept completeness is likely to be low as demonstrated in \ref{tab:GCN-concepts} though the actual model accuracy may be high.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{figures/GCN-BA-Shapes}
+    \includegraphics[width=0.45\textwidth]{figures/Magister-BA-Shapes}
+    \caption{A subset of concepts discovered for BA-Shapes from the best perfomring GCN model compared to those published in figures 2, 3, and 5 in \textit{Magister et al.}\cite{magister2021gcexplainer}. Green nodes highlight the node of interest and pink nodes highlight the neighbourhood used for inference. Each row represents an individual concept.}
+    \label{fig:GCN-BA-Shapes}
+\end{figure}
 
-The average purity is far more erratic with little correlation between the two results which would suggest that the purity score or concept extraction is incorrect.
-However, the 13 node cut-off and non-deterministic nature of k-Means clustering is likely to be the cause rather than an incorrect implementation.
+%\fig{GCN-BA-Shapes}{A subset of concepts discovered for BA-Shapes from the best perfomring GCN model. Green nodes highlight the node of interest and pink nodes highlight the neighbourhood used for inference. Each row represents an individual concept.}
+%
+%\fig{Magister-BA-Shapes}{A subset of the BA Shapes concepts discovered in figures 2, 3 and 5 from \textit{Magister et al.}\cite{magister2021gcexplainer} to demonstrate the full range of labels. Each row represents an individual concept, the same colour system is used as fig. \ref{fig:GCN-BA-Shapes}.}
 
-\fig{GCN-BA-Shapes}{A subset of concepts discovered for BA-Shapes from the best perfomring GCN model. Green nodes highlight the node of interest and pink nodes highlight the neighbourhood used for inference. Each row represents an individual concept.}
-
-\fig{Magister-BA-Shapes}{A subset of the BA Shapes concepts discovered in figures 2, 3 and 5 from \textit{Magister et al.}\cite{magister2021gcexplainer} to demonstrate the full range of labels. Each row represents an individual concept, the same colour system is used as fig. \ref{fig:GCN-BA-Shapes}.}
-
-Figure \ref{fig:GCN-BA-Shapes} presents a subset of the BA Shapes concepts reproduced by the best performing GCN model.
-For comparison figure \ref{fig:Magister-BA-Shapes} presents those published in \textit{Magister et al.}
-Concept 1 and A are included to demonstrate that the model does identify the base graph, in this case Barabasi-Albert, but as can be seen this provides little insight into how the model reasons.
+Figure \ref{fig:GCN-BA-Shapes} presents a comparison of BA Shapes concepts reproduced by the best performing GCN model and hose published in \textit{Magister et al.}
+Concept 1 and A are included to demonstrate that the model does identify the base graph.
 The remaining concepts demonstrate the 3 other labels associated with the house motif, as discussed in \Sref{sec:synth}.
-
-As can be seen all the published concepts have an equivalent concept in the reproduced concepts.
-The same analysis can be made that the edge attaching the house motif to the base graph is important to the classification of the nodes.
-There is also the same distinction between concepts 2 and 3 as concepts B and C representing ``inside'' and the ``outside'' nodes respectively.
-Notice that in both concept 2 and B the  ``inside'' node clearly attaches to the Barabasi-Albert base graph.
-This distinction is also present in concept 4 and D, with both the published and reproduced concepts focusing on the ``inside'' bottom node.
+All the published concepts have an equivalent concept in the reproduced concepts.
+In both results the edge attaching the house motif to the base graph is important to the classification of the nodes.
+The same distinction between concepts 2 and 3 as concepts B and C representing ``inside'' and the ``outside'' nodes respectively is also present in both.
+%Notice that in both concept 2 and B the  ``inside'' node clearly attaches to the Barabasi-Albert base graph.
+%This distinction is also present in concept 4 and D, with both the published and reproduced concepts focusing on the ``inside'' bottom node.
 
 In both cases, and as expected given the concept purity scores, the concepts related to the motifs are almost completely pure with the exception of concept 1 and B.
 Additionally, all the nodes in the house motif have a unique concept where applicable and this leads to the high completeness score.
 
 Given the visual similarity in concepts between the published and reproduced results I consider the implementation of GCN to be accurate.
-Examples of the other datasets is available in \Aref{app:concepts}.
+Examples of the other datasets are available in \Aref{app:concepts}.
 
 \section{Comparison of Accuracy}
 \label{sec:comp-acc}
