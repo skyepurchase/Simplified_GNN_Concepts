@@ -1,0 +1,19 @@
+\chapter{Proofs}
+\section{Proof of equivariance}
+\label{app:perm}
+
+\paragraph{Lemma.}
+If $\bm{\phi}$ is permutation invariant in $\mX_{\sN_i}$ then $F(\mX, \mA)$ is equivariant.
+
+\paragraph{Proof.}
+Let $\pi$ be a permutation of $\sV$, the set of nodes, and $\mP$ the corresponding permutation matrix.
+Given $\mX = \begin{bmatrix}\vx_1 \\ \vdots \\ \vx_n\end{bmatrix}$, $\mP\mX = \begin{bmatrix}\vx_{\pi(1)} \\ \vdots \\ \vx_{\pi(N)}\end{bmatrix}$ noting that each node $v_i$ has the same neighbours, $\sN_i$, however the feature matrix of the neighbours is now $\mP\mX_{\sN_i}$. Therefore $F(\mX, \mA) = \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mP\mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mP\mX_{\sN_{\pi(N)}})\end{bmatrix}$. As $\bm{\phi}$ is permutation invariant in $\mX_{\sN_i}$, $\bm{\phi}(\vx_{\pi(i)}, \mP\mX_{\sN_{\pi(i)}}) = \bm{\phi}(\vx_{\pi(i)}, \mX_{\sN_{\pi(i)}})$.
+
+Thus 
+\begin{align*}
+    F(\mP\mX, \mP\mA\mP^T) &= \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mP\mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mP\mX_{\sN_{\pi(N)}})\end{bmatrix} \\ 
+        &= \begin{bmatrix}\bm{\phi}(\vx_{\pi(1)}, \mX_{\sN_{\pi(1)}}) \\ \vdots \\ \bm{\phi}(\vx_{\pi(N)}, \mX_{\sN_{\pi(N)}})\end{bmatrix} \\
+        &= \mP\begin{bmatrix}\bm{\phi}(\vx_1, \mX_{\sN_1}) \\ \vdots \\ \bm{\phi}(\vx_N, \mX_{\sN_N})\end{bmatrix} \\
+        &= \mP F(\mX, \mA).
+\end{align*}
+
