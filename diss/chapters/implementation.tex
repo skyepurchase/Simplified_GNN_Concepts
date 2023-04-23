@@ -123,32 +123,35 @@ As discussed in \Sref{sec:datasets-imp} choosing different seeds means that node
 \label{sec:extraction}
 
 This subsection uses idea of \emph{activation spaces} which are multidimensional spaces within which the node representations before or after a layer are expressed.
-Therefore there are two stages to concept extraction as discussed in \Sref{sec:GCE}: storing the activation space and clustering the activation space
-The storing of the activations occurs during the experiment run whereas the clustering occurs afterwards to allow for quicker tests on the activation space.
+The concept extraction discussed in \Sref{sec:GCE} requires storing and then clustering the activation space.
+The storing of the activations occurs during the experiment run and the clustering occurs after the experiment.
 
-\paragraph{storing}
-SGC and GCN behave different in regards to storing activation spaces as in SGC the node representations are pre-computed for each layer whereas GCN calculates this during training.
+\paragraph{Storing}
+SGC and GCN behave differently in regards to storing activation spaces as SGC pre-computes the node representations whereas GCN calculates them during training.
 
-The simpler case is SGC where the node representations from each successive filter application can be stored in a dictionary and written out to a file.
-This process allows for multiple layers to be analysed without having to train the SGC model, this in turn can be used to optimise SGC before training though this is not explored.
+In SGC the node representations from each successive filter application can be stored in a dictionary and written out.
+This allows for multiple layers to be analysed without training which in turn can be used to optimise SGC before training.
 
-In comparison GCN requires an additional function during the forward pass of the model to save the node representations to a permanent store.
-\texttt{PyTorch}\cite{paszke2019pytorch} provides this functionality through \emph{hooks} which are functions that can be attached to modules within a model.
+In comparison GCN requires a function during the forward pass of the model to save the node representations.
+\texttt{PyTorch}\cite{paszke2019pytorch} provides this functionality through \emph{hooks} which are functions that can be attached to modules.
 This function will then run whenever the modules \texttt{forward} method is run and \texttt{PyTorch} will pass the input, output and module to the function.
-Thus a simple hook function is created which updates saves the modules output (which are the node representations) to a dictionary of module identifier, activation pairs.
-This dictionary is written out to a file after testing is complete this means that the activations represent the final model.
+Thus a simple hook function is created which updates saves the modules output to a dictionary which is written out to a file after testing is complete.
+%this means that the activations represent the final model.
 
-\paragraph{clustering}
-The described activation dictionaries can be loaded and for each of the layers the node representations are clustered using k-means.
-K-means is chosen for clustering as this is the best performing clustering approach as demonstrated in \textit{Magister et al.}\cite{magister2021gcexplainer}.
-Rather than implement my own k-means algorithm I utilise the algorithm already present within \texttt{scikit learn}\cite{scikit-learn}.
+\paragraph{Clustering}
+%The described activation dictionaries can be loaded and
+For each of the layers the node representations are clustered using $k$-means.
+$k$-means is chosen for clustering as it is the best performing model in \textit{Magister et al.}\cite{magister2021gcexplainer}.
+The specific implementation of $k$-means is provided by
+%Rather than implement my own $k$-means algorithm I utilise the algorithm already present within
+\texttt{scikit learn}\cite{scikit-learn}.
+The clustering is parameterised by the number of clusters which
+can be chosen based on the concept scores in \Sref{sec:GCE}.
+%can then motivate the choice of this value
+Though focusing on maximising the completeness will not necessarily lead to better concepts.
 
-The clustering is parameterised by a tunable number of clusters.
-The concept scores in \Sref{sec:GCE} can then motivate the choice of this value though focusing on maximising the completeness and purity will not lead necessarily to better concepts.
-
-The receptive field of the nodes then needs to be determined as well.
-This determines for each node of interest the size of the receptive field, that is how many hops between connected nodes are allowed.
-This is also controlled by a tunable number of hops and the choice of which is guided by the purity of the concepts.
+The receptive field of a node determines how many hops between connected nodes are allowed.
+Creating subgraphs from nodes closest to a clusters centroid creates a set of example subgraphs for each concept.
 
 To compare SGC and GCN the same concept parameters presented in \textit{GCExplainer}\cite{magister2021gcexplainer} are used.
 
@@ -166,7 +169,7 @@ the accuracy of this decision tree on a held out test set then represents the co
 
 \note{I think this needs rewriting.}
 The decision tree needs to predict a label for each of the nodes of the graph based on the concept the node belongs to.
-The input data to the decision tree is a vector of predicted clusters for each of the nodes based on the k-means clustering.
+The input data to the decision tree is a vector of predicted clusters for each of the nodes based on the $k$-means clustering.
 The output vector is then constructed by matching the node class to the node identifier for each node in the input vector.
 
 \paragraph{Purity}
