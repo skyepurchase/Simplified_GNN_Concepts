@@ -391,20 +391,22 @@ As the process of finding the optimal model, training and then evaluating said m
 Figures \ref{fig:SGC-GCN-latent-space}, \ref{fig:SGCN-SGC-latent-space} and \ref{fig:SGCN-GCN-latent-space} show the t-SNE reduced latent space of the different models.
 Tables \ref{tab:SGCN-acc} and \ref{tab:SGCN-completeness} demonstrate the results achieved by SGCN in both accuracy and concept completeness.
 
-Figure \ref{fig:SGC-GCN-latent-space} demonstrates the first layer which is the most similar between GCN and SGC according to AMI.
+Figure \ref{fig:SGC-GCN-latent-space} demonstrates the first layer which has the highest AMI between GCN and SGC.
 The similarity is not very high but is significantly higher than the similarity between SGC and GCN for the remaining layers.
-This presents the major issue with this technique which is that unfortunately SGC and GCN do represent the nodes very differently.
+This does present a potential issue in combining models where no significant mutual information is present.
 
 Figure \ref{fig:SGCN-SGC-latent-space} demonstrates that the second layer of SGCN is very similar to that of SGC.
-This makes sense as the previous layer was an SGC layer and so the GCN layer is working from a different feature space.
-Notice the spread green labelled nodes (representing the house motif ``floor'') which is also present in the GCN layers in \ref{fig:SGC-GCN-latent-space} and \ref{fig:SGCN-GCN-latent-space}.
-Figure \ref{fig:SGCN-GCN-latent-space} shows that by the third and final layer of SGCN is very similar to that of GCN.
+This is due to the previous layer being an SGC layer and so the GCN layer applied to a different feature space.
+The spread green labelled nodes (representing the house motif ``floor'') is also present in the GCN layers in \ref{fig:SGC-GCN-latent-space} and \ref{fig:SGCN-GCN-latent-space} demonstrating a mixture of representation.
+Figure \ref{fig:SGCN-GCN-latent-space} shows that the final layer of SGCN has a latent space that is very similar to that of GCN.
 Given the increase in performance by SGCN demonstrated in table \ref{tab:SGCN-acc} this likely to be a more optimal space.
 
 Though SGCN does not surpass the performance of GCN as shown in table \ref{tab:SGCN-acc} it is able to surpass it in completeness score highlighted in table \ref{tab:SGCN-completeness}.
 This happens across all layers (noting that the first layer is identical to the SGC layer) and highlights a major benefit of the model.
-GCN takes all 3 layers to reach the high completeness score above $0.9$ comparatively SGC starts high but then continues to decrease as more layers are added.
-By combining the layers after SGC begins to decrease this allows for the completeness score to remain high throughout.
+GCN takes all 3 layers to reach a high completeness score whereas SGC starts high but then decreases as more layers are added.
+By combining the layers the completeness score to remains high throughout.
+
+An analysis of the concepts extracted for SGCN are presented in \Sref{app:concepts}.
 
 \subsection{Jumping knowledge SGC}
 \label{sec:Jump-SGC}
