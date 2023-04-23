@@ -80,11 +80,11 @@ The number of epochs for each dataset matches those proposed in \textit{Magister
 \paragraph{Concept evaluation}
 Criterion \ref{crit3} requires evaluation of the models with respect to concept purity and completeness.
 These metrics are discussed in \Sref{sec:GCE} and implementation is described in \Sref{sec:concepts}.
-On top of the quantitative analysis of the different models concepts lend themselves to qualitative analysis which will mainly focus on visual similarities between the two models.
-the quantitative analysis will also help to infer the differences in how the two models infer labels on the input data.
+As well as quantitative analysis concepts lend themselves to qualitative analysis which focuses on visual similarities between the two models.
+The qualitative analysis will also help in understanding the differences in how the two architectures work.
 
 For qualitative analysis only BA Shapes and Mutagenicity will be covered in detail; brief analysis of the other datasets is presented in \Aref{app:concepts}.
-This extends to extensions where only BA Shapes and Mutagenicity are trained on as proofs of concepts.
+This extends to extensions where only a subset of datasets are trained on as a proof of concept.
 
 It is important to note a number of drawbacks of the GCExplainer in comparing two different models quantitatively.
 \begin{enumerate}
@@ -99,20 +99,20 @@ It is important to note a number of drawbacks of the GCExplainer in comparing tw
         \textit{Ying et al.}\cite{ying2019gnnexplainer} only suggest concept extraction for models that achieve an accuracy of atleast $95\%$ on synthetic datasets. 
 \end{enumerate}
 
-The full comparison of concepts requires a qualitative analysis of the extracted concepts.
-The concepts produced by SGC can be analysed in isolation to infer how SGC reasons about graphs.
-These can then be compared to the concepts produced by GCN to highlight the differences in reasoning and which is easier to understand.
-When reproducing results this is done by comparing the analysis suggested by \textit{Magister et al.}\cite{magister2021gcexplainer} to the reproduced concepts.
-Furthermore, a visual comparison of the concepts can be made, such as matching published concepts to reproduced concepts.
+%The full comparison of concepts requires a qualitative analysis of the extracted concepts.
+%The concepts produced by SGC can be analysed in isolation to infer how SGC reasons about graphs.
+%These can then be compared to the concepts produced by GCN to highlight the differences in reasoning and which is easier to understand.
+%When reproducing results this is done by comparing the analysis suggested by \textit{Magister et al.}\cite{magister2021gcexplainer} to the reproduced concepts.
+%Furthermore, a visual comparison of the concepts can be made, such as matching published concepts to reproduced concepts.
 
 \paragraph{Accuracy evaluation}
 Drawback \ref{nb:accuracy} motivates the additional evaluation metric of accuracy as \Sref{sec:comp-acc} demonstrates that SGC does not meet the desired accuracy.
-To evaluate this each synthetic dataset is split into a train and test set using an 80:20 split.
+To achieve this each synthetic dataset is split into a train and test set using an 80:20 split.
 Note that TUDataset\cite{Morris+2020} and Planetoid\cite{kipf2016semi} use there own train/test splits.
 
 The synthetic datasets are generated randomly along with the train/test split and thus each random seed produces a new variation of the synthetic dataset.
-This means that using the same seeds across different models for the experiments results in the same train/test split.
-This also means that although the hyperparameter search evaluates parameters on the test split of the dataset using a different seed to the experiments means that the experiment test splits are effectively unseen.
+This means that using the same seeds across different experiments results in the same train/test split.
+This also means that although the hyperparameter search evaluates parameters on the test split of a dataset as different as used the evaluation test nodes are unseen.
 
 \subsection{Confidence intervals}
 \label{sec:reporting}
