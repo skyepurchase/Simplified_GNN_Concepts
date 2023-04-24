@@ -239,29 +239,26 @@ Successful reproduction of both \textit{Magister et al.}\cite{magister2021gcexpl
 \section{Extensions}
 \label{sec:extensions-imp}
 After completing the core project my extensions focus on improving the low performance demonstrated by SGC in \Sref{sec:comp-acc}.
-The motivation for some of my extensions develops from the results and analysis of the core project however the implementation details are non-trivial.
+The motivation for the following extensions develop from the results of the core project.
 This section outlines the three extensions completed, the motivation for each and the implementation details.
 The evaluation of my extensions is presented in \Sref{sec:extension-eval}.
 
 \subsection{SGC graph classification}
 \paragraph{Motivation}
 The datasets present in \textit{Magister et al.}\cite{magister2021gcexplainer} include 2 real world datasets that focus on graph classification.
-As discussed in \Sref{sec:datasets-theory} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
+%As discussed in \Sref{sec:datasets-theory} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
 Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
 
 \paragraph{Prior work}
-\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network as proposed by \textit{Zhang et al.}\cite{zhang2018end}.
-However, \textit{Magister et al.} carry out graph classification using GCN in a different way.
-Instead they utilise pooling on the graph node representations from a GCN on each graph in the dataset.
-The label of the entire graph can then be inferred from this single representation.
-As this latter method is easier to implement and allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.} this approach is chosen.
-The resulting model is identical to the standard SGC model with addition of a pooling layer before the classifier.
+\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network proposed by \textit{Zhang et al.}\cite{zhang2018end}.
+Instead \textit{Magister et al.}\cite{magister2021gcexplainer} utilise pooling on the graph node representations from a GCN on each graph in the dataset.
+%The label of the entire graph can then be inferred from this single representation.
+This method is chosen as it allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.}.
+The resulting model is a SGC model with an additional pooling layer to create a single representation for each graph.
 
 \paragraph{Implementation}
-The only problem posed is concept extraction as this is done on the node level, as suggested by \textit{Magister et al.}, rather than the graph level.
-Each graph has a single label with no labels for the node, therefore the method proposed in \Sref{sec:concept-eval}, does not work.
-This is overcome by broadcasting the graph label to each of the nodes in the graph.
-To achieve this additional information about the batch identifier of each node and each label is used to match labels to nodes.
+Concept extraction is done on the node level but each graph has a single label with no node labels and so the method proposed in \Sref{sec:concept-eval} does not work.
+This is solved by broadcasting the graph label to each of the nodes in the graph.
 
 This allows the graphs to be combined into a disconnected forest of graphs and clustering can be carried out on this forest.
 Calculation of concept scores and the visualisation of concept therefore remains the same as that presented in \Sref{sec:concept-eval} and \Sref{sec:vis}.
