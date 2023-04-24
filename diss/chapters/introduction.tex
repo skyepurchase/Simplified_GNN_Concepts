@@ -163,9 +163,14 @@ This model will be used to compare against the GCN models presented in \textit{M
 
 %% Note this is different from our observed problems
 
-\textit{Chanpuriya et al.} \cite{chanpuriya2022simplified} identify one shortcoming of SGC which is its poor performance on heterophilic data.
+\textit{Chanpuriya et al.} \cite{chanpuriya2022simplified} demonstrate that SGC achieves poor performance on heterophilic data.
 The paper introduces SGC with heterophily to overcome these issues. 
 This project identifies a further issue with SGC when working with highly synthetic data where node representations carry little meaning.
+
+\textit{Pasa et al.} \note{citation needed} introduce two new approaches to creating linear GNN architectures based on SGC.
+The new approaches focus on adjusting the pre-computation by introducing exponential and linear parameterised operations.
+These approaches outperform both SGC and GCN on the datasets used in \textit{Wu et al.}
+This project presents two additional approaches to improving the performance of SGC.
 
 % Maybe ablation studies: Pitfalls
 
@@ -173,18 +178,17 @@ This project identifies a further issue with SGC when working with highly synthe
 
 % Basic contributions with extending SGC in new ways
 
-This project extends the work of \textit{Magister et al.} \cite{magister2021gcexplainer} to SGC \cite{wu2019simplifying} to help answer the questions posed in \Sref{sec:motivation}.
-These techniques of concept extraction are applied to an implementation of SGC from \textit{Wu et al.} designed for the dataset.
+This project extends the work of \textit{Magister et al.} \cite{magister2021gcexplainer} to an implementation of SGC \cite{wu2019simplifying}.
 To achieve a full comparison between the two systems SGC is modified to graph classification tasks. 
-This extension uses a simpler approach than the one proposed in the original paper.
-This results demonstrate that far from being comparable to GCN in terms of concept score, SGC is not comparable in accuracy on highly synthetic datasets.
+These results demonstrate a major limitation of SGC on datasets with no node features as it underperforms in terms of concept score and accuracy.
 These results suggest the SGC is primarily focused on tabular data rather than graph data and lacks the necessary mechanisms to infer graph structure.
 
-Two extensions to SGC are proposed to improve the accuracy of the model on the synthetic datasets.
-The primary method is to combine SGC and GCN layers effectively removing some of the unecessary non-linearity in GCN whilst maintaining message passing.
-This approach is shown to be successful when the choice of SGC and GCN layers is done carefully.
-An additional extension is to utilise the techniques of jumping knowledge networks presented in \textit{Xu et al.} \cite{xu2018representation}.
-This demonstrates an improvement in performance in SGC emphasising the importance intermediatary node representations during message passing.
+Two novel extensions to SGC are proposed to improve the accuracy of the model on the synthetic datasets.
+The first method proposes a method of combining GNNs using mutual concepts which is applied to SGC and GCN removing some of the unecessary non-linearity in GCN.
+This approach is shown to be successful though the performance is still limited.
+The second extension utilises the method of jumping knowledge networks presented in \textit{Xu et al.} \cite{xu2018representation}.
+The approach is successful demonstrating graph structure awareness matching GCN whilst remaining negligibly non-linear.
+This new architecture outperforms SGC emphasising the importance intermediatary node representations.
 
 All these methods are analysed in the framework of graph concepts to better understand and demonstrate how approaches to graph data and structure manifest themselves.
 
