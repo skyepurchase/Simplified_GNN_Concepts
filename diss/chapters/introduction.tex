@@ -3,10 +3,12 @@
 % Short introduction giving a full overview
 
 \emph{
-This dissertation explores the effect that linearising graph neural network architectures has on the explainability of the trained model.
-Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the choice in label.
-These concepts are compared to the original Graph Convolution Network (GCN) using the metrics of concept purity and completeness proposed in \textit{Magister et al.} \cite{magister2021gcexplainer}.
-The specific linear model chosen is the Simplified Graph Convolution (SGC) proposed in \textit{Wu et al.} \cite{wu2019simplifying} due to claims that it matches the performance of GCN.
+    This dissertation explores the effect that linearising graph neural network (GNN) architectures has on performance and graph structure awareness.
+    It demonstrates that the current approach to linearising GNNs results in poor graph structure awareness but in response presents two novel approaches to graph representational learning.
+    The first approach presents a new method of combining GNN architectures and the second demonstrates accurate graph structure awareness whilst remaining linear.
+%Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the model's choice of label.
+%These concepts are compared to the original Graph Convolution Network (GCN) using the metrics of concept purity and completeness proposed in \textit{Magister et al.} \cite{magister2021gcexplainer}.
+%The specific linear model chosen is the Simplified Graph Convolution (SGC) proposed in \textit{Wu et al.} \cite{wu2019simplifying} due to claims that it matches the performance of GCN.
 %Further studies are conducted extending the basic architecture of SGC, whilst keeping with the theme of simplified graph neural networks, to see the effect on the accuracy and concept scores.
 }
 
@@ -19,17 +21,35 @@ The specific linear model chosen is the Simplified Graph Convolution (SGC) propo
 
 %% Wide spread of ML systems in general prevalent in every day use
 
-In recent years there has been rapid development and adoption of machine learning systems such as \emph{neural networks} NN.
-However, methods to explain how these ever larger models work is lagging behind leading to either mistrust in, or worse, blind trust in these systems.
-Though standard NNs are in the mainstream spotlight there is increasing requirement for NNs to infer knowledge about connected systems such as social networks and molecules.
+\note{diagram would be useful}
+\emph{Neural networks} (NN) are able to infer complex relationships within both structured and unstructured data.
+\emph{graph neural networks} (GNN) allow for the same functionality on connected systems where complex relationship between datapoints is also required.
+In these systems, such as social networks\note{citation needed} and molecules\note{citation needed}, the data can be represented as nodes connected by edges in a graph.
+The popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.\note{citation needed?}
+Instead \emph{linear GNNs} have been proposed\note{citations needed?} which aim to match the performance of their non-linear counterparts with great success.
+
+\note{diagram would be useful}
+However, this success has only been demonstrated on a small sample of datasets and limited analysis of how linear GNNs work has been carried out.
+This problem extends generally to NNs where understanding or explaining how the model works is largely ignored in favour of higher accuracy.
+One solution to this problem is the notion of \emph{concepts}\note{citation needed} which are high-level units of information which a NN uses to infer a label.
+These units can be visualised in a human interprettable fashion allowing for a better analysis of how a specific model behaves.
+Extending this notion to GNNs\note{citation needed} allows for linear GNNs and their non-linear counterparts to be compared providing a better understanding of how they operate.
+
+The insight provided by the concepts can highlight the limitations of GNN models and thus be used to develope improved models.
+In the case of linear GNNs this can provide further insight into how linearity influences graph structure awareness.
+This goal motivates the project which aims to provide a deeper insight into graph representaional learning and provide novel techniques to graph structure inference.
+
+%In recent years there has been rapid development and adoption of machine learning systems such as \emph{neural networks} (NN).
+%However, methods to explain how these ever larger models work is lagging behind leading to either mistrust in, or worse, blind trust in these systems.
+%Though standard NNs are in the mainstream spotlight there is increasing requirement for NNs to infer knowledge about connected systems such as social networks and molecules.
 %The mainstream advancements result in increasingly larger \emph{neural network} (NN) models focusing on text and image based input.
 %This development makes sense from the perspective of human interaction however these are limited datastructures especially in the ever increasing interaction of digital information.
 %Data present in social networks, computational biology, and systems such as smart cities have multiple predefined connections between each data point.
-In These systems the connected structure is important to classification of the individual data-points leading to the concept of \emph{graph data} and the idea of the \emph{graph neural network} (GNN).
-But criticisms of the deep learning (DL) approach to GNNs has resulted in \emph{Simplified GNNs} (SGNNs) that remove non-linearity and focus on the additional information provided by the graph connections.
-How do these SGNNs compare to GNNs in how they infer labels for graph data?
-Are there potential insights into how graph structure can be better utilised?
-This dissertation answers these questions by evaluating an SGNN within an explanability framework and provides new methods of utilising graph data in SGNNs.
+%In these systems the connected structure is important to classification of the individual data-points leading to the concept of \emph{graph data} and the idea of the \emph{graph neural network} (GNN).
+%But criticisms of the deep learning (DL) approach to GNNs has resulted in \emph{Linear GNNs} (SGNNs) that remove non-linearity and focus on the additional information provided by the graph connections.
+%\note{somewhere else: How do these linear GNNs compare to non-linear GNNs in how they infer labels for graph data?}
+%\note{somewhere else: Are there potential insights into how graph structure can be better utilised?}
+%\note{somewhere else: This dissertation answers these questions by evaluating an SGNN within an explanability framework and provides new methods of utilising graph data in SGNNs.}
 
 %% Brief description of evolution of GNNs, looking at motivation and use cases
 
@@ -41,16 +61,16 @@ This dissertation answers these questions by evaluating an SGNN within an explan
 %More complex graph data may also include attributes associated with the connections which can be simple scalars or multidimensional vectors.
 %For these reasons graph data is a highly flexible and versatile datastructure promoting complex inference.
 
-\paragraph{Graph neural networks (GNNs)} 
-are designed to handle graph data where the connections between data points is an important aspect as the data itself.
-The standard form of a GNN 
+%\paragraph{Graph neural networks (GNNs)} 
+%are designed to handle graph data where the connections between data points is an important aspect as the data itself.
+%The standard form of a GNN 
 %\note{make sure this is valid here!}
-consists of multiple layers connected together by a non-linearity step.
-Each layer performs inference on a node's feature vector in the same way as a NN would perform inference.
+%consists of multiple layers connected together by a non-linearity step.
+%Each layer performs inference on a node's feature vector in the same way as a NN would perform inference.
 %The graph structure is utilised by broadcasting this new node representation along the connected edges to neighbouring nodes.
 %Each node then aggregates the representations of its neighbouring nodes creating a compact representation of the neighbourhood according to itself.
 %The updated representation and aggregation are then combined to produce a final representation before the next layer.
-By using a process known as \emph{message passing} each node's feature vector is updated based on the graph neighbourhood inferring graph structure as well.
+%By using a process known as \emph{message passing} each node's feature vector is updated based on the graph neighbourhood inferring graph structure as well.
 %This process, known as \emph{message passing}, allows a GNN to utilise the graph structure and infer more complex relationships between the data points than an ordinary NN.
 
 %% Rapid integration of these systems 
@@ -67,19 +87,19 @@ By using a process known as \emph{message passing} each node's feature vector is
 %%Thus in cases where inputs are sampled from a collection of data points this prevents calculating the same operation on the same data point across samples.
 %But, it is important that this does not effect the performance of the model.
 
-\paragraph{Simplified GNNs}
-The process of message passing though complex conceptually can easily be decomposed into a linear operation on the graph features and graph adjacency.
-Using the idea of linearising NNs the non-linearity between individual message passing layers can be removed.
-This allows a GNN to pre-compute multiple message passing steps on the graph dataset before inference.
-Inference then results in a simple classification or linear regression task where only a single layer is required.
-This new \emph{simplified GNN} (SGNN) remove their non-linear complexities whilst demonstrating comparable performance to standard GNNs.
+%\paragraph{Linear GNNs}
+%The process of message passing though complex conceptually can easily be decomposed into a linear operation on the graph features and graph adjacency.
+%Using the idea of linearising NNs the non-linearity between individual message passing layers can be removed.
+%This allows a GNN to pre-compute multiple message passing steps on the graph dataset before inference.
+%Inference then results in a simple classification or linear regression task where only a single layer is required.
+%This new \emph{linear GNN} (SGNN) remove their non-linear complexities whilst demonstrating comparable performance to standard GNNs.
 
-\paragraph{Explainability}
-The advancement of new NNs has focused on improving the performance in metrics such as accuracy and training cost which has resulted in impressive models.
-However, these models remain as blackboxes to the users of these systems but equally to the designers.
-Once a model is trained on a specific dataset there is very limited understanding of how the model is analysing the input to produce a result.
-This can and does create a lot of mistrust in NNs as there is a large element of trusting that the output it produces on unseen data will match our expectation.
-The idea of explainability is to provide different methods of visualising how a model works to a human as a form of verification or to provide insight.
+%\paragraph{Explainability}
+%The advancement of new NNs has focused on improving the performance in metrics such as accuracy and training cost which has resulted in impressive models.
+%However, these models remain as blackboxes to the users of these systems but equally to the designers.
+%Once a model is trained on a specific dataset there is very limited understanding of how the model is analysing the input to produce a result.
+%This can and does create a lot of mistrust in NNs as there is a large element of trusting that the output it produces on unseen data will match our expectation.
+%The idea of explainability is to provide different methods of visualising how a model works to a human as a form of verification or to provide insight.
 %Many different approaches exist including before, during and after training, to varying degrees of explanation.
 
 %% Importance of understanding ML inference
