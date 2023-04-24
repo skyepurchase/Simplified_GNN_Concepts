@@ -19,18 +19,18 @@ The edges can be represented as an \emph{adjacency matrix}, $\mA$, where
     \label{eq:adj}
     \emA_{ij} = \begin{cases}1 &\text{iff $(v_i, v_j) \in \sE$} \\ 0 &\text{otherwise}\end{cases}.
 \end{equation}
-This allows the edge information to be passed to a NN as another feature vector along with $\mX$.
+This allows the edge information to be utilised by a NN along with the features $\mX$.
 Furthermore, each node, $v_i \in \sV$, has \emph{neighbours} which is set of connected nodes,
 \begin{equation}
     \label{eq:neighbour}
-    \sN_i = \{v_j | (v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE\}.
+    \sN_i = \{v_j | (v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE\},
 \end{equation}
-An element of $\sN$ is a therefore a \emph{neighbour} of the node $v_i$.
-For ease of writing $\mX_{\sN_i}$ represents the features of the neighbours of $v_i$ defined as 
-\begin{equation}
-    \label{eq:neighbour-reps}
-    \mX_{\sN_i} = \{\{\vx_j | v_j \in \sN_i\}\}.\footnote{As the neighbours may have the same feature vector this must be a multiset.}
-\end{equation}
+where element of $\sN_i$ is considered a \emph{neighbour} of the node $v_i$.
+%For ease of writing $\mX_{\sN_i}$ represents the features of the neighbours of $v_i$ defined as 
+%\begin{equation}
+%    \label{eq:neighbour-reps}
+%    \mX_{\sN_i} = \{\{\vx_j | v_j \in \sN_i\}\}.\footnote{As the neighbours may have the same feature vector this must be a multiset.}
+%\end{equation}
 %If there is data associated with the edges, such as edge weights, this value is stored in the adjacency matrix.
 %An unweighted graph can be described as a weighted graph with edge weights of value $1$.
 %Adjacency matrices can be very sparse, meaning they have very few non-zero values, and therefore the matrix is commonly stored in a \emph{coordinate matrix} (COO) of size $2 \times N$ for $N$ edges in the graph thus only storing edge information.
@@ -48,9 +48,9 @@ $\vh_i^{(l)}$ is lnown as the \emph{node representation} after the $l^{th}$-laye
 %% discussion of pooling functions with graph classification
 
 These representations may then be used as input to a classifier to solve one of 3 different classification tasks: node classification, graph classification, link prediction.
-For the remainder of this dissertation only node and graph classification will be considered.
-Node classification classifies each node solely on the final node representation $\vh_i$.
-Comparitively graph classification aggregates all of the node representations and classifies the entire graph accordingly.
+This project focuses on node classification, where each node is assigned a label, and graph classification, where the graph as a whole is assigned a label.
+%Node classification classifies each node solely on the final node representation $\vh_i$.
+%Comparitively graph classification aggregates all of the node representations and classifies the entire graph accordingly.
 
 \subsection{Graph neural networks}
 
