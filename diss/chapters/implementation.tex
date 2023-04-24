@@ -289,20 +289,18 @@ These can then be compared to see why a specific layer has the highest AMI.
 
 \subsection{Jumping knowledge SGC}
 \paragraph{Motivation}
-\Sref{sec:concept-analysis} discusses the limited influence SGC has on node representations during message passing.
-This is because an SGC model, of degree $k$, can only infer graph structure from the aggregated node representations of all neighbouring nodes within $k$ hops.
-In comparison GCN is able to manipulate node representations between graph convolutions and can therefore learn to amplify or dampen differences between node representations during message passing which SGC cannot do.
-This poses the potential the question of whether the low accuracy (seen in \Sref{sec:comp-acc}) and poor graph structure awareness (seen in \Sref{sec:comp-concept}) is due to the linearity or lack of influence.
+\Sref{sec:concept-analysis} discusses the limited influence that SGC has on node representations.
+This is because an SGC model, of degree $k$, can only infer graph structure from the aggregated node representations within $k$ hops.
+In comparison GCN is able to manipulate node representations and can therefore infer structure from each $k$-depth neighbourhood.
+This suggests that low accuracy seen in \Sref{sec:comp-acc} and poor graph structure awareness seen in \Sref{sec:comp-concept} may be due to the linearity or lack of influence.
 
-To answer this I propose \emph{jump-SGC}(JSGC) which provides the classifier with node representations from each degree of the pre-computation.
-This larger node representation is reduced before the classifier to maintain the same parameter size of the classifier.
-This allows for JSGC to effectively manipulate the node representations though these manipulations do not have an impact on the successive future node representations unlike GCN.
+Therefore the novel \emph{jump-SGC}(JSGC) is proposed which provides the classifier with node representations from each degree of the pre-computation.
+This larger feature matrix is reduced allowing for JSGC to effectively manipulate the node representations.
 This idea mimics \emph{jumping knowledge networks} (JKNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
 
 \paragraph{Prior work}
 \textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing a nodes neighbourhood.
-It specifically identifies the effect on graph structure awareness this has making the method ideal for SGC.
-The motivation for JCNs is the node aggregation methods used resulted in neighbourhood influence similar to a random walk rather than a uniform influence.
+The motivation for JKNs is the node aggregation methods used resulted in neighbourhood influence similar to a random walk rather than a uniform influence.
 As a solution they propose aggregating the the node representations after successive neighbourhood aggregation layers together.
 Three main methods of aggregation are proposed but given the small size of the datasets the proposed concatenation method is best suited.
 
