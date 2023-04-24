@@ -145,7 +145,7 @@ This goal motivates the project which aims to provide a deeper insight into grap
 
 This project is based on the recent work by \textit{Magister et al.} \cite{magister2021gcexplainer} which proposes a new method of graph concepts.
 The paper introduces two concept metrics to guide the choice in optimal parameters for concept extraction.
-It is using these metrics that I compare an SGNN to a GNN as well as confirming that performance matches.
+It is using these metrics that a linear GNN and its non-linear counterpart are compared to provide more insight into the effect of linearisation.
 
 % Simplifying Graph Convolutional Networks
 
@@ -153,9 +153,9 @@ It is using these metrics that I compare an SGNN to a GNN as well as confirming 
 
 %% A movement away from DNN
 
-\textit{Wu et al.} \cite{wu2019simplifying} introduce the original SGNN the \emph{simplified graph convolution} (SGC) based on the \emph{graph convolution network} (GCN) proposed by \textit{Kipf et al.} \cite{kipf2016semi}.
+\textit{Wu et al.} \cite{wu2019simplifying} introduce the \emph{simplified graph convolution} (SGC) based on the \emph{graph convolution network} (GCN) proposed by \textit{Kipf et al.} \cite{kipf2016semi}.
 The method linearises the graph convolution layers in the network allowing these to be pre-computed leaving just a classification layer.
-It is this SGNN that I will be using to compare against the GCN models used in \textit{Magister et al.} \cite{magister2021gcexplainer}.
+This model will be used to compare against the GCN models presented in \textit{Magister et al.} \cite{magister2021gcexplainer}.
 
 % Simplified Graph Convolution with Heterophily
 
