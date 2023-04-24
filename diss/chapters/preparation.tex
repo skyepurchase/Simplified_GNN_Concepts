@@ -406,7 +406,7 @@ The GED is calculated using the following equation
     \label{eq:GED}
     \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
 \end{equation}
-where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c(e_i)$ is the cost of carrying out an edit operation $e_i$.\footnote{This process NP-Hard and so in most cases an exact purity score is infeasible to compute.}
+where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c(e_i)$ is the cost of carrying out an edit operation $e_i$.\footnote{This process is NP-Hard and so in most cases an exact purity score is infeasible to compute.}
 By this metric a high purity score is represented by a lower number with 0 being completely pure.
 
 \paragraph{Concept completeness}
@@ -438,26 +438,17 @@ This allows for a better analysis of the importance of non-linearity in GNNs.
 % There may be more details about implementation
 % May need chapters here or somewhere else about inductive v. transductive!!
 
-To evaluate different GNNs using the metrics described in \Sref{sec:GCE} a trained model needs to be evaluated on specific graphs and concepts extracted from the models inference.
-To train the model the a notion of a graph dataset needs to be defined.
-As described in \Sref{sec:GRL} there three different classification tasks commonly carried out on graphs (though only two are considered) therefore there are three different notions of a graph dataset.
-Node classification datasets assign a class to each node in the dataset, whereas, graph classification datasets assign a single value to the entire graph.
-A graph dataset is therefore described by its collection of graphs and corresponding classes.
+To evaluate different GNN models using the metrics described in \Sref{sec:GCE} a trained model must to be evaluated on specific graph data and the concepts extracted from the result.
+%To train the model the a notion of a graph dataset needs to be defined.
+As described in \Sref{sec:GRL} there are two different classification tasks of interest:
+Node classification datasets, assigning a class to each node, and graph classification datasets, assigning a class to the entire graph.
+A graph dataset is therefore described by a collection of graphs and corresponding class labels.
 
-However, node classification datasets generally include a single \emph{connected} graph where, in the undirected case, there exists at least one path from every node to every other node.
-This creates another distinction between two types of graph datasets:
+Node classification datasets generally include a single \emph{connected} graph where, in the undirected case, there exists at least one path from every node to every other node.
+In comparison, graph classification tasks include a set of different graphs with a range of topologies.
+These differences give rise to the notion of transductive and inductive learning, \Aref{app:datasets}.
 
-\paragraph{Transductive datasets} are datasets where during training the node representations of nodes outside of the training set are ``seen'' by the model but importantly the model does not ``see'' the labels for these nodes.
-The model will later be tested on the labels of these additional nodes without access to the training sets labels.
-This is because the training, validation and test sets are sampled from the nodes, but if only these nodes where given to the model the structure of the graph is lost and a large proportion of the nodes will no longer be connected.
-\note{Include a diagram!}.
-This dataset forces the model to transfer knowledge about existing representation, label pairs to unlabelled nodes.
-
-\paragraph{Inductive datasets} are datasets where the nodes ``seen'' during training, validation and testing are completely disjoint.
-This is generally the case in graph classification tasks where each data point is a unique graph with a classification thus the test set is a new set of graphs with completely unseen nodes.
-This dataset forces the model to induce information of relationships between nodes and optimal representations.
-
-As an extension to my project I extended SGC to apply to graph classification tasks thus allowing for analysis of both the transductive and inductive cases of GNNs as well as node and graph classification.
+As an extension an adjusted SGC is applied to graph classification tasks allowing for analysis of both the node and graph classification cases of GNNs.
 
 \subsection{Synthetic datasets}
 \label{sec:synth}
@@ -468,11 +459,11 @@ As an extension to my project I extended SGC to apply to graph classification ta
 
 To better visualise and analyse concepts for GNNs it is easier to construct graphs with specific properties that produce easy to interpret concepts.
 Because these graphs are generated based on desired properties they are considered synthetic graphs.
-To carry out the analysis of the concept extraction and evalution described in \Sref{sec:GCE} five synthetic graphs are used originally proposed in \textit{Ying et al.}\cite{ying2019gnnexplainer}.
+To carry out the analysis of the concept extraction and evalution described in \Sref{sec:GCE} the five synthetic graphs presented by \textit{Ying et al.}\cite{ying2019gnnexplainer} are used.
 
 The construction of these graphs includes a base graph onto which multiple copies of the same \emph{motif} are attached.
 A motif is a simple graph structure that should be easily recognised by a GNN and used whilst classifying a node or a graph.
-The motifs and the base graph have different classifications and the goal is to correctly classify which classification a node belongs to, that is which graph structure is the node part of.
+The motifs and base graph have different labels and the goal is to classify each node according to the graph structure the node is a part of.
 %Note that the class of a node is dependent on the structure the node is part of rather than the features of the nodes.
 
 \paragraph{Motifs}
@@ -485,16 +476,15 @@ The following two graphs are used as base graphs:
 
 \paragraph{Barabasi-Albert (BA)}
 a densely connected graph where nodes are probabilisitically connected to each other.
-The probability of a node connecting to another depends on the existing degree of the node thus keeping limiting the maximum degree of a node in the graph.
+The probability of a node connecting to another is proportional to the degree of the node thus creating hubs of densely connected nodes.
 
 \paragraph{Tree}
-a binary symmetric tree of height 8 and is therefore very sparse in comparison to Barabasi.
+a binary symmetric tree (BST) of height 8 and is therefore very sparse in comparison to Barabasi.
 These two base graphs provide two different scenarios to compare a models ability to identify the motifs accurately.
 
-Not all motifs and base graphs are paired together and only BA-Shapes\footnote{Which utilises the house motif}, BA-Grid, Tree-Grid and Tree-Cycles are considered.
-There is an additional synthetic dataset, BA-Community, which combines two BA-Shapes graphs and requires the model distinguish between the communities as well as identify the motifs.
-
-Node features for all the graphs are all-$1$ vectors of length 10, except in the case of BA-Community where one of the communities has all-$2$ vectors of length 10.
+Not all motifs and base graphs are paired together and only BA Shapes\footnote{Which utilises the house motif}, BA Grid, Tree Grid and Tree Cycles are considered.
+There is an additional synthetic dataset, BA Community, which combines two BA Shapes graphs and requires the model distinguish between the communities as well as identify the motifs.
+All nodes have no discerning node features except for BA Community which distinguishes between communities.
 
 \subsection{Real-world datasets}
 \label{sec:RWD}
@@ -504,21 +494,20 @@ Node features for all the graphs are all-$1$ vectors of length 10, except in the
 % Discussions of the short comings of this approach
 
 \textit{Wu et al.}\cite{wu2019simplifying} evaluate the performance of SGC on a variety of datasets including Cora, Citeseer and PubMed\cite{citation}.
-These three datasets match the size of the datasets that are used in \textit{Magister et al.} and therefore are used for results reproduction.
+%These three datasets match the size of the datasets that are used in \textit{Magister et al.} and therefore are used for results reproduction.
 Each graph represents a citation network where nodes are articles and edges are citations.
-The node features are bag of word embeddings of the article abstracts or the entire article.
-\note{Better description of the citation networks}
+The node features are bag of word embeddings generated from the article text.
 These datasets are available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} under the Planetoid\cite{planetoid} datasets.
 
-As an extension and to produce meaningful results that reflect real-world applications of GNNs two real world datasets are also tested against.
+As an extension and to produce meaningful results that reflect real-world applications of GNNs two real world datasets are tested against.
 These two datasets are graph classification datasets and therefore inductive datasets compared to the transductive synthetic datasets.
 These datasets are part of TUDataset \cite{Morris+2020} available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
 
 \paragraph{REDDIT BINARY}
 is a dataset where each graph represents a discussion on Reddit with nodes being users and an edge represents one user responding to anothers comment.
 The discussions are sampled from IAmA, AskReddit, TrollXChromosomes, and atheism.
-IAmA and AskReddit are question-answer based whereas TrollXChromosomes and atheism are discussion based.
-The task is to classify the graphs as question-answer or discussion based.
+IAmA and AskReddit are question-answer threads whereas TrollXChromosomes and atheism are discussion threads.
+The task is to classify the graphs as question-answer or discussion threads.
 
 \paragraph{Mutagenicity}
 is a dataset where each graph is a chemical compound where nodes are atoms and edges are chemical bonds.
