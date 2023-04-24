@@ -340,9 +340,8 @@ Furthermore, as GNNs utilise both graph structure and node features concepts can
 
 %% Again this requires proper reading in the subject see above
 
-A concept can be considered an ``interpretable'' high-level units which are more understandable to a human than the standard input units such as inidividual features, pixels or characters.
-A precise definition of a concept in the general sense is hard to formalise.
-\textit{Ghorbani et al.}\cite{ghorbani2019towards} instead propose the following desired properties
+A concept can be considered an ``interpretable'' high-level unit which is human interpretable unlike standard input units such as individual pixels or characters.
+A precise definition of a concept in the general sense is hard to formalise so \textit{Ghorbani et al.}\cite{ghorbani2019towards} propose the following desired properties
 \begin{itemize}
     \item[]
         \smalltitle{Meaningfulness}
@@ -352,12 +351,12 @@ A precise definition of a concept in the general sense is hard to formalise.
     \item[]
         \smalltitle{Coherency}
         requires examples within a concept be perceptually the same or similar to each other whilst simultaneously being different from examples within other concepts.
-        This constraint can be taken further to desire a concept contains identical examples.
-        An example is ``Stripes'' containing examples of only stripes and no examples of circles if ``Circles'' is another concept.
+        This can be further constrained to requiring identical examples.
+        An example is ``Stripes'' containing examples of stripes and no examples of circles if ``Circles'' is another concept.
     \item[]
         \smalltitle{Importance}
         represents how necessary the presence of a concept is to the prediction of a class.
-        For example the classification of a specific object requires that object's concept to be present by the concepts associated with the background are not.
+        For example the classification of a specific object requires that the object's concept to be present but no need for background concepts.
 \end{itemize}
 
 % Relating the explanation to graph based Datasets
@@ -366,9 +365,9 @@ A precise definition of a concept in the general sense is hard to formalise.
 %% Focus on the node classification task for this explanation
 %% Potentially a motivating example
 
-\paragraph{Graph concepts} can therefore be described in the units of subgraphs of the input graph.
-These subgraphs can therefore represent both the structure and the node features that represent the quintessential properties of a given concept.
-The concepts can still satisfy the above desiderata as meaningfulness relates to receptive field of a concepts central node, coherency relates to the graph isomorphy, and importance relates to whether a graph can be classified based on its subgraphs.
+\paragraph{Graph concepts} can therefore be described by subgraphs of the input graph.
+These subgraphs represent both the structure and the node features defining the quintessential properties of a concept.
+The graph concepts satisfy the above desiderata: meaningfulness relates to the size of the subgraph, coherency relates to subgraph isomorphy, and importance relates to classification based on subgraphs alone.
 \note{Include a diagram, also for the above text.}
 
 % Discussion of complications when looking at graph classification
