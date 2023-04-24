@@ -59,17 +59,16 @@ The \texttt{Data} object is copied with updated features allowing for the implem
 
 \texttt{PyTorch Geometric} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
 Beyond the standard \texttt{forward} method of \texttt{PyTorch}\cite{paszke2019pytorch} an addition \texttt{message\_passing} method is also present.
-This method is called during the \texttt{forward} method providing the node representations and associated neighbourhood nodes.
+This method is called during the \texttt{forward} method providing the node representations and associated adjacency.
 This method allows the implementation of the function
 \begin{equation}
     \mH^{(l+1)} = \mS\mH^{(l)}\bm{\Theta}^{(l)},
 \end{equation}
 described in \ref{sec:GCN} as equation \ref{eq:GCN1}.
 During the \texttt{message\_passing} method the normalised adjacency $\mS$ is applied to the node representations $\mH^{(l)}$.
-Then a linear layer is applied to the resulting representations in the \texttt{forward} method.
+After \texttt{message\_passing} a linear layer is applied to the representations.
 
-These GCN layers can then be combined with ReLU non-linearity to form a GCN model.
-The GCN model additionally includes a single linear layer for classification.
+These GCN layers (provided by \texttt{PyTorch Geometric}) can then be combined with a ReLU activation function to form a GCN model.
 In comparison SGC needs only to be a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
 
 \section{Machine Learning Pipeline}
@@ -163,28 +162,25 @@ The concepts from a model are extracted from each layer using the same clusterin
 The theory behind the two concept metrics of completeness and purity are outlined in \Sref{sec:GCE}.
 
 \paragraph{Completeness}
-As discussed in \Sref{sec:GCE} completeness is determined by whether the extracted concepts can be used to infer the resulting class of a node.
-This is achieved by fitting a decision tree\cite{kazhdan2020now} as proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} to the concept data and labels.
-the accuracy of this decision tree on a held out test set then represents the completeness of the concepts extracted.
+As discussed in \Sref{sec:GCE} completeness is determined by whether the extracted concepts can be used to infer node labels.
+This is achieved by fitting a decision tree\cite{kazhdan2020now} as proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} to the concepts and labels.
+The accuracy of this decision tree on the held out test set represents the completeness of the concepts extracted.
 
-\note{I think this needs rewriting.}
-The decision tree needs to predict a label for each of the nodes of the graph based on the concept the node belongs to.
-The input data to the decision tree is a vector of predicted clusters for each of the nodes based on the $k$-means clustering.
-The output vector is then constructed by matching the node class to the node identifier for each node in the input vector.
+The decision tree predicts a label for each of the nodes in the graph based on the concept that the node belongs to.
+The input data is therefore the predicted clusters for each of the nodes based on the $k$-means clustering.
+The target is constructed from the node labels for each node in the input.
 
 \paragraph{Purity}
 To calculate the purity the three quintessential subgraphs of each concept are chosen.
-Each quintessential subgraph centred on a node of interest chosen based on distance to its centroid.
-These subgraphs are constructed through a breadth-first search through the input graph starting from the node of interest.
+Each quintessential subgraph is chosen based on distance to the concept centroid and is constructed by a breadth-first search from the subgraphs node of interest.
 
-The purity is then calculated by taking the average of the GED described in \Sref{sec:GCE} between these concepts.
-The graph edits that are allowed are to add or remove a node or edge noting that the features of the nodes is not considered.
-This provides a similarity of the concepts based on graph structure rather than the representations of the nodes.
+The purity is calculated by taking the average of the GED described in \Sref{sec:GCE} between these subgrphs.
+The graph edits that are allowed are adding or removing a node or edge ignoring the node representations.
+Thus coherence of a concept is based on graph structure rather than node representations.
 
-The reason for only the three quintessential graphs to be considered is due to the computational cost of calculating GED.
-In some cases, where the number of nodes in a subgraph exceeds 13, the purity calculation is skipped.
-It is possible to determine an upperbound on GED in polynomial time however this would negatively impact the purity scores of Barabasi-Albert concepts.
-This in turn would make models that use more Barabasi-Albert concepts appear to be less pure when the concepts are in fact very coherent.
+Three quintessential graphs are considered due to the computational cost of calculating GED.
+In the cases where the number of nodes in a subgraph exceeds 13 the purity calculation is skipped.
+It is possible to determine an upperbound on GED in $\mathcal{O}(n^3)$ however this would negatively impact the purity scores of Barabasi-Albert concepts.
 
 \subsection{Visualisation}
 \label{sec:vis}
