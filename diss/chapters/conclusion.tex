@@ -2,16 +2,13 @@
 
 \section{Summary}
 This dissertation set out to analyse how linearising GNN architectures match the performance of their non-linear counterparts.
-It aimed to understand how graph structure can be better utilised by analysing these two approaches.
-This was achieved by comparing graph concepts from GCN and its linear counterpart, SGC.
-Additionally, three extensions where proposed to further explore the effect of linearity on graph concepts and improve SGC.
-
-As \Sref{sec:comp-acc} demonstrated SGC does not in fact match the performance of its non-linear counterpart.
+%It aimed to understand how graph structure can be better utilised by analysing these two approaches.
+%This was achieved by comparing graph concepts from GCN and its linear counterpart, SGC.
+As \Sref{sec:comp-acc} demonstrated the linear GNN, SGC, does not in fact match the performance of its non-linear counterpart.
 \Sref{sec:comp-concept} highlights the poor graph structure awareness of SGC suggesting that non-linearity is key to inferring structure.
 Extending SGC to graph classification also shows the same lack of graph structure awareness.
 
-With these observations lead to two extensions designed to improve the performance of SGC.
-The first is to combine SGC and GCN to utilise the benefits of both approaches.
+To combat these limitations SGC and GCN are combined to utilise the benefits of both approaches.
 However, though this is successfull the use of SGC is very limited with the GCN layers providing the majority of the inference.
 
 JSGC provides a novel extension to SGC with promising results highlighted in \Sref{sec:Jump-SGC} clearly demonstrating graph structure awareness.
@@ -19,18 +16,19 @@ JSGC provides SGC with intermediate node representations through techniques pres
 Importantly JSGC is negligibly non-linear demonstrating that graph structure awareness is possible within a linear architecture contrary to popular opinion.
 
 \section{Lessons learned}
-The key skill learnt during the project was time management including careful planning allowing for unforeseen setbacks.
-Quick adaptation throughout was key as the majority of the project was research focused requiring exploration based on results.
-Maintaining good software practices and results loggin allowed for easier pivoting throughout the project.
-
-Saving all of the results that I had achieved throughout the project in a presentable format both helped quickly identify interesting results but also speed up the writing process.
-This is also true for keeping all the configuration files including those during experimentation as I was able to review past experiments when more knowledge was gained.
-Keeping notes on all the papers I read was also very useful however in future I would keep a better log of thoughts throughout the project.
-
-NN models are very sensitive to the hyperparameters used which can have a large impact on the apparent performance.
-The process of finding hyperparameters is very tedious as a large search space needs to be explored to verify that the chosen hyperparameters are optimal within that space.
-automating this process was very useful however I completed this process late in my project to verify the results that I had achieved are the best possible configuration.
-Though carrying out hyperparameter sweeps on all of my models did not effect the final analysis in future I will complete this step much earlier.
+\note{New approach discussing lesson learnt \emph{about GNNs}.}
+%The key skill learnt during the project was time management including careful planning allowing for unforeseen setbacks.
+%Quick adaptation throughout was key as the majority of the project was research focused requiring exploration based on results.
+%Maintaining good software practices and results loggin allowed for easier pivoting throughout the project.
+%
+%Saving all of the results that I had achieved throughout the project in a presentable format both helped quickly identify interesting results but also speed up the writing process.
+%This is also true for keeping all the configuration files including those during experimentation as I was able to review past experiments when more knowledge was gained.
+%Keeping notes on all the papers I read was also very useful however in future I would keep a better log of thoughts throughout the project.
+%
+%NN models are very sensitive to the hyperparameters used which can have a large impact on the apparent performance.
+%The process of finding hyperparameters is very tedious as a large search space needs to be explored to verify that the chosen hyperparameters are optimal within that space.
+%automating this process was very useful however I completed this process late in my project to verify the results that I had achieved are the best possible configuration.
+%Though carrying out hyperparameter sweeps on all of my models did not effect the final analysis in future I will complete this step much earlier.
 
 \section{Future work}
 \paragraph{Other GNN architectures}
