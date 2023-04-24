@@ -186,19 +186,19 @@ It is possible to determine an upperbound on GED in $\mathcal{O}(n^3)$ however t
 \label{sec:vis}
 The visualisation of the concepts uses the same approach as the calculation of purity in \Sref{sec:concept-eval}.
 However, more quintessential graphs may be considered to better visualise the extracted concepts.
-This does mean that the visual results may appear contradictory to the purity score as subgraphs further from the centroid may not match the purity reported.
+The visual results may contradict the purity score as subgraphs further from the centroid may not match the calculated purity.
 
 For the synthetic graphs the subgraphs are coloured with two colours, green indicating the node of interest and pink indicating neighbouring nodes.
-In some instances on concept may contain a node of interest of an other visualised concept, in this case the subgraph is visualised with mutliple green nodes.
-This represents the fact that the model does not distinguish between these nodes within the graph structure.
-This process is also used for REDDIT-BINARY\cite{Morris+2020}.
+In some instances one subgraph may contain a node of interest of another visualised subgraph, in this case the subgraph is visualised with multiple green nodes.
+%This represents the fact that the model does not distinguish between these nodes within the graph structure.
+The same process is used for REDDIT-BINARY\cite{Morris+2020}.
 
-In the case of the Mutagenicity\cite{Morris+2020} dataset there already exist standard chemical colour schemes for atoms.
-\textit{Magister et al.}\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept which means that between concepts the colour scheme does not match.
-Instead, I define pre-determined values for each atom based on a chemical colour scheme giving a better comparison across concepts.
+In the case of Mutagenicity\cite{Morris+2020} \textit{Magister et al.}\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept.
+This means that between concepts the colour scheme does not match but there already exist standard chemical colour schemes.
+To provide a better comparison between concepts a chemical colour scheme is chosen and each node is coloured according to this.
 
-In all cases each subgraph is titled by the label of the node of interest.
-This provides additional information about the coherence of the concepts which purity does consider which is whether all the nodes have the same label.
+Regardless of dataset each subgraph is titled by the label of the node of interest.
+This provides additional information about the coherence of the concepts labels.
 
 \section{Testing}
 \label{sec:testing-imp}
