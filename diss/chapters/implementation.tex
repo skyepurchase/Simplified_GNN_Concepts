@@ -304,11 +304,11 @@ The motivation for JKNs is the node aggregation methods used resulted in neighbo
 As a solution they propose aggregating the the node representations after successive neighbourhood aggregation layers together.
 Three main methods of aggregation are proposed but given the small size of the datasets the proposed concatenation method is best suited.
 
-\paragraph{Implementation}
 By concatenating successive neighbourhood aggregations and then reducing the dimensionality to a single node representation uniform influence can be achieved.
 This is because detail present in the closer neighbourhoods can be combined with the wider awareness of the more receptive neighbourhoods.
 Rather than missing larger structure awareness or missing detail JKNs allow for an analysis of both.
 
+\paragraph{Implementation}
 For JSGC this leads to two changes to the model and pre-computation.
 During pre-computation successive applications of the normalised filter are concatenated together.
 A linear layer is then added to the standard SGC to reduce this concatenated representation space to the standard representation space.

@@ -274,8 +274,8 @@ These fullfil the \ref{crit3}$^{rd}$ success criterion.
 \paragraph{Completeness}
 \input{tables/SGC-completeness}
 
-Table \ref{tab:SGC-completeness} demonstrates the completeness scores achieved by SGC compared to GCN and as expected, by the low accuracy achieved by SGC in \Sref{sec:comp-acc}, they are consistently lower than the equivalent GCN models.
-However, given the accuracies of SGC appears closs to random, the resulting completeness scores aresurprisingly close to the GCN scores except in the case of BA Community.
+Table \ref{tab:SGC-completeness} demonstrates the completeness scores achieved by SGC compared to GCN and as expected, by the low accuracy achieved by SGC in table \ref{tab:SGC-acc}, they are consistently lower than the equivalent GCN models.
+However, the resulting completeness scores are close to the GCN scores except in the case of BA Community.
 
 The high completenes scores are due to the fact that completeness relates to importance of concepts and not the performance of the model.
 The relatively high completeness scores for SGC signify that the concepts that SGC produces have some relevance to the class of a node.
@@ -284,16 +284,15 @@ However, as demonstrated by table \ref{tab:SGC-completeness}, this relevance is 
 \paragraph{Purity}
 \input{tables/SGC-purity}
 
-Table \ref{tab:SGC-purity} demonstrates the purity scores achieved by the best performing SGC model compared to GCN.
+Table \ref{tab:SGC-purity} includes the purity scores achieved by the best performing SGC models compared to the corresponding GCN models.
 As discussed in \Sref{sec:GCN-reproduction} the values for purity are likely to be very erratic and not well suited for direct comparison.
 Given this erratic behaviour the values for purity between the two approaches are somewhat correlated with SGC achieving fairly pure concepts.
-As demonstrated SGC can identify pure concepts as is the case of BA Grid, which matches GCN in completely pure concepts.\footnote{For subgraphs the contain less than 13 nodes.}
 
 However, the inclusion of the number of concepts considered when calculating purity demonstrates the limitation of this method of comparison.
 Due to the base graphs a number of concepts contain more than 13 nodes and therefore are not considered.
 Thus the pure concepts of BA Grid are not representative of all the concepts extracted.
 
-Overall, this demonstrates that though SGC does not perform as well as GCN it produces concepts that are as coherent as GCN produces.
+Overall, this demonstrates that though SGC does not perform as well as GCN it produces concepts that are as coherent as GCN.
 
 \subsection{Qualitative analysis}
 \label{sec:concept-analysis}
