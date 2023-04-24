@@ -524,28 +524,28 @@ The task is to classify the graphs as to whether or not they are mutagens.
 
 \paragraph{Programming languages}
 I use Python to write the majority of the software as there is a lot of existing support for machine learning frameworks.
-Furthermore, Python is easy to read, debug and iterate in which is very useful for developing and testing new methods.
+Furthermore, Python is easy to read, debug and experiment in which is useful for developing new models.
 
-To reduce the need for human input when running multiple experiments to get confidence intervals or hyperparameter tuning I also use bash scripts.
-And to allow for easier reproducibility and iteration I utilise YAML files to store build configurations for all of my models.
+To reduce the need for human input when running multiple experiments to get confidence intervals or hyperparameter tuning dynamically generated bash scripts were used.
+To allow for easier reproducibility and iteration I utilise YAML files to store build configurations for all of my models.
 
 \paragraph{Software development}
 
-I use \texttt{NeoVim} to develop my code as this has high customisability allowing me to include specific linters to highlight bugs, typing errors and general static code analysis.
-Additionally I use a local \texttt{Tensorboard} instance to visualise and analyse progress of my experiments in realtime, \texttt{Git} and \texttt{Github} for version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup of experiment results.
-I occasionally used \texttt{Google Colab} for compute units to run the large experiment batches.
+A personal configuration of \texttt{NeoVim} was used to develop the code as this has high customisability allowing personalised linters to highlight bugs, typing errors and general static code analysis.
+Additionally, local \texttt{Tensorboard}\note{citation needed?} instances help visualise and analyse progress of experiments in realtime, \texttt{Git} and \texttt{Github} implement version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup for experiment results.
+\texttt{Google Colab} was occasionally used for compute units to run the large experiment batches.
 
 \paragraph{Libraries}
 \label{sec:libraries}
 
-The major libraries I used where the two ML libraries \texttt{PyTorch} \cite{paszke2019pytorch} and \texttt{PyTorch Geometric} \cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
-\texttt{PyTorch} was chosen over Tensorflow as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
+The major libraries used where \texttt{PyTorch} \cite{paszke2019pytorch} and \texttt{PyTorch Geometric} \cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
+\texttt{PyTorch} was chosen over \texttt{Tensorflow}\note{citation needed} as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
 To help with running experiments, logging results and reproducibility I use \texttt{Lightning AI} which handles the underlying training and testing loop while integrating with Tensorboard.
-\texttt{Hyperopt} is also used as \textit{Wu et al.}\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
+\texttt{Hyperopt}\note{citation needed} is also used as \textit{Wu et al.}\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
 
-For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX} to draw the graphs and \texttt{Matplotlib} to visualise and store the result, I also use \texttt{Matplotlib} to visualise hyperparameter surfaces. Note that \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library automatically.
+For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}\note{citation neede}. For the visualisation of graphs I use \texttt{NetworkX}\note{citation needed} to draw the graphs and \texttt{Matplotlib}\note{citation needed} to visualise and store the result, I also use \texttt{Matplotlib} to visualise hyperparameter surfaces. Note that \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
 
-For unit tests I use Python's own \texttt{unittest} library, to help with software development I use Python's \texttt{typing} library alongside the built in typing functionality of the other libraries. Additionally I use \texttt{tqdm} to visualise progress during concept analysis.
+For unit tests I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built in typing functionality of the other libraries. Additionally I use \texttt{tqdm}\note{citation needed?} to visualise progress during concept analysis.
 
 \section{Requirements analysis}
 
