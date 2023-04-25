@@ -24,16 +24,16 @@
 \note{diagram would be useful}
 \emph{Neural networks} (NN) are able to infer complex relationships within both structured and unstructured data.
 \emph{graph neural networks} (GNN) allow for the same functionality on connected systems where complex relationship between datapoints is also required.
-In these systems, such as social networks\note{citation needed} and molecules\note{citation needed}, the data can be represented as nodes connected by edges in a graph.
-The popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.\note{citation needed?}
-Instead \emph{linear GNNs} have been proposed\note{citations needed?} which aim to match the performance of their non-linear counterparts with great success.
+In these systems, such as social networks\cite{pmlr-v70-gilmer17a} and molecules\cite{DBLP:journals/corr/abs-1806-01973}, the data can be represented as nodes connected by edges in a graph.
+The popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.\cite{wu2019simplifying}
+Instead \emph{linear GNNs} have been proposed\cite{chanpuriya2022simplified,navarin2020linear,wu2019simplifying} which aim to match the performance of their non-linear counterparts with great success.
 
 \note{diagram would be useful}
 However, this success has only been demonstrated on a small sample of datasets and limited analysis of how linear GNNs work has been carried out.
 This problem extends generally to NNs where understanding or explaining how the model works is largely ignored in favour of higher accuracy.
-One solution to this problem is the notion of \emph{concepts}\note{citation needed} which are high-level units of information which a NN uses to infer a label.
+One solution to this problem is the notion of \emph{concepts} which are high-level units of information \cite{ghorbani2019towards} which a NN uses to infer a label.
 These units can be visualised in a human interprettable fashion allowing for a better analysis of how a specific model behaves.
-Extending this notion to GNNs\note{citation needed} allows for linear GNNs and their non-linear counterparts to be compared providing a better understanding of how they operate.
+Extending this notion to GNNs\cite{magister2021gcexplainer,ying2019gnnexplainer} allows for linear GNNs and their non-linear counterparts to be compared providing a better understanding of how they operate.
 
 The insight provided by the concepts can highlight the limitations of GNN models and thus be used to develope improved models.
 In the case of linear GNNs this can provide further insight into how linearity influences graph structure awareness.
@@ -167,7 +167,7 @@ This model will be used to compare against the GCN models presented in \textit{M
 The paper introduces SGC with heterophily to overcome these issues. 
 This project identifies a further issue with SGC when working with highly synthetic data where node representations carry little meaning.
 
-\textit{Pasa et al.} \note{citation needed} introduce two new approaches to creating linear GNN architectures based on SGC.
+\textit{Navarin et al.} \cite{navarin2020linear} introduce two new approaches to creating linear GNN architectures based on SGC.
 The new approaches focus on adjusting the pre-computation by introducing exponential and linear parameterised operations.
 These approaches outperform both SGC and GCN on the datasets used in \textit{Wu et al.}
 This project presents two additional approaches to improving the performance of SGC.
