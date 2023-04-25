@@ -53,15 +53,14 @@ I, \mfullname{} of \mcollege, being a candidate for Part II of the Computer Scie
     Project Title:      & \bf \mtitle                       \\
     Examination:        & \bf \mexamination, 2023           \\
     Word Count:         & \bf \mwordcount\footnotemark[1]   \\
-    Code Line Count:    & \bf \mlinecount                   \\
+    Code Line Count:    & \bf \mlinecount\footnotemark[2]   \\
     Project Originator: & \moriginator                      \\
     Supervisor:         & \msupervisor                      \\ 
 \end{tabular}
 }
 
-\footnotetext[1]{This word count was computed
-by \texttt{texcount}
-}
+\footnotetext[1]{This word count was computed by \texttt{texcount}.}
+\footnotetext[2]{This word count was computed by \texttt{cloc}. Only generating bash scripts where considered as the generated files are all structurally identical.}
 \stepcounter{footnote}
 
 \section*{Original Aims of the Project}
