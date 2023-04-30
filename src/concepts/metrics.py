@@ -6,8 +6,16 @@ from models.activation_classifier import Activation_Classifier
 from sklearn.cluster import KMeans
 from torch_geometric.data import Data, Dataset
 from networkx import Graph
-from typing import Union
+from typing import Union, Dict
 from torch import Tensor
+
+
+PURITY_TEST = True
+
+
+def same_label(n1: Dict[str, int],
+               n2: Dict[str, int]):
+    return n1["label"] == n2["label"]
 
 
 def purity(Graphs: list[Graph],
@@ -23,7 +31,10 @@ def purity(Graphs: list[Graph],
             if G1.number_of_nodes() > max_nodes:
                 continue
             else:
-                score: Union[float, None] = nx.graph_edit_distance(top_graph, G1)
+                if PURITY_TEST:
+                    score: Union[float, None] = nx.graph_edit_distance(top_graph, G1, same_label)
+                else:
+                    score: Union[float, None] = nx.graph_edit_distance(top_graph, G1)
 
                 if score is not None:
                     purity += score

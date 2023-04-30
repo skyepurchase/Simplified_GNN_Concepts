@@ -18,6 +18,9 @@ from torch import Tensor
 from typing import Iterable, Tuple, Union, List
 
 
+PURITY_TEST = True
+
+
 def _get_subgraphs(top_indices: NDArray,
                    y: Tensor,
                    edges: NDArray,
@@ -56,8 +59,15 @@ def _get_subgraphs(top_indices: NDArray,
         # Filter the edge dataframe by those where both ends of the edge are present
         df_neighbours = df[(df[0].isin(neighbours)) & (df[1].isin(neighbours))]
         remaining_edges = df_neighbours.to_numpy() # Convert back to a matrix
-        new_G.add_edges_from(remaining_edges) # Add these edges to the graph
+        new_G.add_edges_from(remaining_edges) # Add these edges to the graphs
 
+        if PURITY_TEST:
+            # Set the data for a concept as the concept label
+            # This means that purity must include the node of interest
+            label_dict = dict((i, y[idx]) for i in new_G.nodes)
+            nx.set_node_attributes(new_G, label_dict, "label")
+
+        # Adding label attributes for better purity score
         color_map: list[Union[str, int]] = []
         node_label: dict[int, str] = {}
         if data is None:
