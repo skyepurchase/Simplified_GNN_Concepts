@@ -381,25 +381,36 @@ In comparison, concept C highlights how GCN is able to identify very large struc
 
 \subsection{SGC and GCN mixed model}
 \label{sec:SGCN}
-\fig{SGC-GCN-latent-space}{The 2D t-SNE reduced latent space of the first layer where SGC and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
-\fig{SGCN-SGC-latent-space}{The 2D t-SNE reduced latent space of the second layer where SGCN and SGC activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
-\fig{SGCN-GCN-latent-space}{The 2D t-SNE reduced latent space of the final (third) layer where SGCN and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.40\textheight]{figures/SGCN-latent-space-0}
+    \includegraphics[width=0.40\textheight]{figures/SGCN-latent-space-1}
+    \includegraphics[width=0.40\textheight]{figures/SGCN-latent-space-2}
+    \caption{The 2D t-SNE reduced latent space of the three different models for each GNN layer (that is ignoring the classifier). Concepts are calculated with the same number of clusters and receptive field. The labels are based on true labels not inferred labels for a better comparison between the models.}
+    \label{fig:SGCN-latent-spaces}
+\end{figure}
+
+%\fig{SGC-GCN-latent-space}{The 2D t-SNE reduced latent space of the first layer where SGC and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
+%\fig{SGCN-SGC-latent-space}{The 2D t-SNE reduced latent space of the second layer where SGCN and SGC activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
+%\fig{SGCN-GCN-latent-space}{The 2D t-SNE reduced latent space of the final (third) layer where SGCN and GCN activations are most similar based on adjusted mutual information of their concepts. Concepts are calculated with the same number of clusters and receptive field.}
 \input{tables/SGCN-acc}
 \input{tables/SGCN-completeness}
 
-As the process of finding the optimal model, training and then evaluating said model requires many steps only BA Shapes is considered.
-Figures \ref{fig:SGC-GCN-latent-space}, \ref{fig:SGCN-SGC-latent-space} and \ref{fig:SGCN-GCN-latent-space} show the t-SNE reduced latent space of the different models.
+As the process of finding the optimal model, training and evaluating requires many steps only BA Shapes is considered.
+Figure \ref{fig:SGCN-latent-spaces} shows the t-SNE reduced latent space of each layer and model.
 Tables \ref{tab:SGCN-acc} and \ref{tab:SGCN-completeness} demonstrate the results achieved by SGCN in both accuracy and concept completeness.
 
-Figure \ref{fig:SGC-GCN-latent-space} demonstrates the first layer which has the highest AMI between GCN and SGC.
+Layer 0 in fig. \ref{fig:SGCN-latent-spaces} demonstrates the first layer which has the highest AMI between GCN and SGC.
 The similarity is not very high but is significantly higher than the similarity between SGC and GCN for the remaining layers.
 This does present a potential issue in combining models where no significant mutual information is present.
 
-Figure \ref{fig:SGCN-SGC-latent-space} demonstrates that the second layer of SGCN is very similar to that of SGC.
+Layer 1 in fig. \ref{fig:SGCN-latent-spaces} demonstrates that the second layer of SGCN is very similar to that of SGC.
 This is due to the previous layer being an SGC layer and so the GCN layer applied to a different feature space.
-The spread green labelled nodes (representing the house motif ``floor'') is also present in the GCN layers in \ref{fig:SGC-GCN-latent-space} and \ref{fig:SGCN-GCN-latent-space} demonstrating a mixture of representation.
-Figure \ref{fig:SGCN-GCN-latent-space} shows that the final layer of SGCN has a latent space that is very similar to that of GCN.
-Given the increase in performance by SGCN demonstrated in table \ref{tab:SGCN-acc} this likely to be a more optimal space.
+The spread green labelled nodes (representing the ``floor'') is present in the GCN layer 0 and SGCN layer 1 demonstrating a mixture of representation.
+
+Layer 2 in fig. \ref{fig:SGCN-latent-spaces} shows that the final layer of SGCN has a latent space that is very similar to that of GCN.
+Given the increase in performance by SGCN this latent space likely to be better.
 
 Though SGCN does not surpass the performance of GCN as shown in table \ref{tab:SGCN-acc} it is able to surpass it in completeness score highlighted in table \ref{tab:SGCN-completeness}.
 This happens across all layers (noting that the first layer is identical to the SGC layer) and highlights a major benefit of the model.
