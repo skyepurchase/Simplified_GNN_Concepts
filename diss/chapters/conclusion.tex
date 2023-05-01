@@ -16,19 +16,31 @@ JSGC provides SGC with intermediate node representations through techniques pres
 Importantly JSGC is negligibly non-linear demonstrating that graph structure awareness is possible within a linear architecture contrary to popular opinion.
 
 \section{Lessons learned}
-%\error{New approach discussing lesson learnt \emph{about GNNs}.}
-The key skill learnt during the project was time management including careful planning allowing for unforeseen setbacks.
-Quick adaptation throughout was key as the majority of the project was research focused requiring exploration based on results.
-Maintaining good software practices and results loggin allowed for easier pivoting throughout the project.
+My project aimed to understand the effect that linearising GNN architectures had on performance through graph concepts.
+This effect depends as much on the dataset, the method of GNN explanability, and architecture as it does on the method of linearisation.
+Regardless, the project explored an area of this space and provided important insights.
 
-Saving all of the results that I had achieved throughout the project in a presentable format both helped quickly identify interesting results but also speed up the writing process.
-This is also true for keeping all the configuration files including those during experimentation as I was able to review past experiments when more knowledge was gained.
-Keeping notes on all the papers I read was also very useful however in future I would keep a better log of thoughts throughout the project.
+Importantly, as shown by the proposed JSGC architecture, it is possible to achieve high graph structure awareness whilst remaining negligibly non-linear.
+This presents a new avenue of GNN architecture design outside of the standard deep learning approach and has utility in efficient graph structure inference.
+But, as demonstrated by the poor performance of SGC, care must be taken in producing linear architectures to retain graph structure awareness.
 
-NN models are very sensitive to the hyperparameters used which can have a large impact on the apparent performance.
-The process of finding hyperparameters is very tedious as a large search space needs to be explored to verify that the chosen hyperparameters are optimal within that space.
-automating this process was very useful however I completed this process late in my project to verify the results that I had achieved are the best possible configuration.
-Though carrying out hyperparameter sweeps on all of my models did not effect the final analysis in future I will complete this step much earlier.
+The project did however demonstrate that non-linearity does provides higher accuracy when compared to linear architectures.
+The results presented do not suggest that non-linearity in NNs in general is ideal but rather that graph structure awareness may be achieved without non-linearity.
+This is clearly demonstrated by the poor performance of SGC and the inability for JSGC to match the accuracy of GCN whilst achieving comparable graph structure awareness.
+These drawbacks may potentially be solved by utilising more complex classifiers such as MLPs.
+
+%The key skill learnt during the project was time management including careful planning allowing for unforeseen setbacks.
+%Quick adaptation throughout was key as the majority of the project was research focused requiring exploration based on results.
+%Maintaining good software practices and results loggin allowed for easier pivoting throughout the project.
+%
+%Saving all of the results that I had achieved throughout the project in a presentable format both helped quickly identify interesting results but also speed up the writing process.
+%This is also true for keeping all the configuration files including those during experimentation as I was able to review past experiments when more knowledge was gained.
+%Keeping notes on all the papers I read was also very useful however in future I would keep a better log of thoughts throughout the project.
+%
+%NN models are very sensitive to the hyperparameters used which can have a large impact on the apparent performance.
+%The process of finding hyperparameters is very tedious as a large search space needs to be explored to verify that the chosen hyperparameters are optimal within that space.
+%automating this process was very useful however I completed this process late in my project to verify the results that I had achieved are the best possible configuration.
+%Though carrying out hyperparameter sweeps on all of my models did not effect the final analysis in future I will complete this step much earlier.
 
 \section{Future work}
 \paragraph{Other GNN architectures}
@@ -43,6 +55,6 @@ Though the accuracy of JSGC is not as high as GCN it is important to note that J
 
 \paragraph{AMI mixed models}
 To combine SGC and GCN the extracted concepts are compared using AMI to determine where the two approaches are similar.
-As demonstrated in \Sref{sec:SGCN} in figures \ref{fig:SGCN-SGC-latent-space} and \ref{fig:SGCN-GCN-latent-space} the resulting model retains the influence of both models.
+As demonstrated in \Sref{sec:SGCN} in figure \ref{fig:SGCN-latent-spaces} the resulting model retains the influence of both models.
 \textit{Shchur et al.}\cite{shchur2018pitfalls} and \textit{Purchase et al.}\cite{purchase2022revisiting} demonstrate the best performing GNN is highly dependent on training setup and dataset.
 By combining the best GNN models in these different environments using the AMI approach it may be possible to overcome these limitations.
