@@ -141,9 +141,8 @@ This goal motivates the project which aims to provide a deeper insight into grap
 
 %% Provides clear metrics to compare models in regards to concepts
 
-This project is based on the recent work by \textit{Magister et al.} \cite{magister2021gcexplainer} which proposes a new method of graph concepts.
-The paper introduces two concept metrics to guide the choice in optimal parameters for concept extraction.
-It is using these metrics that a linear GNN and its non-linear counterpart are compared to provide more insight into the effect of linearisation.
+This project is based on the recent work by \textit{Magister et al.} \cite{magister2021gcexplainer} which proposes a new method to graph concepts and introduces two concept metrics.
+Using these metrics a linear GNN and its non-linear counterpart are compared to provide more insight into the effect of linearisation.
 
 % Simplifying Graph Convolutional Networks
 
@@ -152,8 +151,8 @@ It is using these metrics that a linear GNN and its non-linear counterpart are c
 %% A movement away from DNN
 
 \textit{Wu et al.} \cite{wu2019simplifying} introduce the \emph{simplified graph convolution} (SGC) based on the \emph{graph convolution network} (GCN) proposed by \textit{Kipf et al.} \cite{kipf2016semi}.
-The method linearises the graph convolution layers in the network allowing these to be pre-computed leaving just a classification layer.
-This model will be used to compare against the GCN models presented in \textit{Magister et al.} \cite{magister2021gcexplainer}.
+The method linearises the graph convolution layers in the network allowing these to be pre-computed.
+This linear architecture will be used to compare against the non-linear GCN counterpart.
 
 % Simplified Graph Convolution with Heterophily
 
@@ -161,13 +160,8 @@ This model will be used to compare against the GCN models presented in \textit{M
 
 %% Note this is different from our observed problems
 
-\textit{Chanpuriya et al.} \cite{chanpuriya2022simplified} demonstrate that SGC achieves poor performance on heterophilic data.
-The paper introduces SGC with heterophily to overcome these issues. 
-This project identifies a further issue with SGC when working with highly synthetic data where node representations carry little meaning.
-
-\textit{Navarin et al.} \cite{navarin2020linear} introduce two new approaches to creating linear GNN architectures based on SGC.
-The new approaches focus on adjusting the pre-computation by introducing exponential and linear parameterised operations.
-These approaches outperform both SGC and GCN on the datasets used in \textit{Wu et al.}
+\textit{Chanpuriya et al.} \cite{chanpuriya2022simplified} demonstrate that SGC achieves poor performance on heterophilic data and introduces SGC with heterophily to overcome these issues.
+\textit{Navarin et al.} \cite{navarin2020linear} introduce two new linear GNN architectures the introducing exponential and linear parameterised pre-computations.
 This project presents two additional approaches to improving the performance of SGC.
 
 % Maybe ablation studies: Pitfalls
