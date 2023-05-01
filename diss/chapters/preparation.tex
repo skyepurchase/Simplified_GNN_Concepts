@@ -276,9 +276,9 @@ If either formulation is used for node classification a linear classifier is app
 %% Reiterate the points made in the introduction
 %% Now specifically highlight these areas in the GCN formulisation
 
-As both approaches in \Sref{sec:GCN} demonstrate a GCN can be broken down into individual layers, containing a linear graph operation on the current node representations, stacked together using a non-linear activation function.
-This means that the $k^{th}$-layer node representation requires the calculation of all the non-linear activations up until this layer.
-This is apparent when looking at the formulation in equation \ref{eq:GCN1}.
+As both approaches in \Sref{sec:GCN} demonstrate a GCN can be broken down into individual layers, containing a linear graph operation, stacked together using a non-linear activation function.
+This means that the $k^{th}$-layer node representation requires the calculation of all the non-linear activations up until $k$.
+%This is apparent when looking at the formulation in equation \ref{eq:GCN1}.
 
 \paragraph{Linearization.}
 Considering the linear graph operation as a spectral filter as described in equation \ref{eq:norm} the non-linearity between layers may be considered non-critical to GCN performance.
@@ -289,21 +289,24 @@ Removing the non-linear activation functions from equation \ref{eq:cls} results 
 \begin{equation}
     \hat\mY = \operatorname{softmax}(\underbrace{\mS\cdots\mS}_k\mX\underbrace{\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}}_k),
 \end{equation}
+
 where the filter is applied $k$ times to allow for the retention of the receptive field.
-As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameters
+As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameter
 \begin{equation}
     \label{eq:theta}
     \bm{\Theta} = \underbrace{\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}}_k.
 \end{equation}
+
 The final linearised model, SGC, is therefore
 \begin{equation}
     \label{eq:SGC}
     \hat\mY = \operatorname{softmax}(\mS^{k}\mX\bm{\Theta}).
 \end{equation}
 
-As $\mS$ is fixed for a specific graph $\mS^k\mX$ is also fixed if $\mX$ is fixed.
+As $\mS$ is fixed for a specific graph $\mS^k\mX$ is fixed if $\mX$ is fixed.
 Thus SGC can be broken down into representation extraction, $\bar\mX = \mS^k\mX$, and a classification, $\hat\mY = \operatorname{softmax}(\bar\mX\bm{\Theta})$.
-This allows for $\bar\mX$ to be precomputed for node features $\mX$ or just $\mS^k$, allowing for the pre-computation of different node features.
+This allows for $\bar\mX$ to be precomputed for given node features $\mX$.
+%or just $\mS^k$, allowing for the pre-computation of different node features.
 %Furthermore, different node features can be quickly calculated as $\mS^k$ can be precomputed.
 
 Rather than considering how many layers an SGC model has the equivalent notion of \emph{degree} is used where the degree is the power of $\mS$.
@@ -311,7 +314,7 @@ This directly corresponds to the receptive field of the model where a $k$-degree
 
 \paragraph{Drawbacks}
 SGC suffers from vanishing/exploding values in $\bm{\Theta}$ and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of the graphs nodes.}.
-\textit{Navarin et al.}\cite{navarin2020linear} also state that SGC has a fixed feature extraction step preventing influence on intermediate node representations.
+SGC has a fixed feature extraction step preventing influence on intermediate node representations.
 These drawbacks motivate the extensions presented in \Sref{sec:extensions-imp} and \Sref{sec:extension-eval}.
 
 %The fomulation in equation \ref{GCN-as-GNN} highlights that at after each layer each node representation includes a representation of its immediate neighbours.
