@@ -425,8 +425,9 @@ An analysis of the concepts extracted for SGCN are presented in \Sref{app:concep
 \input{tables/JSGC-acc}
 \input{tables/JSGC-completeness}
 \input{tables/JSGC-purity}
+\fig{JSGC-latent-space}{The final layer in the GCN, SGC and JSGC architectures for BA Shapes. As shown JSGC has clear clusterings for the different labels similar to GCN but the clustering is not as pronounced likely leading to the lower accuracy. In comparison SGC exhibits no clear clustering.}
 
-Tables \ref{tab:JSGC-acc}, \ref{tab:JSGC-completeness} and \ref{tab:JSGC-purity} show the results achieved by JSGC on the datasets analysed in \Sref{sec:comp-concept}.
+Tables \ref{tab:JSGC-acc}, \ref{tab:JSGC-completeness} and \ref{tab:JSGC-purity} show the results achieved by JSGC.
 Overall these demonstrate that JSGC does outperform SGC significantly and is more comparable to GCN.
 The accuracy achieved by JSGC is still lower than the the 95\% suggested by \textit{Ying et al.}\cite{ying2019gnnexplainer} but significantly better.
 This improvement is seen in table \ref{tab:JSGC-completeness} as the completeness scores are closer to 1 with BA Community producing better performing concepts than GCN.\footnote{This is partially a result of the concept parameters used. The high score signifies that good concepts are being utilised by the model but in this case the model still does not appear to be quite capable enough.}
@@ -439,8 +440,9 @@ Comparing these concepts to those achieved by GCN presented in figure \ref{fig:B
 Concepts 1 to 5 in fig. \ref{fig:JSGC-BA-Community} can be directly mapped to A to E in fig. \ref{fig:JSGC-BA-Community}.\footnote{A similar direct mapping was also achieved for BA Shapes.}
 JSGC is now able to distinguish between the two communities highlighted by concepts 1 \& 2 and 3 \& 4.
 Furthermore, within a community JSGC correctly distinguishes between the different nodes as concept 2, 3 and 4 show.
-Most importantly all concepts, except for concept 1, show consistent labelling throughout, particularly in concept 3 where all nodes are ``outside''\footnote{See \Sref{sec:concept-analysis}.} nodes.
+Most importantly all concepts, except for concept 1, show consistent labelling throughout, particularly in concept 3 where all nodes are ``outside'' nodes.
 
-Clearly JSGC has comparable graph structure awareness as GCN and does not require the non-linearity of GCN to achieve this.
+To further highlight the similarity between JSGC and GCN as well as the improvement on SGC figure \ref{fig:JSGC-latent-space} demonstrates the latent space of the concatenation layer in JSGC.
+This demonstrates that JSGC has comparable graph structure awareness to GCN and does not require the non-linearity of GCN to achieve this.
 The lower accuracy of JSGC still suggests that there are elements of GCN that are important to its success and generally GRL.
-However, further studies into the importance of non-linearity in GRL is required.
+However, further studies into the importance of non-linearity in GRL are required.
