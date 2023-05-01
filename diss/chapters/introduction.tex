@@ -21,22 +21,20 @@
 
 %% Wide spread of ML systems in general prevalent in every day use
 
-\note{diagram would be useful}
-\emph{Neural networks} (NN) are able to infer complex relationships within both structured and unstructured data.
-\emph{graph neural networks} (GNN) allow for the same functionality on connected systems where complex relationship between datapoints is also required.
+\emph{Neural networks} (NN) are able to infer complex relationships within data, \emph{graph neural networks} (GNN) extend this functionality to connected systems where predetermined relationships exist between datapoints.
 In these systems, such as social networks\cite{pmlr-v70-gilmer17a} and molecules\cite{DBLP:journals/corr/abs-1806-01973}, the data can be represented as nodes connected by edges in a graph.
-The popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.\cite{wu2019simplifying}
+However, the popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.\cite{wu2019simplifying}
 Instead \emph{linear GNNs} have been proposed\cite{chanpuriya2022simplified,navarin2020linear,wu2019simplifying} which aim to match the performance of their non-linear counterparts with great success.
 
-\note{diagram would be useful}
-However, this success has only been demonstrated on a small sample of datasets and limited analysis of how linear GNNs work has been carried out.
-This problem extends generally to NNs where understanding or explaining how the model works is largely ignored in favour of higher accuracy.
-One solution to this problem is the notion of \emph{concepts} which are high-level units of information \cite{ghorbani2019towards} which a NN uses to infer a label.
-These units can be visualised in a human interprettable fashion allowing for a better analysis of how a specific model behaves.
+\fig{concept}{An example concept from GCN demonstrating that when classifying the top node the model identifies the house structure and attaching arm. Note that the green nodes have different indentifiers demonstrating that this is how GCN consistently identifies the top node.}
+
+However, this success has only been demonstrated on a sample of datasets with limited analysis of how linear GNNs work.
+This problem extends generally to NNs where understanding how a model works is largely ignored in favour of higher accuracy, demonstrated in figure \note{include Pietro's figure?}.
+One solution to this problem is the notion of \emph{concepts}, shown in figure \ref{fig:concept}, which are high-level units of information \cite{ghorbani2019towards} with which a NN infers labels.
+These units can be visualised in a human interprettable fashion allowing for a better analysis of NN models.
 Extending this notion to GNNs\cite{magister2021gcexplainer,ying2019gnnexplainer} allows for linear GNNs and their non-linear counterparts to be compared providing a better understanding of how they operate.
 
-The insight provided by the concepts can highlight the limitations of GNN models and thus be used to develope improved models.
-In the case of linear GNNs this can provide further insight into how linearity influences graph structure awareness.
+The insight provided by concepts can highlight the important features of linear GNN models and thus provide further insight into how linearity influences graph structure awareness.
 This goal motivates the project which aims to provide a deeper insight into graph representaional learning and provide novel techniques to graph structure inference.
 
 %In recent years there has been rapid development and adoption of machine learning systems such as \emph{neural networks} (NN).
