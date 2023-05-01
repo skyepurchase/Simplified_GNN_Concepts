@@ -344,6 +344,7 @@ The proposed approach to explainability that this dissertation follows is that o
 As GNNs utilise both graph structure and node features concepts can provide a human interpretable representation of a GNNs decision process.
 
 \subsection{Concepts}
+\fig{concept-2}{A graph concept from BA Shapes demonstrating the desired properties of meaningfulness, coherency and importance.}
 
 % Explanation of what a concept is generally
 
@@ -354,18 +355,20 @@ A precise definition of a concept in the general sense is hard to formalise so \
 \begin{itemize}
     \item[]
         \smalltitle{Meaningfulness}
-        dictates that the concept is semantically meaningful on its own.
-        That is there is not requirement of additional concepts to provide semantic meaning.
-        An example is an object such as ``Apple'' or ``Personal Pronoun'' rather than an individual pixel or character.
+        dictates that the concept is semantically meaningful on its own requiring no additional information to provide semantic meaning.
+        For example ``Apple'' or ``Personal Pronoun'' rather than an individual pixel or character.
+        This is seen in fig. \ref{fig:concept-2} as all the graphs can be interpretted as abstract houses.
     \item[]
         \smalltitle{Coherency}
-        requires examples within a concept be perceptually the same or similar to each other whilst simultaneously being different from examples within other concepts.
-        This can be further constrained to requiring identical examples.
-        An example is ``Stripes'' containing examples of stripes and no examples of circles if ``Circles'' is another concept.
+        requires examples within a concept be perceptually the same as each other whilst simultaneously being different from examples within other concepts.
+        This can be further constrained to require identical examples.
+        For example ``Stripes'' containing examples of stripes and no examples of circles if ``Circles'' is another concept.
+        This is seen in fig. \ref{fig:concept-2} as all the graphs are isomorphic and only highlight the ``roof''.
     \item[]
         \smalltitle{Importance}
         represents how necessary the presence of a concept is to the prediction of a class.
         For example the classification of a specific object requires that the object's concept to be present but no need for background concepts.
+        This is seen in fig. \ref{fig:concept-2} as the idea of an house is necessary to know whether the highlighted node is a ``roof''.
 \end{itemize}
 
 % Relating the explanation to graph based Datasets
@@ -375,9 +378,9 @@ A precise definition of a concept in the general sense is hard to formalise so \
 %% Potentially a motivating example
 
 \paragraph{Graph concepts} can therefore be described by exemplar subgraphs of the input graph.
-These subgraphs represent both the structure and the node features defining the quintessential properties of a concept.
+These subgraphs represent both the structure and the node features defining the properties of a concept.
 The graph concepts satisfy the above desiderata: meaningfulness relates to the size of the subgraph, coherency relates to subgraph isomorphy, and importance relates to classification based on subgraphs alone.
-\note{Include a diagram, also for the above text.}
+Figure \ref{fig:concept-2} is an example graph concept created using the techniques in \Sref{sec:GCE}.
 
 % Discussion of complications when looking at graph classification
 
