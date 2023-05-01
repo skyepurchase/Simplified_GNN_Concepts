@@ -171,18 +171,15 @@ This project presents two additional approaches to improving the performance of 
 % Basic contributions with extending SGC in new ways
 
 This project extends the work of \textit{Magister et al.} \cite{magister2021gcexplainer} to an implementation of SGC \cite{wu2019simplifying}.
-To achieve a full comparison between the two systems SGC is modified to graph classification tasks. 
-These results demonstrate a major limitation of SGC on datasets with no node features as it underperforms in terms of concept score and accuracy.
-These results suggest the SGC is primarily focused on tabular data rather than graph data and lacks the necessary mechanisms to infer graph structure.
+To achieve a full comparison between the two systems SGC is modified to graph classification tasks.
+These results demonstrate a major limitation of SGC on datasets with no node features as it underperforms in terms of concept score and accuracy contrary to current literature.
+These results suggest the SGC is primarily focused on tabular data rather than graph data and lacks graph structure awareness.
 
 Two novel extensions to SGC are proposed to improve the accuracy of the model on the synthetic datasets.
-The first method proposes a method of combining GNNs using mutual concepts which is applied to SGC and GCN removing some of the unecessary non-linearity in GCN.
-This approach is shown to be successful though the performance is still limited.
+The first method proposes a method of combining GNNs using mutual concepts allowing SGC to replace unecessary non-linearity in GCN.
+This approach is shown to be successful though the performance is limited.
 The second extension utilises the method of jumping knowledge networks presented in \textit{Xu et al.} \cite{xu2018representation}.
 The approach is successful demonstrating graph structure awareness matching GCN whilst remaining negligibly non-linear.
-This new architecture outperforms SGC emphasising the importance intermediatary node representations.
-
-All these methods are analysed in the framework of graph concepts to better understand and demonstrate how approaches to graph data and structure manifest themselves.
 
 %\note{Hopefully will have implemented the dataset to get a better demonstration of the shortcomings of SGC. I would love to compare multiple techniques: GraphSAGE, GCN, GAT, GIN. Furthermore include an MLP as a baseline, hopefully showing that SGC almost behaves the same as an MLP.}
 
