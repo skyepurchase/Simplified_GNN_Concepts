@@ -9,23 +9,24 @@
 
 %% Formal definition of a graph
 
-A \emph{graph} can be formally represented as the tuple $\gG(\sV, \sE, \mX)$ where $\sV$ is the set of nodes in the graph, $\sE$ is the set of edges, and $\mX$ the data associated with the graph also known as the input features.
-Two nodes of the graph, $v_i, v_j \in \sV$, are \emph{connected} if and only if $(v_i, v_j) \in \sE$, the edge is directed with $v_i$ as the source and $v_j$ as the destination.
+A \emph{graph} can be formally represented as the tuple $\gG(\sV, \sE, \mX)$ where $\sV$ is the set of nodes in the graph, $\sE$ is the set of edges, and $\mX$ is the input features.
+Two nodes of the graph, $v_i, v_j \in \sV$, are \emph{connected} if and only if $(v_i, v_j) \in \sE$ and
+%, the edge is directed with $v_i$ as the source and $v_j$ as the destination.
 %It is possible to associate data with the edges of the graph where $(v_i, v_j, \textbf{e}_{ij}) \in \sE$ represents a connection between $v_i$ and $v_j$ and associated vector $\textbf{e}_{ij}$.
-Each node, $v_i \in \sV$, has associated data represented by the \emph{feature vector} $\vx_i = \emX_{i,\star}$ the $i^{th}$ row of $\mX$.
+each node, $v_i \in \sV$, has associated data represented by the \emph{feature vector} $\vx_i = \emX_{i,\star}$ the $i^{th}$, row of $\mX$.
 
 The edges can be represented as an \emph{adjacency matrix}, $\mA$, where 
 \begin{equation}
     \label{eq:adj}
     \emA_{ij} = \begin{cases}1 &\text{iff $(v_i, v_j) \in \sE$} \\ 0 &\text{otherwise}\end{cases}.
 \end{equation}
-This allows the edge information to be utilised by a NN along with the features $\mX$.
+%This allows the edge information to be utilised by a NN along with the features $\mX$.
 Furthermore, each node, $v_i \in \sV$, has \emph{neighbours} which is set of connected nodes,
 \begin{equation}
     \label{eq:neighbour}
     \sN_i = \{v_j | (v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE\},
 \end{equation}
-where element of $\sN_i$ is considered a \emph{neighbour} of the node $v_i$.
+where each element of $\sN_i$ is considered a \emph{neighbour} of the node $v_i$.
 %For ease of writing $\mX_{\sN_i}$ represents the features of the neighbours of $v_i$ defined as 
 %\begin{equation}
 %    \label{eq:neighbour-reps}
@@ -38,7 +39,7 @@ where element of $\sN_i$ is considered a \emph{neighbour} of the node $v_i$.
 % Formal definition of representational learning
 
 The goal of \emph{graph representational learning} is to find, for each $v_i \in \sV$, a vector $\vh_i^{(l)}$ based on the the input features $\mX$ and adjacency matrix $\mA$, where $\vh_i^{(0)} = \vx_i$.
-$\vh_i^{(l)}$ is lnown as the \emph{node representation} after the $l^{th}$-layer and $\mH^{(l)}$ is the total graph representation where $\mH_{i, \star}^{(l)} = \vh_i^{(l)}$.
+$\vh_i^{(l)}$ is the \emph{node representation} after the $l^{th}$-layer and $\mH^{(l)}$ is the total graph representation where $\mH_{i, \star}^{(l)} = \vh_i^{(l)}$.
 %It is therefore important to consider an updated version of equation \ref{eq:neighbour-reps} as $mH_{\sN_i}^{(l)} = \{\{\vh_j^{(l)} | v_j \in \sN_i\}\}$ however $\mX_{\sN_i}$ will be used and the
 
 % Comparison of graph, edge and node based learning
