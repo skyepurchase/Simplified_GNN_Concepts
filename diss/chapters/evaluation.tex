@@ -291,9 +291,8 @@ Overall, this demonstrates that though SGC does not perform as well as GCN it do
 \fig{SGC-BA-Shapes}{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
 
 Figure \ref{fig:SGC-BA-Shapes} visualises a subset of the concepts extracted for SGC on BA Shapes.
-Concepts 1 to 4 demonstrate the purer concepts extracted for SGC with concepts 5 to 7 representing the more common impure concepts.
-Concept 5 demonstrates a shortcoming of calculating purity as this is considered a ``pure'' concept as the Barabasi-Albert graphs, having more than 13 nodes, are not considered. 
-As with GCN, concept 1 demonstrates that SGC is able to identify the base graph.
+Concepts 1 to 4 demonstrate the purer concepts extracted for SGC with concepts 5 to 7 representing the common impure concepts.
+Concept 5 demonstrates a shortcoming of calculating purity: this is considered a ``pure'' concept as the Barabasi-Albert graphs, having more than 13 nodes, are not considered. 
 
 Concepts 2, 3 and 4 demonstrate that SGC can identify pure concepts with important graph structure components.
 These concepts can be directly compared to concepts 3, 2 and 4 in figure \ref{fig:GCN-BA-Shapes} respectively.
@@ -301,10 +300,8 @@ As with GCN the attaching arm is important to the classification of the nodes an
 However, as can be seen in concept 2, this distinction is not as strong as GCN.
 
 Concepts 5, 6 and 7 demonstrate the impure concepts that are extracted from SGC.
-This is the major shortcoming of SGC it cannot consistently distinguish between the base graph and the motif.
+This demonstrates that SGC cannot consistently distinguish between the base graph and the motif.
 %Given that the nodes of interest in house motif are all consistent across these concepts suggests that there is an element of structure being identified.
-The problem is that SGC is unable to discern between structures that produce similar node representations.
-
 These observations are hypothesised to be a result of limited learnable influence on node representations in SGC.
 Though equation \ref{eq:theta} suggests that the GCN node manipulation should be preserved the reality is that only the final filter output is manipulated.
 This observation leads to the extension presented in \Sref{sec:Jump-SGC} allowing SGC to access individual filter applications.
@@ -321,17 +318,17 @@ This observation leads to the extension presented in \Sref{sec:Jump-SGC} allowin
 Figure \ref{fig:BA-Community} highlights the inability of SGC to accurately discern graph structure where GCN demonstrate accurate graph structure awareness.
 Concepts 1, 2 and 3 demonstrate the purer concepts for SGC trained on BA Community and Concepts A to E represent the equivalent concepts for GCN.
 
-As discussed SGC may be able to identify graph structure, as shown in concepts 1 and 2, however concept 1 highlights the fact that SGC cannot determine which part of the graph structure a node is.
-Comparatively concepts A, B and C show similar structures except consistent labels across the concept.
+SGC may be able to identify basic graph structure, as shown in concepts 1 and 2, but concept 1 highlights the inability for SGC to determine which part of the graph structure a node is.
+Comparatively concepts A, B and C show similar structures with consistent labels across the concept.
 
 Furthermore, concept 2 groups nodes from the second community\footnote{labels 4, 5, 6 and 7.} together not nodes with the same graph structure.
 In comparison, GCN is able to discern between members in the same community demonstrated by concepts B and C
 Additionally, GCN can distinguish between different communities as concepts A and B represent the same node in the house motif but different communities.
 %This erroneous behaviour is not standard as concept 3 highlights how the Barabasi-Albert subgraphs from separate communities are grouped together.
-GCN treats the two communities different regardless of structural similarity which is clear in concepts D and E compared to concept 3.
+GCN always treats the two communities different regardless of structural similarity which is clear in concepts D and E compared to concept 3.
 
-Overall SGC is able to infer basic graph structure or group nodes into communities but is unable to achieve fine-grained awareness.
-Though particularly apparent in BA Community these behaviours of SGC effect the performance on other datasets.
+Overall SGC is able to infer basic graph structure or communities but is unable to achieve fine-grained awareness.
+Though particularly apparent in BA Community these effect the performance on other datasets.
 
 \subsection{Summary}
 %The low accuracy of SGC means that the data present in tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} does not carry much meaning.
