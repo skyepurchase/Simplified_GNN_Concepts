@@ -77,9 +77,7 @@ The number of epochs for each dataset matches those proposed in \textit{Magister
 
 \paragraph{Concept evaluation}
 Criterion \ref{crit3} requires evaluation of the models with respect to concept purity and completeness.
-These metrics are discussed in \Sref{sec:GCE} and implementation is described in \Sref{sec:concepts}.
-As well as quantitative analysis concepts lend themselves to qualitative analysis which focuses on visual similarities between the two models.
-The qualitative analysis will also help in understanding the differences in how the two architectures work.
+Concepts lend themselves to qualitative analysis which focuses on visual similarities and will help in understanding the differences in how the two architectures work.
 
 For qualitative analysis only BA Shapes and Mutagenicity will be covered in detail; brief analysis of the other datasets is presented in \Aref{app:concepts}.
 This extends to extensions where only a subset of datasets are trained on as a proof of concept.
@@ -88,10 +86,6 @@ It is important to note a number of drawbacks of the GCExplainer in comparing tw
 \begin{enumerate}
     \item 
         Concept purity is calculated only using subgraphs with less than 13 nodes.
-        This means that pure quantitative analysis does not represent a full comparison of the two models.
-    \item 
-        The number of clusters and the receptive field of the concepts can be arbitrarily manipulated to find the highest score.
-        To combat this the new SGC models are compared against the same concept extraction parameters presented in table \ref{tab:GCN-concept-params}.
     \item 
         \label{nb:accuracy}
         \textit{Ying et al.}\cite{ying2019gnnexplainer} only suggest concept extraction for models that achieve an accuracy of atleast $95\%$ on synthetic datasets. 
@@ -108,9 +102,10 @@ Drawback \ref{nb:accuracy} motivates the additional evaluation metric of accurac
 To achieve this each synthetic dataset is split into a train and test set using an 80:20 split.
 Note that TUDataset\cite{Morris+2020} and Planetoid\cite{kipf2016semi} use there own train/test splits.
 
-The synthetic datasets are generated randomly along with the train/test split and thus each random seed produces a new variation of the synthetic dataset.
-This means that using the same seeds across different experiments results in the same train/test split.
-This also means that although the hyperparameter search evaluates parameters on the test split of a dataset as different as used the evaluation test nodes are unseen.
+The synthetic datasets are generated randomly along with the train/test split and thus each random seed produces a new variation.
+This means that using the same seed results in the same train/test split.
+Thus the hyperparameter search evaluates parameters on a different test split to the evaluation test split as different seeds are used.
+This means that the evaluation test nodes are still unseen.
 
 \subsection{Confidence intervals}
 \label{sec:reporting}
@@ -147,17 +142,17 @@ This fulfills the \ref{crit2}$^{nd}$ success criterion.
 \paragraph{Method}
 In both cases across all datasets the hyperparameters presented in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params} are used.
 Each model, dataset experiment is run 10 times with different randomly pre-selected seeds and the mean and confidence interval are presented in accordance with \Sref{sec:reporting}.
-The implementation of SGC pre-computation is presented in \Sref{sec:datasets-imp}.
+The implementation of the SGC pre-computation is presented in \Sref{sec:datasets-imp}.
 The implementation of GCN uses the layers provided by \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
 
 \subsection{SGC}
 \input{tables/SGC-reproduction}
 
-Table \ref{tab:SGC-reproduction} presents the accuracy achieved by my SGC models compared to the accuracy presented in table 2 of \textit{Wu et al.}\cite{wu2019simplifying}.
-As can be seen in both Cora and Citeseer the accuracies are closely correlated, though the accuracy presented by \textit{Wu et al.} are outside of my confidence interval.
+Table \ref{tab:SGC-reproduction} presents the accuracy achieved by the reproduced SGC models compared to the accuracy presented in table 2 of \textit{Wu et al.}\cite{wu2019simplifying}.
+As can be seen in both Cora and Citeseer the accuracies are closely correlated.
 Comparitively Pubmed presents a large discrepancy between the published results and the reproduced results with large variation in the reproduced results.
 These descrepancies are likely due to the uncertainty in hyperparameters as the exact weight decay constant used is unknown.
-Furthermore, the published learning rate of 0.2 yields worse results and so, as demonstrated in table \ref{tab:SGC-reproduction-params}, new learning rates are used.
+Furthermore, the published learning rate of 0.2 yields worse results and so new learning rates are used (table \ref{tab:SGC-reproduction-params}).
 Based on these considerations I consider my implementation of SGC to be correct.
 
 \subsection{GCN}
@@ -165,23 +160,23 @@ Based on these considerations I consider my implementation of SGC to be correct.
 \paragraph{Accuracy}
 \input{tables/GCN-acc}
 Table \ref{tab:GCN-acc} presents the accuracy achieved the reproduced GCN models compared to the accuracy published in table 16 of \textit{Magister et al.}\cite{magister2021gcexplainer}.
-As can be seen in the majority of cases the reproduced accuracy matches or exceeds the accuracy presented by \textit{Magister et al.}.
+In the majority of cases the reproduced accuracy matches or exceeds the accuracy presented by \textit{Magister et al.}.
 Given the small size of the synthetic datasets it is expected that near 100\% accuracy is achieved.
 For the real-world datasets the expectation is above 85\% as suggested by \textit{Ying et al.}\cite{ying2019gnnexplainer}.
 
 BA Community is a significant outlier in the results reaching neither near 100\% or the suggested 95\%.
-However, if the model is allowed to train for more than the defined 6000 epochs an accuracy closer to 95\% is achieved.
+However, if the model is allowed to train for more than 6000 epochs an accuracy closer to 95\% is achieved.
 Due to these considerations I consider my implementation of GCN to be correct.
 
 \paragraph{Concept scores}
 \input{tables/GCN-concepts}
 Table \ref{tab:GCN-concepts} presents the concept scores for each of the top performing GCN models compared to those in tables 4 and 5 in \textit{Magister et al.}.
-As with the accuracy reproduction the values for concept completeness are closely correlated for the majority of the models.
+As with the accuracy the concept completeness scores are closely correlated for the majority of the models.
 %\fig{erroneous-labels}{A subset of the concepts discovered for Mutagenicity highlighting the erroneous labels. Each row represents a concept and the graphs are coloured according to standard chemical colouring.}
 %
 %Figure \ref{fig:erroneous-labels} demonstrates that the clustering for Mutagenicity focuses on chemical similarity which does not necessarily correlate to mutagen similarity.
 %This means that the concept completeness is likely to be low as demonstrated in \ref{tab:GCN-concepts} though the actual model accuracy may be high.
-However, average purity has little correlation between the two results which is due to the 13 node cut-off and non-deterministic nature of $k$-Means clustering.
+Though average purity has little correlation between the two results this is due to the 13 node cut-off and non-deterministic nature of $k$-Means clustering.
 %rather than an incorrect implementation.
 
 
@@ -197,16 +192,16 @@ However, average purity has little correlation between the two results which is 
 %
 %\fig{Magister-BA-Shapes}{A subset of the BA Shapes concepts discovered in figures 2, 3 and 5 from \textit{Magister et al.}\cite{magister2021gcexplainer} to demonstrate the full range of labels. Each row represents an individual concept, the same colour system is used as fig. \ref{fig:GCN-BA-Shapes}.}
 
-Figure \ref{fig:GCN-BA-Shapes} presents a comparison of BA Shapes concepts reproduced by the best performing GCN model and hose published in \textit{Magister et al.}
-Concept 1 and A are included to demonstrate that the model does identify the base graph.
-The remaining concepts demonstrate the 3 other labels associated with the house motif, as discussed in \Sref{sec:synth}.
+Figure \ref{fig:GCN-BA-Shapes} presents a comparison of BA Shapes concepts reproduced by the best performing GCN model and those published in \textit{Magister et al.}
+%Concept 1 and A are included to demonstrate that the model does identify the base graph.
+%The remaining concepts demonstrate the 3 other labels associated with the house motif, as discussed in \Sref{sec:synth}.
 All the published concepts have an equivalent concept in the reproduced concepts.
-In both results the edge attaching the house motif to the base graph is important to the classification of the nodes.
+In both models the edge attaching the house motif to the base graph is important to the classification of the nodes.
 The same distinction between concepts 2 and 3 as concepts B and C representing ``inside'' and the ``outside'' nodes respectively is also present in both.
 %Notice that in both concept 2 and B the  ``inside'' node clearly attaches to the Barabasi-Albert base graph.
 %This distinction is also present in concept 4 and D, with both the published and reproduced concepts focusing on the ``inside'' bottom node.
 
-In both cases, and as expected given the concept purity scores, the concepts related to the motifs are almost completely pure with the exception of concept 1 and B.
+In both models the concepts are almost completely pure with the exception of concept 2 and B.
 Additionally, all the nodes in the house motif have a unique concept where applicable and this leads to the high completeness score.
 
 Given the visual similarity in concepts between the published and reproduced results I consider the implementation of GCN to be accurate.
