@@ -39,11 +39,11 @@ Additionally, \Sref{sec:comp-acc} demonstrates further comparison between the mo
 \label{sec:hyperparameters}
 
 \paragraph{Reproduction}
-\textit{Magister et al.}\cite{magister2021gcexplainer} use a GCN model to evaluate their proposed graph concept explainer.
-The paper trains and evaluates the model on the same 5 synthetic node classification datasets described in \Sref{sec:synth} and therefore the same hyperparameters are used for the GCN baseline.
+\textit{Magister et al.}\cite{magister2021gcexplainer} use a GCN model to evaluate their proposed graph concept explainer on the 5 synthetic node classification datasets described in \Sref{sec:synth}.
+The hyperparameters used are presented in table 15 from \textit{Magister et al.}. 
 
-\textit{Wu et al.}\cite{wu2019simplifying} states that the weight decay parameter for the Planetoid\cite{kipf2016semi} datasets was found using \texttt{hyperopt}\cite{bergstra2013making} over 60 iterations.
-This process was repeated for results reproduction however it was found that the hyperparameters for the learning rate were different from those stated.
+\textit{Wu et al.}\cite{wu2019simplifying} use hyperopt to find the weight decay parameter for the Planetoid\cite{kipf2016semi} datasets.
+This process was repeated however it was found that the learning rates were different from those stated.
 
 The hyperparameters for these models are available in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params}.
 Additionally the concept extraction metrics are presented in table \ref{tab:GCN-concept-params}.
@@ -54,15 +54,16 @@ Additionally the concept extraction metrics are presented in table \ref{tab:GCN-
 
 \paragraph{New models}
 The core project defines 5 models based on the SGC architecture as required by criterion \ref{crit1}.
-As the underlying graph operator is the same for both GCN and SGC the degree of the SGC model same as the layers in the equivalent GCN model.
-This is the approach that \textit{Wu et al.}\cite{wu2019simplifying} take to creating there SGC models.
+As the underlying graph operator is the same for both GCN and SGC the degree of the SGC model is same as the number of layers in GCN.
+This is the approach that \textit{Wu et al.}\cite{wu2019simplifying} use to create their SGC models.
 
 The learning rate for SGC models is likely to be different from the GCN models due to the reformulation.
-Furthermore, \textit{Wu et al.}\cite{wu2019simplifying} use weight decay to keep weight values close to $0$ as would be assumed from the multiplication of weight matrices in equation \ref{eq:theta}.
+Furthermore, \textit{Wu et al.}\cite{wu2019simplifying} suggest using weight decay to keep weight values close to $0$
+%as would be assumed from the multiplication of weight matrices in equation \ref{eq:theta}.
 Rather than stochastic approaches to finding hyperparameters a sweep of values is tested.
 
 The result of these searches is presented in figures \ref{fig:SGC-surfaces} and \ref{fig:JSGC-surfaces}.
-The majority of sweeps demonstrate minimal impact on model accuracy and therefore a learning rate of $0.01$ and weight decary constant of $0.1$ is chosen.
+The majority of sweeps demonstrate minimal impact on model accuracy and therefore a learning rate of $0.01$ and weight decay constant of $0.1$ is chosen.
 The hyperparameters used are presented in table \ref{tab:SGC-params}.
 
 %\input{tables/SGC-params}
