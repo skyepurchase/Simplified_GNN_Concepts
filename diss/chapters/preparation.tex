@@ -449,17 +449,15 @@ Therefore, the described process of concept extraction and evaluation is used in
 % There may be more details about implementation
 % May need chapters here or somewhere else about inductive v. transductive!!
 
-To evaluate different GNN models using the metrics described in \Sref{sec:GCE} a trained model must to be evaluated on specific graph data and the concepts extracted from the result.
+To evaluate different GNN models using the metrics described in \Sref{sec:GCE} a trained model is evaluated on specific graph data and concepts extracted from the result.
 %To train the model the a notion of a graph dataset needs to be defined.
 As described in \Sref{sec:GRL} there are two different classification tasks of interest:
 Node classification datasets, assigning a class to each node, and graph classification datasets, assigning a class to the entire graph.
 A graph dataset is therefore described by a collection of graphs and corresponding class labels.
 
-Node classification datasets generally include a single \emph{connected} graph where, in the undirected case, there exists at least one path from every node to every other node.
+Node classification datasets generally include a single \emph{connected} graph where at least one path from every node to every other node exists.
 In comparison, graph classification tasks include a set of different graphs with a range of topologies.
 These differences give rise to the notion of transductive and inductive learning, \Aref{app:datasets}.
-
-As an extension an adjusted SGC is applied to graph classification tasks allowing for analysis of both the node and graph classification cases of GNNs.
 
 \subsection{Synthetic datasets}
 \label{sec:synth}
@@ -468,12 +466,12 @@ As an extension an adjusted SGC is applied to graph classification tasks allowin
 % Discuss how certain properties can be instilled
 % Relation to graph theory or importance thereof
 
-To better visualise and analyse concepts for GNNs it is easier to construct graphs with specific properties that produce easy to interpret concepts.
+To better analyse concepts it is easier to construct graphs with specific properties that produce interpretable concepts.
 Because these graphs are generated based on desired properties they are considered synthetic graphs.
 To carry out the analysis of the concept extraction and evalution described in \Sref{sec:GCE} the five synthetic graphs presented by \textit{Ying et al.}\cite{ying2019gnnexplainer} are used.
 
 The construction of these graphs includes a base graph onto which multiple copies of the same \emph{motif} are attached.
-A motif is a simple graph structure that should be easily recognised by a GNN and used whilst classifying a node or a graph.
+A motif is a simple graph structure that should be easily recognised by a GNN and is human intreprettable.
 The motifs and base graph have different labels and the goal is to classify each node according to the graph structure the node is a part of.
 %Note that the class of a node is dependent on the structure the node is part of rather than the features of the nodes.
 
@@ -483,19 +481,19 @@ are highly ordered graph structures that are easy to identify and differ from th
 The four motifs can be seen in figure \ref{tab:motifs}.
 As these motifs are also very simple they speed up the intensive process of calculating concept purity.
 
-The following two graphs are used as base graphs:
+The following graphs are used as base graphs:
 
 \paragraph{Barabasi-Albert (BA)}
 a densely connected graph where nodes are probabilisitically connected to each other.
 The probability of a node connecting to another is proportional to the degree of the node thus creating hubs of densely connected nodes.
 
 \paragraph{Tree}
-a binary symmetric tree (BST) of height 8 and is therefore very sparse in comparison to Barabasi.
+a binary symmetric tree (BST) as this is very sparse in comparison to Barabasi.
 These two base graphs provide two different scenarios to compare a models ability to identify the motifs accurately.
 
 Not all motifs and base graphs are paired together and only BA Shapes\footnote{Which utilises the house motif}, BA Grid, Tree Grid and Tree Cycles are considered.
-There is an additional synthetic dataset, BA Community, which combines two BA Shapes graphs and requires the model distinguish between the communities as well as identify the motifs.
-All nodes have no discerning node features except for BA Community which distinguishes between communities.
+BA Community combines two BA Shapes graphs and requires distinguishing between the communities.
+All datasets have no discerning node features except for BA Community which distinguishes between communities.
 
 \subsection{Real-world datasets}
 \label{sec:RWD}
@@ -510,14 +508,13 @@ Each graph represents a citation network where nodes are articles and edges are 
 The node features are bag of word embeddings generated from the article text.
 These datasets are available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} under the Planetoid\cite{planetoid} datasets.
 
-As an extension and to produce meaningful results that reflect real-world applications of GNNs two real world datasets are tested against.
+To produce meaningful results that reflect real-world applications of GNNs two real world datasets are used.
 These two datasets are graph classification datasets and therefore inductive datasets compared to the transductive synthetic datasets.
 These datasets are part of TUDataset \cite{Morris+2020} available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
 
 \paragraph{REDDIT BINARY}
-is a dataset where each graph represents a discussion on Reddit with nodes being users and an edge represents one user responding to anothers comment.
+is a dataset where each graph represents a discussion on Reddit with users as nodes and comments as edges.
 The discussions are sampled from IAmA, AskReddit, TrollXChromosomes, and atheism.
-IAmA and AskReddit are question-answer threads whereas TrollXChromosomes and atheism are discussion threads.
 The task is to classify the graphs as question-answer or discussion threads.
 
 \paragraph{Mutagenicity}
