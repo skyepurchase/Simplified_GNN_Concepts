@@ -117,9 +117,9 @@ As discussed in \Sref{sec:datasets-imp} choosing different seeds means that node
 \subsection{Extraction}
 \label{sec:extraction}
 
-This subsection uses idea of \emph{activation spaces} which are multidimensional spaces within which the node representations before or after a layer are expressed.
-The concept extraction discussed in \Sref{sec:GCE} requires storing and then clustering the activation space.
-The storing of the activations occurs during the experiment run and the clustering occurs after the experiment.
+This subsection uses idea of \emph{activation spaces} which are multidimensional spaces within which the node representations after an activation layer are expressed.\footnote{The term activation space, though incorrect, is also used when referring to SGC pre-computation to avoid confusion.}
+The concept extraction discussed in \Sref{sec:GCE} requires storing and then clustering this activation space.
+These occur at different points with storing occuring during the experiment run and clustering occuring afterwards.
 
 \paragraph{Storing}
 SGC and GCN behave differently in regards to storing activation spaces as SGC pre-computes the node representations whereas GCN calculates them during training.
@@ -130,13 +130,12 @@ This allows for multiple layers to be analysed without training which in turn ca
 In comparison GCN requires a function during the forward pass of the model to save the node representations.
 \texttt{PyTorch}\cite{paszke2019pytorch} provides this functionality through \emph{hooks} which are functions that can be attached to modules.
 This function will then run whenever the modules \texttt{forward} method is run and \texttt{PyTorch} will pass the input, output and module to the function.
-Thus a simple hook function is created which updates saves the modules output to a dictionary which is written out to a file after testing is complete.
+Thus a hook function is created which saves the modules output to a dictionary which is written out to a file after testing.
 %this means that the activations represent the final model.
 
 \paragraph{Clustering}
 %The described activation dictionaries can be loaded and
-For each of the layers the node representations are clustered using $k$-means.
-$k$-means is chosen for clustering as it is the best performing model in \textit{Magister et al.}\cite{magister2021gcexplainer}.
+For each of the layers the node representations are clustered using $k$-means as it is the best performing model as seen in \textit{Magister et al.}\cite{magister2021gcexplainer}.
 The specific implementation of $k$-means is provided by
 %Rather than implement my own $k$-means algorithm I utilise the algorithm already present within
 \texttt{scikit learn}\cite{scikit-learn}.
@@ -145,8 +144,8 @@ can be chosen based on the concept scores in \Sref{sec:GCE}.
 %can then motivate the choice of this value
 Though focusing on maximising the completeness will not necessarily lead to better concepts.
 
-The receptive field of a node determines how many hops between connected nodes are allowed.
-Creating subgraphs from nodes closest to a clusters centroid creates a set of example subgraphs for each concept.
+to generate subgraph examples for each concept the neighbourhood of nodes closest to a cluster centroid are included.
+The size of the neighbourhood is determined by the receptive field which determines how many hops between connected nodes are allowed.
 
 To compare SGC and GCN the same concept parameters presented in \textit{GCExplainer}\cite{magister2021gcexplainer} are used.
 
