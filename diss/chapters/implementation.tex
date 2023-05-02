@@ -87,9 +87,9 @@ To reduce this overhead multiple bash scripts are dynamically created to run sin
 
 \subsection{Reproducibility}
 \label{sec:reproducibility}
-It is important that the results that are achieved by the models, especially in regards to model accuracy, can be replicated later.
+It is important that all the results presented in \Sref{ch:evaluation} can be replicated later.
 %This is both for the results presented in this dissertation but also for results found during experimentation in the extension phase.
-To achieve this every single experiment must set a seed value which is saved along with the results.
+To achieve this every experiment must set a seed value which is saved along with the results.
 %This way when running the same configuration again using the same seed the expected outcome should be the same within very small bounds.
 Furthermore, the results achieved are linked to the model build 
 %that identifies all the hyperparameters used.
@@ -98,7 +98,7 @@ which specifies details of the model so that it can be replicated.
 %in a completely different ML pipeline.
 Thus the build files need to be human readable and easily expandable.
 
-To achieve these two requirements YAML files used as they are very readable and integrate with the rest of the pipeline.
+To achieve these two requirements YAML files are used as they are very readable and integrate with the rest of the pipeline.
 Each build has a unique YAML file following the convention \texttt{<model>.<dataloader>.<dataset>.<version>.yml}.
 Storing the YAML filename, seed and timestamp with every set of results allows for accurate reproduction.
 
