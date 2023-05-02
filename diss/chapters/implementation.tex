@@ -106,8 +106,7 @@ Storing the YAML filename, seed and timestamp with every set of results allows f
 The infrastructure used in \Sref{sec:reproducibility} also aids experimentation by linking results to configurations.
 This is particularly desirable during the extension phase where the best method is unknown.
 
-Beyond quick iteration finding the optimal hyperparameters is essential.
-Incorrect hyperparameters can lead to low performance and thus invalidate the interpretation of the models.
+Finding the optimal hyperparameters is essential as incorrect hyperparameters can lead to artificially low performance and thus invalidate the interpretation of the models.
 To find hyperparameters \texttt{sweep.py} takes a set of different hyperparameter values and runs a short evaluation of the performance.
 To properly evaluate models it is important that this evaluation does not use nodes that are in the final test set.
 As discussed in \Sref{sec:datasets-imp} choosing different seeds means that nodes in the evaluation test set are unseen.
