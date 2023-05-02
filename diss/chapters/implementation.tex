@@ -147,8 +147,6 @@ Though focusing on maximising the completeness will not necessarily lead to bett
 to generate subgraph examples for each concept the neighbourhood of nodes closest to a cluster centroid are included.
 The size of the neighbourhood is determined by the receptive field which determines how many hops between connected nodes are allowed.
 
-To compare SGC and GCN the same concept parameters presented in \textit{GCExplainer}\cite{magister2021gcexplainer} are used.
-
 \subsection{Evaluation}
 \label{sec:concept-eval}
 
@@ -169,13 +167,13 @@ The target is constructed from the node labels for each node in the input.
 To calculate the purity the three quintessential subgraphs of each concept are chosen.
 Each quintessential subgraph is chosen based on distance to the concept centroid and is constructed by a breadth-first search from the subgraphs node of interest.
 
-The purity is calculated by taking the average of the GED described in \Sref{sec:GCE} between these subgrphs.
+The purity is calculated by taking the average of the GED described in \Sref{sec:GCE} between these subgraphs.
 The graph edits that are allowed are adding or removing a node or edge ignoring the node representations.
-Thus coherence of a concept is based on graph structure rather than node representations.
+Thus coherence of a concept is based on graph structure rather than node representations, this drawback is discussed further in \Sref{sec:concept-analysis}.
 
 Three quintessential graphs are considered due to the computational cost of calculating GED.
 In the cases where the number of nodes in a subgraph exceeds 13 the purity calculation is skipped.
-It is possible to determine an upperbound on GED in $\mathcal{O}(n^3)$ however this would negatively impact the purity scores of Barabasi-Albert concepts.
+This can be mitigated by calculating an upperbound on the GED in $\mathcal{O}(n^3)$ however this would negatively impact the purity scores of Barabasi-Albert concepts.
 
 \subsection{Visualisation}
 \label{sec:vis}
