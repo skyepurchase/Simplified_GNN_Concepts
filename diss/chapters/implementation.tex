@@ -227,7 +227,7 @@ The hyperparameters used are available in \Aref{app:hyperparameters}.
 After completing the core project my extensions focus on improving the low performance demonstrated by SGC in \Sref{sec:comp-acc}.
 The motivation for the following extensions develop from the results of the core project.
 This section outlines the three extensions completed, the motivation for each and the implementation details.
-The evaluation of my extensions is presented in \Sref{sec:extension-eval}.
+The evaluation of the extensions is presented in \Sref{sec:extension-eval}.
 
 \subsection{SGC graph classification}
 \paragraph{Motivation}
@@ -237,16 +237,15 @@ Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could
 
 \paragraph{Prior work}
 \textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network proposed by \textit{Zhang et al.}\cite{zhang2018end}.
-Instead \textit{Magister et al.}\cite{magister2021gcexplainer} utilise pooling on the graph node representations from a GCN on each graph in the dataset.
+In comparison \textit{Magister et al.}\cite{magister2021gcexplainer} utilise pooling on the graph node representations from a GCN to achieve graph classification.
 %The label of the entire graph can then be inferred from this single representation.
-This method is chosen as it allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.}.
-The resulting model is a SGC model with an additional pooling layer to create a single representation for each graph.
+The latter method is chosen as it allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.}.
 
 \paragraph{Implementation}
-Concept extraction is done on the node level but each graph has a single label with no node labels and so the method proposed in \Sref{sec:concept-eval} does not work.
-This is solved by broadcasting the graph label to each of the nodes in the graph.
+The new SGC mdoel has an additional pooling layer to create a single representation for each graph.
+Each graph now has a single label with no node labels, given that concept extraction is done on the node level the method proposed in \Sref{sec:concept-eval} does not work.
 
-This allows the graphs to be combined into a disconnected forest of graphs and clustering can be carried out on this forest.
+This is solved by broadcasting the graph label to each of the nodes in the graph allowing the graphs to be combined into a disconnected forest of graphs which can be clustered.
 Calculation of concept scores and the visualisation of concept therefore remains the same as that presented in \Sref{sec:concept-eval} and \Sref{sec:vis}.
 
 \subsection{SGC and GCN mixed model}
