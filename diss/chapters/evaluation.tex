@@ -349,15 +349,15 @@ Extensions described in \Sref{sec:extensions-imp} and evaluated in \Sref{sec:ext
 \section{Extensions}
 \label{sec:extension-eval}
 \subsection{Evaluation}
-All the extensions explored focus on improving the ability of SGC or expanding the functionality of the model.
-Therefore to evaluate the success of these attempts the models are evaluated using the same techniques used in \ref{sec:evaluation}.
+All the extensions explored focus on improving or extending SGC.
+Therefore these attempts are evaluated using the same techniques used in \Sref{sec:evaluation}.
 As these are extensions a smaller subset of the graph datasets are considered looking mainly at BA Shapes, as the best performing dataset, and BA Community, as the worst.
 
 \subsection{SGC graph classification}
 \label{SGC-graph}
 \fig{SGC-Mutagenicity}{Concepts from SGC and GCN for Mutagenicity comparing the complexity of the inferred graph structure. The numbered concepts are a subset of SGC concepts and the lettered concepts are a subset of GCN. The colour scheme matches standard chemical colours.}
 
-Tables \ref{tab:SGC-acc}, \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} already include the results achieved by SGC on Mutagenicity.
+Tables \ref{tab:SGC-acc}, \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} include the results achieved by SGC on Mutagenicity.
 The same quantitative analysis presented in \Sref{sec:quant} can be applied to the results achieved by SGC.
 This suggests that the source of the graph data is not the issue, even though SGC performed well on Planetoid\cite{Fey/Lenssen/2019}.
 As discussed in \Sref{sec:comp-acc} the cause for the discrepancy is due to Planetoid\cite{Fey/Lenssen/2019} being focused on node representation.
@@ -365,9 +365,9 @@ As discussed in \Sref{sec:comp-acc} the cause for the discrepancy is due to Plan
 
 Figure \ref{fig:SGC-Mutagenicity} further highlights the shortcomings of SGC compared to GCN.
 Concepts 1, 2 and 3 focus on the inclusion of a single atom or small molecule structure wheres A, B and C demonstrate complex multi-atom structures.
-Concepts 1 and 2 suggest identification structure though consistently focus on single atoms whereas concepts A and B show consistent multi-atom structures.
-In the extreme concept 3 highlights the focus on grouping by atom, the major consistent feature the chlorine atom.
-In comparison, concept C highlights how GCN is able to identify very large structures, two cyclic rings are consistently identified across all examples.
+Concepts 1 and 2 suggest the identification structure though consistently focus on single atoms whereas concepts A and B show consistent multi-atom structures.
+In the extreme concept 3 highlights the focus on grouping by atom as chlorine is the main consistent feature across subgraphs.
+In comparison, concept C highlights how GCN is able to identify very large structures with two cyclic rings consistently identified.
 
 \subsection{SGC and GCN mixed model}
 \label{sec:SGCN}
