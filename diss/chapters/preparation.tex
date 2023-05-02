@@ -299,12 +299,15 @@ As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a si
 
 The final linearised model, SGC, is therefore
 \begin{equation}
-    \label{eq:SGC}
     \hat\mY = \operatorname{softmax}(\mS^{k}\mX\bm{\Theta}).
 \end{equation}
 
 As $\mS$ is fixed for a specific graph $\mS^k\mX$ is fixed if $\mX$ is fixed.
-Thus SGC can be broken down into representation extraction, $\bar\mX = \mS^k\mX$, and a classification, $\hat\mY = \operatorname{softmax}(\bar\mX\bm{\Theta})$.
+Thus SGC can be broken down into representation extraction, $\bar\mX = \mS^k\mX$, and a classification
+\begin{equation}
+    \label{eq:SGC}
+    \hat\mY = \operatorname{softmax}(\bar\mX\bm{\Theta}).
+\end{equation}
 This allows for $\bar\mX$ to be precomputed for given node features $\mX$.
 %or just $\mS^k$, allowing for the pre-computation of different node features.
 %Furthermore, different node features can be quickly calculated as $\mS^k$ can be precomputed.

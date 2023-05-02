@@ -6,24 +6,22 @@
 The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} as well as the Planetoid\cite{planetoid}\cite{citation} datasets.
 
 \paragraph{Synthetic datasets}
-The synthetic datasets discussed in \Sref{sec:synth} are proposed by \textit{Ying et al.}\cite{ying2019gnnexplainer} are available pre-built in their github and \texttt{PyTorch Geometric} provide limited versions of a small subset I decide to implement them myself.
-This allows for more rigorous testing 
-%of both the datasets and the SGC precomputation later 
-described in \Sref{sec:testing-imp}.
+The synthetic datasets discussed in \Sref{sec:synth} are available pre-built on github and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} provide limited versions of a small subset.
+Rather than use these the datasets are reimplemented to allow for more rigorous testing described in \Sref{sec:testing-imp}.
 
-The motifs described in \Sref{sec:synth} can be hard-coded.
+%The motifs described in \Sref{sec:synth} can be hard-coded.
 %each motif is therefore an adjacency matrix (in coordinate form) and a label vector.
 When generating the dataset the base graph adjacency is generated first. 
 %with a label vector assigning every node to class 0.
 %The Barabasi-Albert graph is generated probabilistically adding one node at a time and connecting each node to the existing graph based on the degree of the nodes currently in the graph.
-Then each motif required is 
+Then the hard-coded adjacency for each motif required is 
 %the hard-coded tensors are adjusted and 
 appended to the on going adjacency matrix and label vector by connecting
 %This adjustment includes adding an additional bidirectional connection between 
 a random node in the base graph to a predetermined node of the motif.
 
-The datasets need to be compliant with \texttt{PyTorch Geometric} to be used correctly during training.
-\texttt{PyTorch Geometric} provides an \texttt{InMemoryDataset} abstract class for datasets that are small enough to be generated and stored within RAM.
+The datasets need to be compliant with \texttt{PyTorch Geometric} to be used correctly and so must extend the \texttt{InMemoryDataset} abstract class. 
+This is designed for datasets that are small enough to be generated and stored within RAM.
 %As these are transductive datasets as described in \Sref{sec:datasets-theory} 
 Each dataset contains a single graph \texttt{Data} object is created that is then accessed through a dataloader.
 
@@ -48,18 +46,17 @@ This process is achieved with three functions that calculate the normalised filt
 %by computing the required matrices and multiplications, 
 convert the matrix form and successively apply the filter to the node representations.
 
-This results in a new feature matrix which replaces the \texttt{Data} object features.
-Thus the SGC model does not need any adjacency matrix and can instead be implemented as a classifier.
+This results in a new feature matrix which replaces the original \texttt{Data} object's features.
+Equation \ref{eq:SGC} shows that SGC does not need any adjacency informartion and can instead be implemented as a classifier.
 For the sake of consistency and to aid the concept evaluation functions in \Sref{sec:concepts} the adjacency matrix is keep.
 %A new \texttt{Data} object is created copying the labels, data splits and adjacency of the input graph but with the pre-computation matrix as the feature matrix.
-The \texttt{Data} object is copied with updated features allowing for the implementation of the SGC and GCN mixed model proposed in \Sref{sec:SGCN}.
+This also aids the implementation of the SGC and GCN mixed model proposed in \Sref{sec:SGCN}.
 
 \section{Models}
 \label{sec:models}
 
-\texttt{PyTorch Geometric} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
-Beyond the standard \texttt{forward} method of \texttt{PyTorch}\cite{paszke2019pytorch} an addition \texttt{message\_passing} method is also present.
-This method is called during the \texttt{forward} method providing the node representations and associated adjacency.
+\texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
+\texttt{MessagePassing} extends the \texttt{PyTorch} \texttt{Module} class adding the \texttt{message\_passing} method which is called during the \texttt{forward} method passing node representations and associated adjacency.
 This method allows the implementation of the function
 \begin{equation}
     \mH^{(l+1)} = \mS\mH^{(l)}\bm{\Theta}^{(l)},
