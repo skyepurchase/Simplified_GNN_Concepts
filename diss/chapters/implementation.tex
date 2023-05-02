@@ -280,26 +280,22 @@ In comparison GCN is able to manipulate node representations and can therefore i
 This suggests that low accuracy seen in \Sref{sec:comp-acc} and poor graph structure awareness seen in \Sref{sec:comp-concept} may be due to the linearity or lack of influence.
 
 Therefore the novel \emph{jump-SGC}(JSGC) is proposed which provides the classifier with node representations from each degree of the pre-computation.
-This larger feature matrix is reduced allowing for JSGC to effectively manipulate the node representations.
 This idea mimics \emph{jumping knowledge networks} (JKNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
 
 \paragraph{Prior work}
 \textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing a nodes neighbourhood.
-The motivation for JKNs is the node aggregation methods used resulted in neighbourhood influence similar to a random walk rather than a uniform influence.
 As a solution they propose aggregating the the node representations after successive neighbourhood aggregation layers together.
-Three main methods of aggregation are proposed but given the small size of the datasets the proposed concatenation method is best suited.
+Three main methods of aggregation are proposed but given the small size of the datasets the concatenation method is chosen.
 
-By concatenating successive neighbourhood aggregations and then reducing the dimensionality to a single node representation uniform influence can be achieved.
-This is because detail present in the closer neighbourhoods can be combined with the wider awareness of the more receptive neighbourhoods.
-Rather than missing larger structure awareness or missing detail JKNs allow for an analysis of both.
+By concatenating successive neighbourhood aggregations and then reducing the dimensionality uniform influence across all $k$-depth neighbourhoods is achieved.
+This is because the detail present in the smaller neighbourhoods can be combined with the wider awareness of larger neighbourhoods.
 
 \paragraph{Implementation}
-For JSGC this leads to two changes to the model and pre-computation.
+For JSGC this leads to two changes to the pre-computation and model.
 During pre-computation successive applications of the normalised filter are concatenated together.
-A linear layer is then added to the standard SGC to reduce this concatenated representation space to the standard representation space.
-During this stage JSGC is able to infer more complex graph structure than SGC.
+A linear layer is then added to the standard SGC to reduce this concatenated dimension, during this JSGC is able to infer more complex graph structure than SGC.
 To combine this with the classifier a single non-linear rectified linear unit layer is introduced.
-This non-linearity remains constant regardless of how the model scales and therefore the added potential benefits of the single non-linear layer is deemed negligible.
+This non-linearity remains constant regardless of how the model scales and therefore it is deemed negligible.
 
 \section{Repository}
 
