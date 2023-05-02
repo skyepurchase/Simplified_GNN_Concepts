@@ -195,29 +195,22 @@ This provides additional information about the coherence of the concepts labels.
 \section{Testing}
 \label{sec:testing-imp}
 As discussed in \Sref{sec:testing} the project utilises two forms of testing to verify the implementation.
-Additionally, running the pipeline, described in \Sref{sec:pipeline}, verifies that the modules ntegrate correctly.
-Where modules are not implemented dummy data or functions are used instead.
+Additionally, the pipeline (described in \Sref{sec:pipeline}) verifies that the modules integrate correctly.
 
 \paragraph{Unit testing}
-Three components of the software follow traditional software development and therefore unit tests are used to verify implementation
+Three components of the software follow traditional software development and therefore unit tests are used:
 \begin{itemize}
     \item[] 
         \smalltitle{Synthetic datasets} 
         These have strict defining properties based on the parameters passed during initialisation.
         Verification of the datasets can be done with hard-coded values for small initialisations and
         %to verify the correct motif is used or base graph.
-        for larger instances general are
+        general properties for larger instances.
         %properties such as the expected number of nodes, number of classes, and number of nodes within a given class can be
-        used to verify that the correct procedure was taken.
     \item[] 
         \smalltitle{Pre-computation}
-        This is a theoretical calculation which
-        %where the specific matrix multiplications
-        has already been verified through the derivation in \Sref{sec:GCN} and \Sref{sec:SGC}.
-        However, to verify that these are correctly implemented
-        %and that the application of the filter is correct
-        small test graphs are used.
-        In these cases the expected results can be calculated by hand.
+        This has already been verified through the derivation in \Sref{sec:GCN} and \Sref{sec:SGC}.
+        However, to verify that these are correctly implemented small test graphs are used.
     \item[] 
         \smalltitle{Concept evaluation}
         %Though parts of this implementation use algorithms provided by \texttt{scikit learn}\cite{scikit-learn} the results of these functions needs to be verified in the new context.
@@ -226,7 +219,8 @@ Three components of the software follow traditional software development and the
 \end{itemize}
 
 \paragraph{Reproduction of prior results}
-Successful reproduction of both \textit{Magister et al.}\cite{magister2021gcexplainer}'s and \textit{Wu et al.}\cite{wu2019simplifying}'s results in presented in \Sref{sec:reproduction}.
+for both \textit{Magister et al.}\cite{magister2021gcexplainer} and \textit{Wu et al.}\cite{wu2019simplifying} are presented in \Sref{sec:reproduction}.
+The hyperparameters used are available in \Aref{app:hyperparameters}.
 
 \section{Extensions}
 \label{sec:extensions-imp}
