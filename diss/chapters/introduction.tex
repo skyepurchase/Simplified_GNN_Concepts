@@ -3,7 +3,7 @@
 % Short introduction giving a full overview
 
 \emph{
-    This dissertation explores the effect that linearising graph neural network (GNN) architectures has on performance and graph structure awareness.
+    This dissertation explores the effect that simplifying graph neural network (GNN) architectures through linearisation has on performance and graph structure awareness.
     It demonstrates that the current approach to linearising GNNs results in poor graph structure awareness but in response presents two novel approaches to graph representational learning.
     The first approach presents a new method of combining GNN architectures and the second demonstrates accurate graph structure awareness whilst remaining linear.
 %Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the model's choice of label.
@@ -24,12 +24,12 @@
 \emph{Neural networks} (NN) are able to infer complex relationships within data, \emph{graph neural networks} (GNN) extend this functionality to connected systems where predetermined relationships exist between datapoints.
 In these systems, such as social networks\cite{pmlr-v70-gilmer17a} and molecules\cite{DBLP:journals/corr/abs-1806-01973}, the data can be represented as nodes connected by edges in a graph.
 However, the popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.\cite{wu2019simplifying}
-Instead \emph{linear GNNs} have been proposed\cite{chanpuriya2022simplified,navarin2020linear,wu2019simplifying} which aim to match the performance of their non-linear counterparts with great success.
+Instead \emph{simplified GNNs} (specifically \emph{linear GNNs}) have been proposed\cite{chanpuriya2022simplified,navarin2020linear,wu2019simplifying} which aim to match the performance of their non-linear counterparts with great success.
 
 \fig{concept}{An example concept from GCN demonstrating that when classifying the top node the model identifies the house structure and attaching arm. Note that the green nodes have different indentifiers demonstrating that this is how GCN consistently identifies the top node.}
 
 However, this success has only been demonstrated on a sample of datasets with limited analysis of how linear GNNs work.
-This problem extends generally to NNs where understanding how a model works is largely ignored in favour of higher accuracy, demonstrated in figure \note{include Pietro's figure?}.
+This problem extends generally to NNs where understanding how a model works is largely ignored in favour of higher accuracy.
 One solution to this problem is the notion of \emph{concepts}, shown in figure \ref{fig:concept}, which are high-level units of information \cite{ghorbani2019towards} with which a NN infers labels.
 These units can be visualised in a human interprettable fashion allowing for a better analysis of NN models.
 Extending this notion to GNNs\cite{magister2021gcexplainer,ying2019gnnexplainer} allows for linear GNNs and their non-linear counterparts to be compared providing a better understanding of how they operate.
