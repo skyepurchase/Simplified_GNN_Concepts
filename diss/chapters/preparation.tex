@@ -344,7 +344,7 @@ The proposed approach to explainability that this dissertation follows is that o
 As GNNs utilise both graph structure and node features concepts can provide a human interpretable representation of a GNNs decision process.
 
 \subsection{Concepts}
-\fig{concept-2}{A graph concept from BA Shapes demonstrating the desired properties of meaningfulness, coherency and importance.}
+\fig{concept-2}{A graph concept from BA Shapes demonstrating the desired properties of meaningfulness, coherency and importance. Green highlights the node of interest and pink represents the local nieghbourhood.}
 
 % Explanation of what a concept is generally
 
@@ -406,42 +406,41 @@ The aim is providing global explanations for a specific dataset class to better 
 %% Discussion of short comings of clusterings
 %% Discussion of further benefits of latent space
 
+\paragraph{Concept extraction}
+uses $k$-Means clustering on the node representations of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
+This clusters nodes by the similarity of the representations as the model is likely to treat those nodes the same.
+Subgraphs centred on a cluster's nodes provide the high-level unit required by \textit{Ghorbani et al.}\cite{ghorbani2019towards}.
+An example of an extracted concept is presented in figure \ref{fig:concept-2}.
+%For the purposes of SGC the same process is carried out on $\bar\mX$, the pre-computed features.
+
 \paragraph{Concept scores} are generated for each concept representing how meaningful, coherent and important a specific set of concepts are.
-These scores also allow for further exploration of the concept space for a specific model.
+These scores allow for further exploration of the concept space for a specific model.
 
 \paragraph{Concept purity}
-relates to the coherence of a concept and is best represented by subgraph isomorphy within a concept's exemplar subgraphs.
-High concept purity indicates a coherent concept and therefore a likely global concept of the model.
-As concept purity is tied to graph similarity \textit{Magister et al.}\cite{magister2021gcexplainer} suggest using the \emph{graph edit distance} (GED) as the measure of purity.
-The GED is calculated using the following equation
+relates to the coherence of a concept and is best represented by subgraph isomorphy.
+High concept purity indicates a coherent concept and therefore a global concept of the model.
+As concept purity is tied to graph similarity \textit{Magister et al.}\cite{magister2021gcexplainer} suggest using the \emph{graph edit distance} (GED) which calculated as 
 \begin{equation}
     \label{eq:GED}
     \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
 \end{equation}
 where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c(e_i)$ is the cost of carrying out an edit operation $e_i$.\footnote{This process is NP-Hard and so in most cases an exact purity score is infeasible to compute.}
 By this metric a high purity score is represented by a lower number with 0 being completely pure.
+The concept in figure \ref{fig:concept-2} has a purity score of 0 as all the graphs are isomorphic.
 
 \paragraph{Concept completeness}
 relates to the importance of the concept determining whether the correct output can be predicted from the concepts alone.
-A high accuracy in classifying the graph according to its concepts indicates that the concepts extracted are important.
-Due to the construction of concepts through clustering the resulting concept space is not easily separable by classifiers such as logistic regressors.
-\textit{Magister et al.}\cite{magister2021gcexplainer} suggest using a decision tree\cite{kazhdan2020now}.
+High accuracy in classifying the graph according to its concepts indicates that the concepts extracted are important.
+As the concept space is not easily separable by classifiers such as logistic regressors \textit{Magister et al.}\cite{magister2021gcexplainer} suggest using a decision tree\cite{kazhdan2020now}.
 
 % Detailing why this method was chosen
 
 %% The improvements seen in the paper in regards to visual comparison
 %% The clear metrics for comparison
 
-\paragraph{Concept extraction}
-uses $k$-Means clustering on the node representations of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
-This clusters nodes by the similarity of the representations as this is equivalent to the model treating these nodes as the same concept.
-Concept subgraphs include the local neighbourhood of the clustered nodes to provide the high-level unit required by \textit{Ghorbani et al.}\cite{ghorbani2019towards}.
-%For the purposes of SGC the same process is carried out on $\bar\mX$, the pre-computed features.
-
 \paragraph{Comparing concepts} between two models trained on the same dataset can give an indication as to how the two models differ in their inference.
-Furthermore, the differences present between the two models provides further insight into how the models reason about the task.
-For this reason the process of concept extraction and evaluation presented in \textit{Magister et al.}\cite{magister2021gcexplainer} is chosen to compare how SGC and GCN explainer classify graphs given that both models use the same underlying spectral filter.
-This allows for a better analysis of the importance of non-linearity in GNNs.  
+Furthermore, the differences present between the two models provides further insight into how the models reason.
+Therefore, the described process of concept extraction and evaluation is used in comparing how SGC and GCN operate to analyse the importance of non-linearity in GNNs.  
 
 \section{Datasets}
 \label{sec:datasets-theory}
