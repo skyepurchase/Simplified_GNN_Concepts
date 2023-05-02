@@ -79,11 +79,11 @@ As the main aspect of this project is concept extraction, evaluation, and interp
 Unfortunately, for the purposes of the core project and extensions a single wrapper is not possible.
 This is because the wrappers need to behave differently for SGC and GCN as GCN needs additional adjacency information.
 Additionally the real-world graph classification datasets require one-hot encoding when calculating loss whereas the synthetic datasets do not.
-Therefore the project implements 5 different wrappers to accomodate these differences.
+Therefore the project implements 5 different wrappers.
 
-The datasets, pre-computation and dataloaders discussed in \Sref{sec:datasets-imp}, the models described in \Sref{sec:models} and the wrappers are then instantiated, run and results saved in a single \texttt{main.py} file.
+The datasets, pre-computation and dataloaders discussed in \Sref{sec:datasets-imp}, the models described in \Sref{sec:models} are controlled by \texttt{main.py}.
 To run a single experiment the specific model build, dataset, seed, save destinations, etc. need to be passed to this function.
-To reduce this overhead multiple bash scripts can be dynamically created to run single quick experiments or full experiments which test the model on prechosen random seeds.
+To reduce this overhead multiple bash scripts are dynamically created to run single quick experiments or full experiments which test the model on prechosen random seeds.
 
 \subsection{Reproducibility}
 \label{sec:reproducibility}
