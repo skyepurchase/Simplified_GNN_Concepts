@@ -335,7 +335,7 @@ Though particularly apparent in BA Community these effect the performance on oth
 %However, table \ref{tab:SGC-completeness} does suggest that SGC does not produce useful concepts even though table \ref{tab:SGC-purity} suggests that these concepts are coherent.
 
 SGC is not as capabale as GCN when dealing with synthetic datasets where graph structure is important.
-Table \ref{tab:SGC-acc} demonstrates poor performance across the full range of synthetic datasets and tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} show the corresponding low concept scores.
+Table \ref{tab:SGC-acc} demonstrates poor performance across all of the synthetic datasets and tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} show the corresponding low concept scores.
 Attempts to improve the performance by increasing the parameters of SGC have resulted in no substantial improvement to accuracy or concept score.
 
 The concepts extracted from SGC across the datasets demonstrate a lack of graph structure awareness which is a key feature of any GNN.
@@ -344,7 +344,7 @@ These results suggest that the linearisation of GCN clearly does not maintain th
 
 However, as discussed in \Sref{sec:comp-acc}, the lack of influence that SGC has on node representations is likely the cause for low performance.
 SGC can only manipulated the final convolution node representations which provide limited insight into the structure of the graph.
-Extensions described in \Sref{sec:extension-imp} and evaluated in \Sref{sec:extension-eval} aim to combat this to provide a fairer comparison between the two models.
+Extensions described in \Sref{sec:extensions-imp} and evaluated in \Sref{sec:extension-eval} aim to combat this to provide a fairer comparison between linear and non-linear GNNs.
 
 \section{Extensions}
 \label{sec:extension-eval}
