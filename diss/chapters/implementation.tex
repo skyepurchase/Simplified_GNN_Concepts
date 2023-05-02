@@ -251,9 +251,9 @@ Calculation of concept scores and the visualisation of concept therefore remains
 \subsection{SGC and GCN mixed model}
 \label{sec:SGCN}
 \paragraph{Motivation}
-The derivation in \Sref{sec:SGC} shows that SGC is directly derived from GCN using the same graph filter and so the two models should be interchangeable to some extent.
+The derivation in \Sref{sec:SGC} shows that SGC is directly derived from GCN using the same graph filter and so the two models should be interchangeable.
 Futhermore, the benefit of SGC is to reduce the complexity of GCN and pre-compute the graph operation.
-For the very small datasets in \Sref{sec:datasets-imp} the improvement on cost and reduction in parameters is not significant this is not the case for larger datasets.
+Though very small datasets have little improvement on cost or reduction in parameters this is not the case for larger datasets.
 
 However, due to the low accuracy of SGC seen in \Sref{sec:comp-acc} some properties of GCN must be required for high accuracy.
 A mixture of both, referred to as SGCN, could therefore yield a high accuracy model with fast pre-computation.
