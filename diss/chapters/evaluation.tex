@@ -211,28 +211,27 @@ Examples of the other datasets are available in \Aref{app:concepts}.
 \input{tables/SGC-acc}
 
 Table \ref{tab:SGC-acc} demonstrates the mean accuracies achieved by each of the SGC models using the hyperparameters in \ref{tab:SGC-params}.
-As a comparison the accuracies achieved by GCN are presented beside them.
-The performanace of SGC is very poor and so random guesses are included to demonstrate this.
+As a comparison the accuracies achieved by GCN are included, and as performanace of SGC is very poor random guesses are included.
 
 \paragraph{Compared to GCN}
 the accuracies achieved by SGC are significantly worse and go against \textit{Wu et al.}'s claim that SGC can match GCN perfomance.
 In the majority of cases the accuracy achieved by SGC is roughly $50\%$ less than that achieved by GCN.
-BA Grid, the highest performing dataset, achieves $72.4\%$ accuracy which is still $27.1\%$ less than GCN.
+BA Grid, the highest performing dataset, achieves $72.4\%$, $27.1\%$ less than GCN.
 %does SGC achieve a good accuracy in comparison to GCN though even here the difference in accuracy is $27.1$\%.
 
 These poor results suggest that the graph structure awareness of SGC is far worse than that of GCN as labels are based only on graph structure.
 This is also an explanation for why SGC is able to surpass the accuracy of GCN in the Planetoid\cite{kipf2016semi} datasets as these datasets rely heavily on node representations.
 
 \paragraph{Compared to random guesses}
-SGC does not perform significantly better except in the cases of BA Shapes and BA Grid.
+SGC does not perform significantly better than random guesses except in the cases of BA Shapes and BA Grid.
 In the cases of the Tree datasets this can be attributed to the sparsity of the base graph where the motif structure and BST structure share similar connectivity.
-
 In comparison the dense BA graph allows for a better distinction between the motifs and the base graph.
+
 This distinction is attributed to the degree normalisation demonstrated in equation \ref{eq:GCN-as-GNN}.
-This advantage is not present in BA Community the two communities and the possibility of a motif having multiple connections to different base graphs.
+This advantage is not present in BA Community due to the communities and the possibility of a motif having multiple connections to different base graphs.
 
 These results are not due to poor hyperparameter selection as demonstrated in \Aref{app:hyperparameters} and discussed in \Sref{sec:hyperparameters}.
-Instead the explanation for the poor performance is due to the lack of proper graph structure awareness.
+Instead the explanation for the poor performance is due to the lack of graph structure awareness.
 
 \paragraph{Comparison of parameters}
 Given that SGC uses a single classifier layer compared to GCNs multiple layers there is a large discrepancy in the number of parameters\footnote{SGC has roughly 40 parameters compared to GCN with $>$1000 for BA Shapes.}.
