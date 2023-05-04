@@ -177,7 +177,7 @@ To motivate the idea of the SGC it is important to think of $\mS$ from a differe
 represented by the node representation $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
 
 As an analogy to Fourier analysis $f_\theta \star_\sG \vh_i$ is defined in the graph spectral domain.
-Any signal on a graph can be projected onto the eigenvectors of the graph Laplacian, $\mL = \mU\bm{\Lambda}\mU^T$, where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$.
+Any signal on a graph can be projected onto the eigenvectors of the graph Laplacian, $\mL = \mD - \mA = \mU\bm{\Lambda}\mU^T$, where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$.
 Therefore the graph Fourier transform of a graph function $g$ is
 \begin{equation}
     \hat{g} = \mU^Tg
@@ -196,9 +196,11 @@ Therefore the graph Fourier transform of a graph function $g$ is
 %This transforms $\vh_i$ into its frequency components according to the spectral domain of the graph.
 
 This transformation is applied to $\vh_i$ and $f_\theta$ so that $\hat\vh_i$ and $\hat f_\theta$ are projected onto the graph eigenvectors.
-As the eigenvectors are orthonormal this means $\mU^T(f_\theta \star_\sG \vh_i) = \hat f_\theta \odot \hat\vh_i$ where $\odot$ is the hadamard product (\Aref{app:orth}).
-Let $\hat\mF_\theta = \operatorname{diag}(f_\theta)$ then
+As the graph Laplacian is symmetric the inverse transform exists, applying $\mU$ instead of $\mU^T$.
+Thus the graph convolution is defined as $f_\theta \star_\sG \vh_i = \mU(\hat f_\theta \odot \hat\vh_i)$ where $\odot$ is the hadamard product.
+To simplifying the calculation let $\hat\mF_\theta = \operatorname{diag}(f_\theta)$,
 \begin{equation}
+    \label{eq:conv}
     f_\theta \star_\sG \vh_i = \mU\hat\mF_\theta\mU^T\vh_i.
 \end{equation}
 
@@ -216,24 +218,26 @@ Let $\hat\mF_\theta = \operatorname{diag}(f_\theta)$ then
 To prevent $\hat\mF_\theta$ growing with the dimension of the signal it can be defined as a power series of the fixed Laplacian eigenvalue matrix,
 \begin{equation}
     \label{eq:filter}
-    \hat\mF_{\bm{\theta}} = \sum_{i=0}^k\theta_j\bm{\Lambda}^j.
+    \hat\mF_{\bm{\theta}} = \sum_{j=0}^k\theta_j\bm{\Lambda}^j.
 \end{equation}
 
-\textit{Kipf et al.}\cite{kipf2016semi} suggest using $k=1$ and define $\theta = \theta_0 = -\theta_1$ resulting in
+%\textit{Kipf et al.}\cite{kipf2016semi} suggest using $k=1$ and define $\theta = \theta_0 = -\theta_1$ resulting in
+Using this new filter in equation \ref{eq:conv} yield the following formulation of the graph convolution
 \begin{equation}
     \label{eq:GCN-comp}
-    f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i = \theta(\mI - \mL)\vh_i.\footnote{$\mU\bm{\Lambda}^j\mU^T = \mU\underbrace{\bm{\Lambda}\cdots\bm{\Lambda}}_j\mU^T = \underbrace{\mU\bm{\Lambda}\mU^T\mU\cdots\mU^T\mU\bm{\Lambda}\mU^T}_j = (\mU\bm{\Lambda}\mU^T)^j$}
+    f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i.\footnote{$\mU\bm{\Lambda}^j\mU^T = \mU\underbrace{\bm{\Lambda}\cdots\bm{\Lambda}}_j\mU^T = \underbrace{\mU\bm{\Lambda}\mU^T\mU\cdots\mU^T\mU\bm{\Lambda}\mU^T}_j = (\mU\bm{\Lambda}\mU^T)^j$}
+    %= \theta(\mI - \mL)\vh_i.
 \end{equation}
 
 Computation of the eigendecomposition of $\mL$ is expensive for large graphs so \textit{Hammond et al.}\cite{hammond2011wavelets} suggest using Chebyshev polynomials (\Aref{app:chebyshev}).
 %With the additional assumption that a NN can adapt to scaling we assume that the maximum eigenvalue is approximately $2$.
-Using the first order Chebyshev polynomial, $\mL - \mI$,
-and the normalised graph Laplacian, $\mL = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$ (\Aref{app:laplacian}), equation \ref{eq:GCN-comp} can be written as 
+Using the first order Chebyshev polynomial, $\mI + (\mL - \mI)$, and the normalised graph Laplacian, $\mL^{sym} = \mD^{-\frac12}\mL\mD^{-\frac12} = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$ equation \ref{eq:GCN-comp} can be written as 
 \begin{equation}
     \label{eq:no-norm}
-    f_\theta *_\sG \vh_i \approx \theta(\mI - (\mL - \mI))\vh_i = \theta(\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\vh_i.
+    f_\theta *_\sG \vh_i \approx (\theta_1\mI + \theta_2(\mL - \mI))\vh_i \approx \theta(\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\vh_i,
 \end{equation}
 
+where $\theta = \theta_1 = - \theta_2$ as suggested by \textit{Kipf et al.}\cite{kipf2016semi}.
 The filter can then be used to update the node representations as such
 %Applying an individual paramaterised filter to each signal, that is each node, in the graph results in the following formulisation
 \begin{equation}

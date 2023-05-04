@@ -1,11 +1,39 @@
 \chapter{Graph Convolution Network}
 
-\section{Graph laplacian}
-\label{app:laplacian}
-
-\error{Include discussion of what the laplacian is, the eigendecomposition, and the normalised laplacian}
-
-\section{Chebyshev polynomials}
+\section{Chebyshev polynomial filter}
 \label{app:chebyshev}
 
-\error{Discuss chebyshev polynomials and the assumptions made}
+Chebyshev polynomials are recursively defined as the following
+
+\begin{align}
+    T_k(x) &= 2xT_{k-1}(x) - T_{k-2}(x), \\
+    T_0(x) &= 1, \\
+    T_1(x) &= x.
+\end{align}
+
+Rather than define $\hat\mF_\theta$ as a power series on the eigenvalues of the graph Laplacian, $\bm{\Theta}$ it can be defined as a Chebyshev polynomial
+
+\begin{equation}
+    \hat\mF_\theta = \sum_{j=0}^k\theta_jT_j(\widetilde{\bm{\Lambda}}).
+\end{equation}
+
+where $\widetilde{\bm{\Lambda}} = \frac2{\lambda_{max}}\bm{\Lambda} - \mI$ and $\lambda_{max}$ is the largest eigenvalue. This keeps the values of $\bm{\Lambda}$ in the range $(-1, 1]$.
+
+Looking at equation \ref{eq:GCN-comp} this allows the new formulation of the graph convolution as 
+
+\begin{equation}
+    \label{eq:chebnet}
+    f_\theta \star_\sG \vh_i = \sum_{j=0}^k \theta_jT_j(\widetilde{\mL})\vh_i.
+\end{equation}
+
+where $\widetilde{\mL} = \frac2{\lambda_{max}}\mL - \mI$. It can be assumed that $\lambda_{max} = 2$ as during training the parameters will adapt to any scaling on the filter. This means that $\widetilde{\mL} = \mL - \mI$ Therefore the first order approximation of the Chebyshev polynomial filter in equation \ref{eq:chebnet} is 
+
+\begin{equation}
+    (\theta_1\mI - \theta_2(\mL - \mI))\vh_i
+\end{equation}
+
+%\section{Graph laplacian}
+%\label{app:laplacian}
+%
+%\error{Include discussion of what the laplacian is, the eigendecomposition, and the normalised laplacian}
+

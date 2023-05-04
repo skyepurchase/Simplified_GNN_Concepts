@@ -183,7 +183,7 @@ def plot_latent_space(latent_data_list: List[NDArray],
         None"""
  
     fig: FigureBase
-    fig, axes = plt.subplots(1, len(latent_data_list), dpi=200)
+    fig, axes = plt.subplots(1, len(latent_data_list))
     fig.suptitle(f'Latent space of {", ".join(names)}')
     colors = ["tab:blue", "tab:orange", "tab:green", "tab:red"]
 
