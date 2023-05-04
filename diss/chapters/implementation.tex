@@ -247,12 +247,11 @@ Calculation of concept scores and the visualisation of a concept remains the sam
 \subsection{SGC and GCN mixed model}
 \label{sec:SGCN}
 \paragraph{Motivation}
-The derivation in \Sref{sec:SGC} shows that SGC is directly derived from GCN using the same graph filter and so the two models should be interchangeable.
-Furthermore, the benefit of SGC is to reduce the complexity of GCN and pre-compute the graph operation.
-Though very small datasets have little improvement in cost or reduction in parameters this is not the case for larger datasets.
+The benefit of SGC is to reduce the complexity of GCN and pre-compute the successive applications of the graph filter, described in equations \ref{eq:op} and \ref{eq:norm}, by removing the non-linearity between layers.
+This pre-computation reduces the cost of training a model as it can be calculated before training unlike in GCN.
 
-However, due to the low accuracy of SGC seen in \Sref{sec:comp-acc} some properties of GCN must be required for high accuracy.
-A mixture of both, referred to as SGCN, could therefore yield a high-accuracy model with fast pre-computation.
+However, due to the low accuracy of SGC in comparison to GCN, seen in \Sref{sec:comp-acc}, some properties of GCN must be required to achieve high accuracy.
+Utilising both the SGC pre-computation and GCN layers, referred to as SGCN, could therefore yield a high-accuracy model with fast pre-computation.
 
 \paragraph{Implementation}
 For simplicity and to utilise the pre-computation SGCN starts with SGC layers followed by GCN layers.

@@ -344,7 +344,7 @@ These drawbacks motivate the extensions presented in \Sref{sec:extensions-imp} a
 NNs are presented as black-box models where the decision process used to infer an output based on input is opaque to a user.
 This results in mistrust in NNs especially deep NNs where the relationship between input and output is complex.
 
-the goal of explainability is to provide a human interpretable representation of the model's decision process.
+The goal of explainability is to provide a human interpretable representation of the model's decision process.
 Ideally, global explanations are provided allowing insight into the model's full decision process rather than a local feature.
 
 The proposed approach to explainability that this dissertation follows is that of concepts as these can be inferred after training and thus do not affect model performance.
@@ -553,7 +553,7 @@ Additionally, local \texttt{Tensorboard}\cite{tensorflow2015-whitepaper} instanc
 \paragraph{Libraries}
 \label{sec:libraries}
 
-The major libraries used where \texttt{PyTorch} \cite{paszke2019pytorch} and \texttt{PyTorch Geometric} \cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
+The major libraries used where \texttt{PyTorch}\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
 \texttt{PyTorch} was chosen over \texttt{Tensorflow}\cite{tensorflow2015-whitepaper} as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
 To help with running experiments, logging results and reproducibility I use \texttt{Lightning AI} which handles the underlying training and testing loop with Tensorboard support.
 \texttt{Hyperopt}\cite{bergstra2013making} is also used as \textit{Wu et al.}\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
@@ -657,7 +657,7 @@ This licensing complies with the licenses of my dependencies.
 
 \section{Starting point}
 
-My starting point is the same as the starting point declared in my proposal except for the additional information that the research paper over the summer has resulted in an acceptance to Learning on Graphs 2022.
+I have worked with \texttt{PyTorch}\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} and have experience building graph datasets and GNN models.
 I use the \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} implementation of GCN layers to build the GCN network, as this is just a baseline model. I also rely on the libraries discussed in \Sref{sec:libraries}.
 Aside from these dependencies, I built the project from scratch.
 

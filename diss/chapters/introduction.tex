@@ -15,6 +15,8 @@
 \section{Motivation}
 \label{sec:motivation}
 
+\error{Include a figure comparing linear to non-linear GNNs.}
+
 % Importance/rise in use of GNNs
 
 % The rise in use of ML systems
@@ -24,17 +26,20 @@
 \emph{Neural networks} (NN) are able to infer complex relationships within data, \emph{graph neural networks} (GNN) extend this functionality to connected systems where predetermined relationships exist between data points.
 In these systems, such as social networks\cite{pmlr-v70-gilmer17a} and molecules\cite{DBLP:journals/corr/abs-1806-01973}, the data can be represented as nodes connected by edges in a graph.
 However, the popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.\cite{wu2019simplifying}
-Instead \emph{simplified GNNs} (specifically \emph{linear GNNs}) have been proposed\cite{chanpuriya2022simplified,navarin2020linear,wu2019simplifying} which aim to match the performance of their non-linear counterparts with great success.
+Instead \emph{simplified GNNs} have been proposed\cite{chanpuriya2022simplified,navarin2020linear,wu2019simplifying} that match the performance of non-linear GNNs on certain benchmarks.
+Simplified GNNs include both linear GNNs, which include no non-linearity, and quasi-linear GNNs, which may include one or two non-linear layers regardless of model scale.
 
-\fig{concept}{An example concept from GCN demonstrating that when classifying the top node the model identifies the house structure and attaching arm. Note that the green nodes have different identifiers demonstrating that this is how GCN consistently identifies the top node.}
+\fig{concept}{An example graph concept from GCN demonstrating that when classifying the top node the model identifies the house structure and attaching arm. The consistency of the structure suggests that this is important to classifying the top node.}
 
-However, this success has only been demonstrated on a sample of datasets with limited analysis of how linear GNNs work.
+However, the benchmarks contain a limited number of datasets and little work has been done to understand how linear GNNs work.
 This problem extends generally to NNs where understanding how a model works is largely ignored in favour of higher accuracy.
-One solution to this problem is the notion of \emph{concepts}, shown in figure \ref{fig:concept}, which are high-level units of information \cite{ghorbani2019towards} with which a NN infers labels.
+\note{Reword this:}
+The operation of NN can be understood through \emph{concepts} which are collections of low-level inputs, such as pixels or characters, \cite{ghorbani2019towards} with which a NN infers labels.
 These units can be visualised in a human-interpretable fashion allowing for a better analysis of NN models.
-Extending this notion to GNNs\cite{magister2021gcexplainer,ying2019gnnexplainer} allows for linear GNNs and their non-linear counterparts to be compared providing a better understanding of how they operate.
+Figure \ref{fig:concept} presents an example of a graph concept which can be interpretted as ``a house structure with an attaching arm''.
+This is more meaningful than individual node features and helps identify the importance of the house structure to classifying the green node.
 
-The insight provided by concepts can highlight the important features of linear GNN models and thus provide further insight into how linearity influences graph structure awareness.
+The insight provided by concepts can highlight the important features of linear GNN models and provide further insight into how linearity influences graph structure awareness.
 This goal motivates the project which aims to provide a deeper insight into graph representational learning and provide novel techniques to graph structure inference.
 
 %In recent years there has been rapid development and adoption of machine learning systems such as \emph{neural networks} (NN).
@@ -128,6 +133,7 @@ This goal motivates the project which aims to provide a deeper insight into grap
 % More efficient systems should not sacrifice ease of understanding
 
 \section{Previous and Related Work}
+\error{Properly describe each paper's aims/results/contributions. Include all the major work that has led up to this point and any similar explorations.}
 
 % GNN Explainer
 
@@ -141,7 +147,7 @@ This goal motivates the project which aims to provide a deeper insight into grap
 
 %% Provides clear metrics to compare models in regards to concepts
 
-This project is based on the recent work by \textit{Magister et al.} \cite{magister2021gcexplainer} which proposes a new method to graph concepts and introduces two concept metrics.
+This project is based on the recent work by \textit{Magister et al.} \cite{magister2021gcexplainer} which proposes a new method to extract graph concepts and introduces two concept metrics to compare between extracted concepts.
 Using these metrics a linear GNN and its non-linear counterpart are compared to provide more insight into the effect of linearisation.
 
 % Simplifying Graph Convolutional Networks
@@ -150,7 +156,7 @@ Using these metrics a linear GNN and its non-linear counterpart are compared to 
 
 %% A movement away from DNN
 
-\textit{Wu et al.} \cite{wu2019simplifying} introduce the \emph{simplified graph convolution} (SGC) based on the \emph{graph convolution network} (GCN) proposed by \textit{Kipf et al.} \cite{kipf2016semi}.
+The project also implements and extends the work by \textit{Wu et al.} \cite{wu2019simplifying} who introduce \emph{simplified graph convolution} (SGC)
 The method linearises the graph convolution layers in the network allowing these to be pre-computed.
 This linear architecture will be used to compare against the non-linear GCN counterpart.
 
@@ -170,16 +176,23 @@ This project presents two additional approaches to improving the performance of 
 
 % Basic contributions with extending SGC in new ways
 
-This project applies the tools proposed by \textit{Magister et al.} \cite{magister2021gcexplainer} to SGC \cite{wu2019simplifying}.
-To achieve a full comparison between the two systems SGC is modified to graph classification tasks.
-These results demonstrate a major limitation of SGC on datasets with no node features as it underperforms in terms of concept score and accuracy contrary to current literature.
-These results suggest the SGC is primarily focused on tabular data rather than graph data and lacks graph structure awareness.
+This project applies the graph explainability tools proposed by \textit{Magister et al.} \cite{magister2021gcexplainer} to the linear model SGC \cite{wu2019simplifying}.
+This provides a new analysis of linear GNN models and their limitations providing new insight into how graph structure is inferred.
+These results demonstrate that purely linear models, such as SGC, cannot infer fine-grained graph structure.
+The lack of graph structure awareness suggest the SGC is primarily focused on tabular data rather than graph data.
 
-Two novel extensions to SGC are proposed to improve the accuracy of the model on the synthetic datasets.
-The first method proposes a method of combining GNNs using mutual concepts allowing SGC to replace unnecessary non-linearity in GCN.
-This approach is shown to be successful though the performance is limited.
-The second extension utilises the method of jumping knowledge networks presented in \textit{Xu et al.} \cite{xu2018representation}.
-The approach is successful demonstrating graph structure awareness matching GCN whilst remaining negligibly non-linear.
+Two novel extensions are proposed to improve the accuracy and graph structure awareness of SGC.
+\begin{enumerate}
+    \item
+        A new model which uses SGC pre-computation with GCN layers to utilise the efficient pre-computation with the higher performing GCN layers.
+        The architecture removes unnecessary non-linearity from the primary layers of a GCN model by finding an SGC pre-computation that closely resembles their output.
+        This means that the effect on the final layers of the GCN model are minimally affected.
+    \item
+        A new architecture which uses SGC within a version of jumping knowledge networks \cite{xu2018representation}.
+        The architecture aggregates each successive SGC pre-computation so that the model has more control of the node representations.
+        This improves the graph structure awareness of SGC whilst remaining quasi-linear as one non-linear layer is added to separate aggregation and classification.        
+\end{enumerate}
+Both approaches are successful demonstrating graph structure awareness is achievable whilst remaining quasi-linear.
 
 %\note{Hopefully will have implemented the dataset to get a better demonstration of the shortcomings of SGC. I would love to compare multiple techniques: GraphSAGE, GCN, GAT, GIN. Furthermore include an MLP as a baseline, hopefully showing that SGC almost behaves the same as an MLP.}
 
