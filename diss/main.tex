@@ -65,25 +65,28 @@ I, \mfullname{} of \mcollege, being a candidate for Part II of the Computer Scie
 
 \section*{Original Aims of the Project}
 
+\error{Include why the reader should care}
 This project analyses the effect that simplifying graph neural networks (GNNs), through linearisation, has on model performance and why this is the case.
 %the graph concepts that are extracted from a trained model.
-The project focuses
-%specifically on the widely aclaimed
-on the Simplified Graph Convolution \cite{wu2019simplifying}[SGC] as a fully linearised model that matches the performance of non-linear GNNs.
+The project focuses on the linear GNN, Simplified Graph Convolution \cite{wu2019simplifying}, as it has been shown to match the performance of traditional, non-linear GNNs on a sample of benchmark datasets.
 %which removes the non-linearity between layers from previous graph neural network approaches reducing the problem of graph representational learning to a precomputation on the graph structure and a single linear regressor.
-Using the notion of graph concepts and the metrics proposed in \textit{Magister et. al} \cite{magister2021gcexplainer} the project aims to compare SGC to Graph Convolution Network.
+Using the notion of graph concepts proposed in \textit{Magister et. al} \cite{magister2021gcexplainer} the project aims to compare SGC to Graph Convolution Network to determine the effect of linearising GNNs.
 The overall aim of the project is to better understand how linear architectures can achieve graph structure awareness.
-These insights then guide extensions into improving linear GNN architectures and reducing computational cost.
+These insights then guide extensions to improve linear GNN architectures and reduce computational cost.
 %Further extensions then build on SGC to see which techniques can improve accuracy and concept metrics.
 
 \section*{Work Completed}
 
 The project was a success gaining insight into the graph structure awareness of both linear and non-linear models.
-The insight gained lead to a novel approach to mixing GNN architectures and a new linear architecture that achieves improved structural awareness comparable to non-linear models.
-It further demonstrated that the SGC architecture proposed by \textit{Wu et al.} does not have fine-grained graph structure awareness and demonstrates poor performance on a range of new datasets.
+The insight gained lead to two new approaches to graph learning
+\begin{enumerate}
+    \item Using both linear and non-linear GNNs in one model to gain the benefit of both approaches.
+    \item A new linear GNN which aggregates linear graph filters to improve graph structure awareness.
+\end{enumerate}
+The project further demonstrated that the SGC architecture proposed by \textit{Wu et al.} does not have fine-grained graph structure awareness and demonstrates poor performance on a range of new datasets.
 %Furthermore, it demonstrated that in the case of highly synthetic data SGC is unable to match the performance of GCN by a significant margin.
 %My extensions demonstrate that in the case of real-world graph datasets, where graph structure is important, SGC continues to underperform compared to GCN and does not produce comparable concepts.
-To combat this a novel extension to SGC using jumping knowledge networks\cite{xu2018representation} is presented that demonstrates graph structure awareness in a linear model.
+%To combat this a novel extension to SGC using jumping knowledge networks\cite{xu2018representation} is presented that demonstrates graph structure awareness in a linear model.
 %However, overall SGC does not appear to be a suitable candidate for graph representational learning on its own.
 %I additionally set out to create a new parameterised dataset to further analyse the shortcomings of SGC when dealing with graph structure.
 %\error{This is still not complete but I am undertaking this task.}

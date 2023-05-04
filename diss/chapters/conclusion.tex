@@ -4,20 +4,20 @@
 This dissertation set out to analyse how linearising GNN architectures match the performance of their non-linear counterparts.
 %It aimed to understand how graph structure can be better utilised by analysing these two approaches.
 %This was achieved by comparing graph concepts from GCN and its linear counterpart, SGC.
-As \Sref{sec:comp-acc} demonstrated the linear GNN, SGC, does not in fact match the performance of its non-linear counterpart.
+As \Sref{sec:comp-acc} demonstrated the linear GNN, SGC, does not match the performance of its non-linear counterpart.
 \Sref{sec:comp-concept} highlights the poor graph structure awareness of SGC suggesting that non-linearity is key to inferring structure.
 Extending SGC to graph classification also shows the same lack of graph structure awareness.
 
 To combat these limitations SGC and GCN are combined to utilise the benefits of both approaches.
-However, though this is successfully the use of SGC is very limited with the GCN layers providing the majority of the inference.
+However, though this is successful the use of SGC is very limited with the GCN layers providing the majority of the inference.
 
-JSGC provides a novel extension to SGC with promising results highlighted in \Sref{sec:Jump-SGC} clearly demonstrating graph structure awareness.
+JSGC provides a novel extension to SGC with promising results highlighted in \Sref{sec:Jump-SGC} demonstrating graph structure awareness.
 JSGC provides SGC with intermediate node representations through techniques present in JKNs\cite{xu2018representation} allowing for better structural influences.
 Importantly JSGC is negligibly non-linear demonstrating that graph structure awareness is possible within a linear architecture.
 
 \section{Lessons learned}
 My project aimed to understand the effect that linearising GNN architectures had on performance through graph concepts.
-This effect depends as much on the dataset, the method of GNN explanability, and architecture as it does on the method of linearisation.
+This effect depends as much on the dataset, the method of GNN explainability, and architecture as it does on the method of linearization.
 Regardless, the project explored an area of this space and provided important insights.
 
 Importantly, as shown by the proposed JSGC architecture, it is possible to achieve high graph structure awareness whilst remaining negligibly non-linear.
@@ -26,7 +26,7 @@ But, as demonstrated by the poor performance of SGC, care must be taken in produ
 
 The project did however demonstrate that non-linearity does provides higher accuracy when compared to linear architectures.
 The results presented do not suggest that non-linearity in NNs in general is ideal but rather that graph structure awareness may be achieved without non-linearity.
-This is clearly demonstrated by the poor performance of SGC and the inability for JSGC to match the accuracy of GCN whilst achieving comparable graph structure awareness.
+This is demonstrated by the poor performance of SGC and the inability for JSGC to match the accuracy of GCN whilst achieving comparable graph structure awareness.
 These drawbacks may potentially be solved by utilising more complex classifiers such as MLPs.
 
 %The key skill learnt during the project was time management including careful planning allowing for unforeseen setbacks.

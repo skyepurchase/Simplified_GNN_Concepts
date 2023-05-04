@@ -2,11 +2,11 @@
 
 \section{Datasets}
 \label{sec:datasets-imp}
-\Sref{sec:datasets-theory} presents a number of datasets that cover a range of different GNN training styles and motifs.
+\Sref{sec:datasets-theory} presents several datasets that cover a range of different GNN training styles and motifs.
 The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} as well as the Planetoid\cite{planetoid}\cite{citation} datasets.
 
 \paragraph{Synthetic datasets}
-The synthetic datasets discussed in \Sref{sec:synth} are available pre-built on github and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} provide limited versions of a small subset.
+The synthetic datasets discussed in \Sref{sec:synth} are available pre-built on GitHub and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} provide limited versions of a small subset.
 Rather than use these the datasets are reimplemented to allow for more rigorous testing described in \Sref{sec:testing-imp}.
 
 %The motifs described in \Sref{sec:synth} can be hard-coded.
@@ -16,21 +16,19 @@ When generating the dataset the base graph adjacency is generated first.
 %The Barabasi-Albert graph is generated probabilistically adding one node at a time and connecting each node to the existing graph based on the degree of the nodes currently in the graph.
 Then the hard-coded adjacency for each motif required is 
 %the hard-coded tensors are adjusted and 
-appended to the on going adjacency matrix and label vector by connecting
+appended to the ongoing adjacency matrix and label vector by connecting
 %This adjustment includes adding an additional bidirectional connection between 
 a random node in the base graph to a predetermined node of the motif.
 
 The datasets need to be compliant with \texttt{PyTorch Geometric} to be used correctly and so must extend the \texttt{InMemoryDataset} abstract class. 
 This is designed for datasets that are small enough to be generated and stored within RAM.
 %As these are transductive datasets as described in \Sref{sec:datasets-theory} 
-Each dataset contains a single graph \texttt{Data} object is created that is then accessed through a dataloader.
+Each dataset contains a single graph \texttt{Data} object is created that is then accessed through a data loader.
 
-The \texttt{Data} object includes train and test split masks randomly assigning nodes to achieve an 80:20 ratio based on seed value.
+The \texttt{Data} object includes train and test split masks randomly assigning nodes to achieve an 80:20 ratio based on the seed value.
 %This random assignment is based on the seed value for the experiment discussed in \Sref{sec:reproducibility}.
-This 
 %randomness also applies to the generation of the graph 
-creates significantly different graphs each generation
-meaning that nodes for one seed value are effectively unseen for another seed value.
+This creates significantly different graphs for each generation meaning that nodes for one seed value are unseen for a different seed value.
 
 \paragraph{SGC}
 The majority of SGC is the pre-computation
@@ -47,10 +45,9 @@ This process is achieved with three functions that calculate the normalised filt
 convert the matrix form and successively apply the filter to the node representations.
 
 This results in a new feature matrix which replaces the original \texttt{Data} object's features.
-Equation \ref{eq:SGC} shows that SGC does not need any adjacency informartion and can instead be implemented as a classifier.
-For the sake of consistency and to aid the concept evaluation functions in \Sref{sec:concepts} the adjacency matrix is keep.
+Equation \ref{eq:SGC} shows that SGC does not need any adjacency information and can instead be implemented as a classifier.
+For consistency and the concept evaluation functions described in \Sref{sec:concepts} the adjacency matrix is kept.
 %A new \texttt{Data} object is created copying the labels, data splits and adjacency of the input graph but with the pre-computation matrix as the feature matrix.
-This also aids the implementation of the SGC and GCN mixed model proposed in \Sref{sec:SGCN}.
 
 \section{Models}
 \label{sec:models}
@@ -66,22 +63,22 @@ During the \texttt{message\_passing} method the normalised adjacency $\mS$ is ap
 After \texttt{message\_passing} a linear layer is applied to the representations.
 
 These GCN layers (provided by \texttt{PyTorch Geometric}) can then be combined with a ReLU activation function to form a GCN model.
-In comparison SGC needs only to be a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
+In comparison, SGC needs only to be a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
 
 \section{Machine Learning Pipeline}
 \label{sec:pipeline}
 
-The ML pipeline is the infrastructure that links the datasets, pre-computation, dataloaders, and models together to train and evaluate the models.
+The ML pipeline is the infrastructure that links the datasets, pre-computation, data loaders, and models together to train and evaluate the models.
 This allows for specific experiment configurations to be run changing each component individually or together.
 As the main aspect of this project is concept extraction, evaluation, and interpretation I use \texttt{PyTorch Lightning} as the main component of the pipeline.
 
 \texttt{PyTorch Lightning} provides \texttt{Lightning Modules} that act as wrappers around standard \texttt{PyTorch} (and therefore \texttt{PyTorch Geometric}) modules and carry out all the required training, validation and testing loops.
-Unfortunately, for the purposes of the core project and extensions a single wrapper is not possible.
+Unfortunately, for the core project and extensions, a single wrapper is not possible.
 This is because the wrappers need to behave differently for SGC and GCN as GCN needs additional adjacency information.
-Additionally the real-world graph classification datasets require one-hot encoding when calculating loss whereas the synthetic datasets do not.
+Additionally, the real-world graph classification datasets require one-hot encoding when calculating loss whereas the synthetic datasets do not.
 Therefore the project implements 5 different wrappers.
 
-The datasets, pre-computation and dataloaders discussed in \Sref{sec:datasets-imp}, the models described in \Sref{sec:models} are controlled by \texttt{main.py}.
+The datasets, pre-computation and data loaders discussed in \Sref{sec:datasets-imp}, the models described in \Sref{sec:models} are controlled by \texttt{main.py}.
 To run a single experiment the specific model build, dataset, seed, save destinations, etc. need to be passed to this function.
 To reduce this overhead multiple bash scripts are dynamically created to run single quick experiments or full experiments which test the model on prechosen random seeds.
 
@@ -91,12 +88,11 @@ It is important that all the results presented in \Sref{ch:evaluation} can be re
 %This is both for the results presented in this dissertation but also for results found during experimentation in the extension phase.
 To achieve this every experiment must set a seed value which is saved along with the results.
 %This way when running the same configuration again using the same seed the expected outcome should be the same within very small bounds.
-Furthermore, the results achieved are linked to the model build 
+Furthermore, the results achieved are linked to the model build which specifies details of the model so that it can be replicated.
 %that identifies all the hyperparameters used.
 %The model build 
-which specifies details of the model so that it can be replicated.
 %in a completely different ML pipeline.
-Thus the build files need to be human readable and easily expandable.
+Thus the build files need to be human-readable and easily expandable.
 
 To achieve these two requirements YAML files are used as they are very readable and integrate with the rest of the pipeline.
 Each build has a unique YAML file following the convention \texttt{<model>.<dataloader>.<dataset>.<version>.yml}.
@@ -108,7 +104,7 @@ This is particularly desirable during the extension phase where the best method 
 
 Finding the optimal hyperparameters is essential as incorrect hyperparameters can lead to artificially low performance and thus invalidate the interpretation of the models.
 To find hyperparameters \texttt{sweep.py} takes a set of different hyperparameter values and runs a short evaluation of the performance.
-To properly evaluate models it is important that this evaluation does not use nodes that are in the final test set.
+To properly evaluate models this evaluation mustn't use nodes that are in the final test set.
 As discussed in \Sref{sec:datasets-imp} choosing different seeds means that nodes in the evaluation test set are unseen.
 
 \section{Concept Extraction and Evaluation}
@@ -117,9 +113,9 @@ As discussed in \Sref{sec:datasets-imp} choosing different seeds means that node
 \subsection{Extraction}
 \label{sec:extraction}
 
-This subsection uses idea of \emph{activation spaces} which are multidimensional spaces within which the node representations after an activation layer are expressed.\footnote{The term activation space, though incorrect, is also used when referring to SGC pre-computation to avoid confusion.}
+This subsection uses the idea of \emph{activation spaces} which are multidimensional spaces within which the node representations after an activation layer are expressed.\footnote{The term activation space, though incorrect, is also used when referring to SGC pre-computation to avoid confusion.}
 The concept extraction discussed in \Sref{sec:GCE} requires storing and then clustering this activation space.
-These occur at different points with storing occuring during the experiment run and clustering occuring afterwards.
+These occur at different points with storing occurring during the experiment run and clustering occurring afterwards.
 
 \paragraph{Storing}
 SGC and GCN behave differently in regards to storing activation spaces as SGC pre-computes the node representations whereas GCN calculates them during training.
@@ -127,24 +123,24 @@ SGC and GCN behave differently in regards to storing activation spaces as SGC pr
 In SGC the node representations from each successive filter application can be stored in a dictionary and written out.
 This allows for multiple layers to be analysed without training which in turn can be used to optimise SGC before training.
 
-In comparison GCN requires a function during the forward pass of the model to save the node representations.
+In comparison, GCN requires a function during the forward pass of the model to save the node representations.
 \texttt{PyTorch}\cite{paszke2019pytorch} provides this functionality through \emph{hooks} which are functions that can be attached to modules.
 This function will then run whenever the modules \texttt{forward} method is run and \texttt{PyTorch} will pass the input, output and module to the function.
-Thus a hook function is created which saves the modules output to a dictionary which is written out to a file after testing.
+A hook function is created which saves the output of a layer to a dictionary, the dictionary is written to a file after the test loop is complete.
 %this means that the activations represent the final model.
 
 \paragraph{Clustering}
 %The described activation dictionaries can be loaded and
-For each of the layers the node representations are clustered using $k$-means as it is the best performing model as seen in \textit{Magister et al.}\cite{magister2021gcexplainer}.
+For each of the layers, the node representations are clustered using $k$-means as it is the best-performing model as seen in \textit{Magister et al.}\cite{magister2021gcexplainer}.
 The specific implementation of $k$-means is provided by
 %Rather than implement my own $k$-means algorithm I utilise the algorithm already present within
 \texttt{scikit learn}\cite{scikit-learn}.
 The clustering is parameterised by the number of clusters which
 can be chosen based on the concept scores in \Sref{sec:GCE}.
 %can then motivate the choice of this value
-Though focusing on maximising the completeness will not necessarily lead to better concepts.
+Though focusing on maximising completeness will not necessarily lead to better concepts.
 
-to generate subgraph examples for each concept the neighbourhood of nodes closest to a cluster centroid are included.
+To generate the example subgraphs, the neighbourhood of nodes closest to a cluster centroid are \error{find a better phrase!}.
 The size of the neighbourhood is determined by the receptive field which determines how many hops between connected nodes are allowed.
 
 \subsection{Evaluation}
@@ -157,7 +153,7 @@ The theory behind the two concept metrics of completeness and purity are outline
 \paragraph{Completeness}
 As discussed in \Sref{sec:GCE} completeness is determined by whether the extracted concepts can be used to infer node labels.
 This is achieved by fitting a decision tree\cite{kazhdan2020now} as proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} to the concepts and labels.
-The accuracy of this decision tree on the held out test set represents the completeness of the concepts extracted.
+The accuracy of this decision tree on the hold-out test set represents the completeness of the concepts extracted.
 
 The decision tree predicts a label for each of the nodes in the graph based on the concept that the node belongs to.
 The input data is therefore the predicted clusters for each of the nodes based on the $k$-means clustering.
@@ -165,7 +161,7 @@ The target is constructed from the node labels for each node in the input.
 
 \paragraph{Purity}
 To calculate the purity the three quintessential subgraphs of each concept are chosen.
-Each quintessential subgraph is chosen based on distance to the concept centroid and is constructed by a breadth-first search from the subgraphs node of interest.
+Each quintessential subgraph is chosen based on the distance to the concept centroid and is constructed by a breadth-first search from the subgraphs node of interest.
 
 The purity is calculated by taking the average of the GED described in \Sref{sec:GCE} between these subgraphs.
 The graph edits that are allowed are adding or removing a node or edge ignoring the node representations.
@@ -173,7 +169,7 @@ Thus coherence of a concept is based on graph structure rather than node represe
 
 Three quintessential graphs are considered due to the computational cost of calculating GED.
 In the cases where the number of nodes in a subgraph exceeds 13 the purity calculation is skipped.
-This can be mitigated by calculating an upperbound on the GED in $\mathcal{O}(n^3)$ however this would negatively impact the purity scores of Barabasi-Albert concepts.
+This can be mitigated by calculating an upper bound on the GED in $\mathcal{O}(n^3)$ however this would negatively impact the purity scores of Barabasi-Albert concepts.
 
 \subsection{Visualisation}
 \label{sec:vis}
@@ -181,16 +177,16 @@ The visualisation of the concepts uses the same subgraph construction as purity 
 However, more quintessential graphs may be considered to better visualise the extracted concepts.
 This means the visual results may contradict the purity score as subgraphs further from the centroid may not match the calculated purity.
 
-For the synthetic graphs the subgraphs are coloured with two colours, green indicating the node of interest and pink indicating neighbouring nodes.
-In some instances one subgraph may contain a node of interest of another visualised subgraph, in this case the subgraph is visualised with multiple green nodes.
+For the synthetic graphs, the subgraphs are coloured with two colours, green indicating the node of interest and pink indicating neighbouring nodes.
+In some instances, one subgraph may contain a node of interest in another subgraph resulting in multiple green nodes appearing in both.
 %This represents the fact that the model does not distinguish between these nodes within the graph structure.
 The same process is used for REDDIT-BINARY\cite{Morris+2020}.
 
 In the case of Mutagenicity\cite{Morris+2020} \textit{Magister et al.}\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept meaning that between concepts the colour scheme does not match.
 To provide a better comparison between concepts a chemical colour scheme is chosen and each node is coloured according to this.
 
-Regardless of dataset each subgraph is titled by the label of the node of interest.
-This provides additional information about the coherence of the concepts labels.
+Regardless of the dataset, each subgraph is titled by the label of the node of interest.
+This provides additional information about the coherence of the concept labels.
 
 \section{Testing}
 \label{sec:testing-imp}
@@ -210,11 +206,11 @@ Three components of the software follow traditional software development and the
     \item[] 
         \smalltitle{Pre-computation}
         This has already been verified through the derivation in \Sref{sec:GCN} and \Sref{sec:SGC}.
-        However, to verify that these are correctly implemented small test graphs are used.
+        Small test graphs are used to verify that these are correctly implemented.
     \item[] 
         \smalltitle{Concept evaluation}
         %Though parts of this implementation use algorithms provided by \texttt{scikit learn}\cite{scikit-learn} the results of these functions needs to be verified in the new context.
-        Small graphs with pre-determined clusters are used to verify the implementation by comparing the predicted clusters to the expected clusterings.
+        Small graphs with pre-determined clusters verify the implementation by comparing the predicted clusters to the expected clusterings.
         In the case of purity isomorphic graphs and non-isomorphic of known GED are used.
 \end{itemize}
 
@@ -225,67 +221,66 @@ The hyperparameters used are available in \Aref{app:hyperparameters}.
 \section{Extensions}
 \label{sec:extensions-imp}
 After completing the core project my extensions focus on improving the low performance demonstrated by SGC in \Sref{sec:comp-acc}.
-The motivation for the following extensions develop from the results of the core project.
+The motivation for the following extensions is based on the results of the core project.
 This section outlines the three extensions completed, the motivation for each and the implementation details.
 The evaluation of the extensions is presented in \Sref{sec:extension-eval}.
 
 \subsection{SGC graph classification}
 \paragraph{Motivation}
-The datasets present in \textit{Magister et al.}\cite{magister2021gcexplainer} include 2 real world datasets that focus on graph classification.
+The datasets used in \textit{Magister et al.}\cite{magister2021gcexplainer} include two real-world datasets focusing on graph classification.
 %As discussed in \Sref{sec:datasets-theory} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
 Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
 
 \paragraph{Prior work}
-\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC suggesting that it can substitute GCN in a deep graph convolutional neural network proposed by \textit{Zhang et al.}\cite{zhang2018end}.
+\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC and suggest replacing GCN in a deep graph convolutional neural network\cite{zhang2018end}.
 In comparison \textit{Magister et al.}\cite{magister2021gcexplainer} utilise pooling on the graph node representations from a GCN to achieve graph classification.
 %The label of the entire graph can then be inferred from this single representation.
 The latter method is chosen as it allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.}.
 
 \paragraph{Implementation}
-The new SGC mdoel has an additional pooling layer to create a single representation for each graph.
+The new SGC model has an additional pooling layer to create a single representation for each graph.
 Each graph now has a single label with no node labels, given that concept extraction is done on the node level the method proposed in \Sref{sec:concept-eval} does not work.
 
 This is solved by broadcasting the graph label to each of the nodes in the graph allowing the graphs to be combined into a disconnected forest of graphs which can be clustered.
-Calculation of concept scores and the visualisation of concept therefore remains the same as that presented in \Sref{sec:concept-eval} and \Sref{sec:vis}.
+Calculation of concept scores and the visualisation of a concept remains the same as that presented in \Sref{sec:concept-eval} and \Sref{sec:vis}.
 
 \subsection{SGC and GCN mixed model}
 \label{sec:SGCN}
 \paragraph{Motivation}
 The derivation in \Sref{sec:SGC} shows that SGC is directly derived from GCN using the same graph filter and so the two models should be interchangeable.
-Futhermore, the benefit of SGC is to reduce the complexity of GCN and pre-compute the graph operation.
-Though very small datasets have little improvement on cost or reduction in parameters this is not the case for larger datasets.
+Furthermore, the benefit of SGC is to reduce the complexity of GCN and pre-compute the graph operation.
+Though very small datasets have little improvement in cost or reduction in parameters this is not the case for larger datasets.
 
 However, due to the low accuracy of SGC seen in \Sref{sec:comp-acc} some properties of GCN must be required for high accuracy.
-A mixture of both, referred to as SGCN, could therefore yield a high accuracy model with fast pre-computation.
+A mixture of both, referred to as SGCN, could therefore yield a high-accuracy model with fast pre-computation.
 
 \paragraph{Implementation}
 For simplicity and to utilise the pre-computation SGCN starts with SGC layers followed by GCN layers.
-For a fair comparison the total number of layers remains the same as the corresponding SGC and GCN models.
-This reduces the problem to finding where SGC and GCN agree the most.
+For a fair comparison, the total number of layers remains the same as the corresponding SGC and GCN models.
+This reduces the problem of finding where SGC and GCN agree the most.
 
 This is achieved using \emph{adjusted mutual information}(AMI) between the two models.
 Mutual information gives a measure for the dependence of the two models' clusters and therefore how similar the models are.
 However, this does not take into account the random chance of two nodes appearing in the same cluster.
-Therefore the mutual information is adjusted for this chance resulting in a number in the range $[0, 1]$ where $1$ represent identical clustering.
+Therefore the mutual information is adjusted for this chance resulting in a number in the range $[0, 1]$ where $1$ represents identical clustering.
 
-To better visualise the resulting model the activation space of the models is reduced using \emph{t-distributed stochastic neighbor embedding} (t-SNE) to 2 dimensions.
-This clusters similar representations which acts as a visual proxy to viewing all the concepts of a model.
-These can then be compared to see why a specific layer has the highest AMI.
+To better visualise the resulting model the activation space of the models is reduced using \emph{t-distributed stochastic neighbour embedding} (t-SNE) to 2 dimensions.
+This clusters similar representations together allowing these clusters to be compared to see why a specific layer has the highest AMI.
 
 \subsection{Jumping knowledge SGC}
 \paragraph{Motivation}
 \Sref{sec:concept-analysis} discusses the limited influence that SGC has on node representations.
 This is because an SGC model, of degree $k$, can only infer graph structure from the aggregated node representations within $k$ hops.
-In comparison GCN is able to manipulate node representations and can therefore infer structure from each $k$-depth neighbourhood.
-This suggests that low accuracy seen in \Sref{sec:comp-acc} and poor graph structure awareness seen in \Sref{sec:comp-concept} may be due to the linearity or lack of influence.
+In comparison, GCN can manipulate node representations and can therefore infer structure from each $k$-depth neighbourhood.
+This suggests that the low accuracy seen in \Sref{sec:comp-acc} and poor graph structure awareness seen in \Sref{sec:comp-concept} may be due to the linearity or lack of influence.
 
 Therefore the novel \emph{jump-SGC}(JSGC) is proposed which provides the classifier with node representations from each degree of the pre-computation.
 This idea mimics \emph{jumping knowledge networks} (JKNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
 
 \paragraph{Prior work}
-\textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing a nodes neighbourhood.
-As a solution they propose aggregating the the node representations after successive neighbourhood aggregation layers together.
-Three main methods of aggregation are proposed but given the small size of the datasets the concatenation method is chosen.
+\textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing the neighbourhood of a node.
+They propose aggregating the node representations after successive neighbourhood aggregation layers together to provide a better representation.
+Three main methods of aggregation are proposed but, given the small size of the datasets, the concatenation method is chosen.
 
 By concatenating successive neighbourhood aggregations and then reducing the dimensionality uniform influence across all $k$-depth neighbourhoods is achieved.
 This is because the detail present in the smaller neighbourhoods can be combined with the wider awareness of larger neighbourhoods.
@@ -293,7 +288,7 @@ This is because the detail present in the smaller neighbourhoods can be combined
 \paragraph{Implementation}
 For JSGC this leads to two changes to the pre-computation and model.
 During pre-computation successive applications of the normalised filter are concatenated together.
-A linear layer is then added to the standard SGC to reduce this concatenated dimension, during this JSGC is able to infer more complex graph structure than SGC.
+A linear layer is then added to the standard SGC to reduce this concatenated dimension, during this JSGC can infer more complex graph structures than SGC.
 To combine this with the classifier a single non-linear rectified linear unit layer is introduced.
 This non-linearity remains constant regardless of how the model scales and therefore it is deemed negligible.
 
@@ -340,8 +335,8 @@ This non-linearity remains constant regardless of how the model scales and there
 .3  \myfolder{blue}{wrappers.................................pytorch lightning wrappers}.
 }
 
-The repository structure for my projecy.
+The repository structure for my project.
 The structure loosely follows ML project structures such as those provided by \texttt{cookiecutter} but is mainly driven by the requirements of \texttt{PyTorch Lighntning}.
 Data folders are kept at the top level including folders for bash scripts allowing the scripts to access all the source code and folders necessary.
-the \texttt{src} folder contains all the python code with top level python files such as \texttt{main.py} and \texttt{eval.py} acting as control code for the algorithms in the subfolders.
+the \texttt{src} folder contains all the python code with top-level python files such as \texttt{main.py} and \texttt{eval.py} acting as control code for the algorithms in the subfolders.
 \hlc[blue!50]{blue} icons represent directories, \hlc[red!50]{red} icons represent files, and \hlc[green!50]{green} icons represent executables.

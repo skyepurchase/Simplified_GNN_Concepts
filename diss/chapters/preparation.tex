@@ -70,10 +70,10 @@ Therefore consider a vector valued function, $\vf$, taking neighbourhood represe
 Given some permutation, $\mP$, $\vf(\mP\mX_{\sN_i}, \mP\mA\mP^T) \equiv \vf(\mX_{\sN_i}, \mA)$.\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the premultiplication transposed to permute the columns.}
 
 Furthermore, if the node features are permutated then the updated node representations should be as well.
-Thus consider a matrix valued function, $F$, taking the input representations and adjacency matrix, and producing a new representation matrix.
+Thus consider a matrix-valued function, $F$, taking the input representations and adjacency matrix, and producing a new representation matrix.
 It must be the case that $F(\mP\mX, \mP\mA\mP^T) \equiv \mP F(\mX, \mA)$.
 
-For the node representation update function, $F$, to be equivarient it suffices for the neighbourhood representation function to be invariant, \Aref{app:perm}.
+For the node representation update function, $F$, to be equivariant it suffices for the neighbourhood representation function to be invariant, \Aref{app:perm}.
 For the neighbourhood representation to be invariant an invariant aggregation function, $\bigoplus$, combines updated neighbourhood representations.
 Thus a neighbour representation for $\vx_i$ is $\bigoplus_{\vx_j \in \mX_{\sN_i}}c_{ij}\bm{\psi(\vx_j)}$,\footnote{Multiple formulations exist and is an area of active research.}
 where $\bm{\psi}$ is a node representation update function.
@@ -114,7 +114,7 @@ This leads to a general invariant node representation update function
 \subsubsection{As a GNN}
 
 The GCN is the simplest implementation of the formulation outlined above.
-The principle is to add the degree weighted sum of a node's neighbour representations to the current node representation.
+The principle is to add the degree-weighted sum of a node's neighbour representations to the current node representation.
 %This maintainsd the invariance constraint but nodes with a high degree are overly represented and so each term is normalised by the degree of the connecting nodes.
 This results in the common representation of GCN as
 
@@ -158,7 +158,7 @@ This reformulation gives the following graph operator
     \mS = \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12}.
 \end{equation}
 
-Thus a GCN layer can be interpretted as a graph operator and non-linear activation
+Thus a GCN layer can be interpreted as a graph operator and non-linear activation
 \begin{equation}
     \label{eq:GCN1}
     \mH^{(l+1)} = \sigma(\mS\mH^{(l)}\bm{\Theta}^{(l)}).
@@ -173,7 +173,7 @@ Thus a GCN layer can be interpretted as a graph operator and non-linear activati
 \subsubsection{As a convolution}
 \label{sec:conv}
 
-To motivate the idea of the SGC it is important to think of $\mS$ from a different perspective, as a graph convolution filter. A convolution is a multiplication of two functions, in this case a signal,\footnote{The signal is a function $\vh : \sV \to \R^n$ however the nodes are fixed so define $\vh_i \equiv \vh(v_i)$.}
+To motivate the idea of the SGC it is important to think of $\mS$ from a different perspective, as a graph convolution filter. A convolution is a multiplication of two functions, in this case a signal,\footnote{The signal is a function $\vh : \sV \to \R^n$, however, the nodes are fixed so define $\vh_i \equiv \vh(v_i)$.}
 represented by the node representation $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
 
 As an analogy to Fourier analysis $f_\theta \star_\sG \vh_i$ is defined in the graph spectral domain.
@@ -222,7 +222,7 @@ To prevent $\hat\mF_\theta$ growing with the dimension of the signal it can be d
 \end{equation}
 
 %\textit{Kipf et al.}\cite{kipf2016semi} suggest using $k=1$ and define $\theta = \theta_0 = -\theta_1$ resulting in
-Using this new filter in equation \ref{eq:conv} yield the following formulation of the graph convolution
+Using this new filter in equation \ref{eq:conv} yields the following formulation of the graph convolution
 \begin{equation}
     \label{eq:GCN-comp}
     f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i.\footnote{$\mU\bm{\Lambda}^j\mU^T = \mU\underbrace{\bm{\Lambda}\cdots\bm{\Lambda}}_j\mU^T = \underbrace{\mU\bm{\Lambda}\mU^T\mU\cdots\mU^T\mU\bm{\Lambda}\mU^T}_j = (\mU\bm{\Lambda}\mU^T)^j$}
@@ -286,7 +286,7 @@ This means that the $k^{th}$-layer node representation requires the calculation 
 
 \paragraph{Linearization.}
 Considering the linear graph operation as a spectral filter as described in equation \ref{eq:norm} the non-linearity between layers may be considered non-critical to GCN performance.
-Instead the benefit comes from the local averaging from successive filter applications as hypothesised by \textit{Wu et al.}.
+Instead, the benefit comes from the local averaging from successive filter applications as hypothesised by \textit{Wu et al.}.
 %\textit{Wu et al.}\cite{wu2019simplifying} consider this hypothesis citing the benefit arises from the local averaging as apparent in the graph operation formulation described in \Sref{sec:conv}.
 %The resulting model is therefore a linear multiplication of the normalised spectral filters and parameter matrix.
 Removing the non-linear activation functions from equation \ref{eq:cls} results in
@@ -301,7 +301,7 @@ As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a si
     \bm{\Theta} = \underbrace{\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}}_k.
 \end{equation}
 
-The final linearised model, SGC, is therefore
+Thus the final model becomes
 \begin{equation}
     \hat\mY = \operatorname{softmax}(\mS^{k}\mX\bm{\Theta}).
 \end{equation}
@@ -320,7 +320,7 @@ Rather than considering how many layers an SGC model has the equivalent notion o
 This directly corresponds to the receptive field of the model where a $k$-degree SGC model has the same receptive field as a $k$-layer GCN model.
 
 \paragraph{Drawbacks}
-SGC suffers from vanishing/exploding values in $\bm{\Theta}$ and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of the graphs nodes.}.
+SGC suffers from vanishing/exploding values in $\bm{\Theta}$ and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of the nodes of the graph.}.
 SGC has a fixed feature extraction step preventing influence on intermediate node representations.
 These drawbacks motivate the extensions presented in \Sref{sec:extensions-imp} and \Sref{sec:extension-eval}.
 
@@ -344,38 +344,38 @@ These drawbacks motivate the extensions presented in \Sref{sec:extensions-imp} a
 NNs are presented as black-box models where the decision process used to infer an output based on input is opaque to a user.
 This results in mistrust in NNs especially deep NNs where the relationship between input and output is complex.
 
-the goal of explainability is to provide a human interpretable representation of the models decision process.
-Ideally global explanations are provided allowing insight into the models full decision process rather than for a local feature.
+the goal of explainability is to provide a human interpretable representation of the model's decision process.
+Ideally, global explanations are provided allowing insight into the model's full decision process rather than a local feature.
 
-The proposed approach to explainability that this dissertation follows is that of concepts as these can be inferred after training and thus do not effect model performance.
+The proposed approach to explainability that this dissertation follows is that of concepts as these can be inferred after training and thus do not affect model performance.
 As GNNs utilise both graph structure and node features concepts can provide a human interpretable representation of a GNNs decision process.
 
 \subsection{Concepts}
-\fig{concept-2}{A graph concept from BA Shapes demonstrating the desired properties of meaningfulness, coherency and importance. Green highlights the node of interest and pink represents the local nieghbourhood.}
+\fig{concept-2}{A graph concept from BA Shapes demonstrating the desired properties of meaningfulness, coherency and importance. Green highlights the node of interest and pink represents the local neighbourhood.}
 
 % Explanation of what a concept is generally
 
 %% Again this requires proper reading in the subject see above
 
-A concept can be considered an ``interpretable'' high-level unit which is human interpretable unlike standard input units such as individual pixels or characters.
+A concept is a high-level unit of information that is more interpretable than standard input units such as individual pixels or characters.
 A precise definition of a concept in the general sense is hard to formalise so \textit{Ghorbani et al.}\cite{ghorbani2019towards} propose the following desired properties
 \begin{itemize}
     \item[]
         \smalltitle{Meaningfulness}
         dictates that the concept is semantically meaningful on its own requiring no additional information to provide semantic meaning.
-        For example ``Apple'' or ``Personal Pronoun'' rather than an individual pixel or character.
-        This is seen in fig. \ref{fig:concept-2} as all the graphs can be interpretted as abstract houses.
+        For example, ``Apple'' or ``Personal Pronoun'' rather than an individual pixel or character.
+        This is seen in figure \ref{fig:concept-2} as all the graphs can be interpreted as abstract houses.
     \item[]
         \smalltitle{Coherency}
-        requires examples within a concept be perceptually the same as each other whilst simultaneously being different from examples within other concepts.
+        requires examples within a concept to be perceptually the same as each other whilst simultaneously being different from examples within other concepts.
         This can be further constrained to require identical examples.
-        For example ``Stripes'' containing examples of stripes and no examples of circles if ``Circles'' is another concept.
-        This is seen in fig. \ref{fig:concept-2} as all the graphs are isomorphic and only highlight the ``roof''.
+        For example, ``Stripes'' should contain examples of stripes and no examples of circles, if ``Circles'' is another concept.
+        This is seen in figure \ref{fig:concept-2} as all the graphs are isomorphic and only highlight the ``roof''.
     \item[]
         \smalltitle{Importance}
         represents how necessary the presence of a concept is to the prediction of a class.
-        For example the classification of a specific object requires that the object's concept to be present but no need for background concepts.
-        This is seen in fig. \ref{fig:concept-2} as the idea of an house is necessary to know whether the highlighted node is a ``roof''.
+        For example, the classification of a specific object requires that the object's concept to be present but no need for background concepts.
+        This is seen in figure \ref{fig:concept-2} as the idea of a house is necessary to know whether the highlighted node is a ``roof''.
 \end{itemize}
 
 % Relating the explanation to graph based Datasets
@@ -402,9 +402,9 @@ Figure \ref{fig:concept-2} is an example graph concept created using the techniq
 %% The human in the loop aspect of this project
 %% Link in ideas from GNNExplainer
 
-\emph{Graph concept explainer} (GCExplainer) proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} focuses on unsupervised concept extraction with human input to achieve meaningulness and coherency.
+\emph{Graph concept explainer} (GCExplainer) proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} focuses on unsupervised concept extraction with human input to achieve meaningfulness and coherency.
 GCExplainer automates concept extraction by clustering the node representations of a GNN model and mapping each cluster to a concept.
-The aim is providing global explanations for a specific dataset class to better understand how a GNN model operates.
+The aim is to provide global explanations for a specific dataset class to better understand how a GNN model operates.
 
 % Discussion of the metrics
 
@@ -415,7 +415,7 @@ The aim is providing global explanations for a specific dataset class to better 
 
 \paragraph{Concept extraction}
 uses $k$-Means clustering on the node representations of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
-This clusters nodes by the similarity of the representations as the model is likely to treat those nodes the same.
+This clusters the input graph's nodes by the similarity of the representations as the model will treat a cluster's nodes the same.
 Subgraphs centred on a cluster's nodes provide the high-level unit required by \textit{Ghorbani et al.}\cite{ghorbani2019towards}.
 An example of an extracted concept is presented in figure \ref{fig:concept-2}.
 %For the purposes of SGC the same process is carried out on $\bar\mX$, the pre-computed features.
@@ -432,7 +432,7 @@ As concept purity is tied to graph similarity \textit{Magister et al.}\cite{magi
     \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
 \end{equation}
 where $\gamma(\sG_1, \sG_2)$ is the set of edits to transform $\sG_1$ into $\sG_2$ and $c(e_i)$ is the cost of carrying out an edit operation $e_i$.\footnote{This process is NP-Hard and so in most cases an exact purity score is infeasible to compute.}
-By this metric a high purity score is represented by a lower number with 0 being completely pure.
+A high purity score is represented by a lower number with 0 being completely pure.
 The concept in figure \ref{fig:concept-2} has a purity score of 0 as all the graphs are isomorphic.
 
 \paragraph{Concept completeness}
@@ -446,7 +446,7 @@ As the concept space is not easily separable by classifiers such as logistic reg
 %% The clear metrics for comparison
 
 \paragraph{Comparing concepts} between two models trained on the same dataset can give an indication as to how the two models differ in their inference.
-Furthermore, the differences present between the two models provides further insight into how the models reason.
+Furthermore, the differences present between the two models provide further insight into how the model reason.
 Therefore, the described process of concept extraction and evaluation is used in comparing how SGC and GCN operate to analyse the importance of non-linearity in GNNs.  
 
 \section{Datasets}
@@ -475,10 +475,10 @@ These differences give rise to the notion of transductive and inductive learning
 
 To better analyse concepts it is easier to construct graphs with specific properties that produce interpretable concepts.
 Because these graphs are generated based on desired properties they are considered synthetic graphs.
-To carry out the analysis of the concept extraction and evalution described in \Sref{sec:GCE} the five synthetic graphs presented by \textit{Ying et al.}\cite{ying2019gnnexplainer} are used.
+To carry out the analysis of the concept extraction and evaluation described in \Sref{sec:GCE} the five synthetic graphs presented by \textit{Ying et al.}\cite{ying2019gnnexplainer} are used.
 
 The construction of these graphs includes a base graph onto which multiple copies of the same \emph{motif} are attached.
-A motif is a simple graph structure that should be easily recognised by a GNN and is human intreprettable.
+A motif is a simple graph structure that should be easily recognised by a GNN and is human-interpretable.
 The motifs and base graph have different labels and the goal is to classify each node according to the graph structure the node is a part of.
 %Note that the class of a node is dependent on the structure the node is part of rather than the features of the nodes.
 
@@ -491,12 +491,12 @@ As these motifs are also very simple they speed up the intensive process of calc
 The following graphs are used as base graphs:
 
 \paragraph{Barabasi-Albert (BA)}
-a densely connected graph where nodes are probabilisitically connected to each other.
+a densely connected graph where nodes are probabilistically connected to each other.
 The probability of a node connecting to another is proportional to the degree of the node thus creating hubs of densely connected nodes.
 
 \paragraph{Tree}
 a binary symmetric tree (BST) as this is very sparse in comparison to Barabasi.
-These two base graphs provide two different scenarios to compare a models ability to identify the motifs accurately.
+These two base graphs provide two different scenarios to compare a model's ability to identify the motifs accurately.
 
 Not all motifs and base graphs are paired together and only BA Shapes\footnote{Which utilises the house motif}, BA Grid, Tree Grid and Tree Cycles are considered.
 BA Community combines two BA Shapes graphs and requires distinguishing between the communities.
@@ -512,10 +512,10 @@ All datasets have no discerning node features except for BA Community which dist
 \textit{Wu et al.}\cite{wu2019simplifying} evaluate the performance of SGC on a variety of datasets including Cora, Citeseer and PubMed\cite{citation}.
 %These three datasets match the size of the datasets that are used in \textit{Magister et al.} and therefore are used for results reproduction.
 Each graph represents a citation network where nodes are articles and edges are citations.
-The node features are bag of word embeddings generated from the article text.
+The node features are bag-of-word embeddings generated from the article text.
 These datasets are available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} under the Planetoid\cite{planetoid} datasets.
 
-To produce meaningful results that reflect real-world applications of GNNs two real world datasets are used.
+To produce meaningful results that reflect real-world applications of GNNs two real-world datasets are used.
 These two datasets are graph classification datasets and therefore inductive datasets compared to the transductive synthetic datasets.
 These datasets are part of TUDataset \cite{Morris+2020} available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
 
@@ -539,15 +539,15 @@ The task is to classify the graphs as to whether or not they are mutagens.
 
 \paragraph{Programming languages}
 I use Python to write the majority of the software as there is a lot of existing support for machine learning frameworks.
-Furthermore, Python is easy to read, debug and experiment in which is useful for developing new models.
+Furthermore, Python is easy to read, debug and experiment with which is useful for developing new models.
 
 To reduce the need for human input when running multiple experiments to get confidence intervals or hyperparameter tuning dynamically generated bash scripts were used.
 To allow for easier reproducibility and iteration I utilise YAML files to store build configurations for all of my models.
 
 \paragraph{Software development}
 
-A personal configuration of \texttt{NeoVim} was used to develop the code as this has high customisability allowing personalised linters.
-Additionally, local \texttt{Tensorboard}\cite{tensorflow2015-whitepaper} instances help visualise and analyse progress of experiments in realtime, \texttt{Git} and \texttt{Github} implement version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup for experiment results.
+A personal configuration of \texttt{NeoVim} was used to develop the code as this has high customizability allowing personalised linters.
+Additionally, local \texttt{Tensorboard}\cite{tensorflow2015-whitepaper} instances help visualise and analyse the progress of experiments in realtime, \texttt{Git} and \texttt{Github} implement version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup for experiment results.
 \texttt{Google Colab} was occasionally used for compute units to run the large experiment batches.
 
 \paragraph{Libraries}
@@ -560,18 +560,18 @@ To help with running experiments, logging results and reproducibility I use \tex
 
 For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}\cite{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX}\cite{SciPyProceedings_11} to draw the graphs and \texttt{Matplotlib}\cite{Hunter:2007} to visualise the result and hyperparameter surfaces. \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
 
-For unit tests I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built in typing functionality of the other libraries. Additionally I use \texttt{tqdm}\cite{casper_da_costa_luis_2023_7697295} to visualise progress during concept analysis.
+For unit tests I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built-in typing functionality of the other libraries. Additionally, I use \texttt{tqdm}\cite{casper_da_costa_luis_2023_7697295} to visualise progress during concept analysis.
 
 \section{Requirements analysis}
 
 % definitely think this is useful
 % to be figured out later
 
-The success criteria of the project proposal (\Aref{ch:proposal}) three main stages of development each requiring individual and joint requirements.
-Furthermore there are additional requirements to improve reproducibility of the code and desirable requirements for extensions.
+The success criteria of the project proposal (\Aref{ch:proposal}) define three main stages of development each requiring individual and joint requirements.
+Further requirements include improving the reproducibility of the code and results with additional requirements for extensions.
 
 Table \ref{tab:requirements} demonstrates the requirements analysis for this project.
-Risk represents how critical a requirements success is given how difficult it will be to implement.
+Risk represents how critical a requirement's success is given how difficult it will be to implement.
 
 ``-'' represents a general requirement for the project to be implemented, ``S'' represents a requirement based on the given success criteria, and ``E'' represents a requirement that is an extension to the core project.
 
@@ -583,17 +583,17 @@ Risk represents how critical a requirements success is given how difficult it wi
 % But iterative when looking at the results and direction forward
 % sprint work style between meetings
 
-For the core of my project I adopt a Waterfall method \cite{royce1970managing} for my project:
+For the core of my project I adopt a Waterfall method \cite{royce1970managing} for the project:
 
 \begin{equation*}
     \textit{Requirements analysis} \longrightarrow \textit{Design} \longrightarrow \textit{Implementation} \longrightarrow \textit{Testing} \longrightarrow \textit{Evaluation}
 \end{equation*}
 
 During the \textit{Design} phase I start with a skeleton implementation of the ML pipeline and focus on each of the requirements in turn carrying out both \texttt{Implementation} and \texttt{Testing} together where possible.
-At each stage I confirm that the implemented requirement integrates with the rest of the project using a combination of predetermined dummy data, dummy models and dummy concept analysis where these aspects where not yet implemented.
+At each stage I confirm that the implemented requirement integrates with the rest of the project using dummy data if a module is not implemented.
 The \textit{Evaluation} stage includes all the experiment runs and concept analysis required to meet my success criteria replacing \textit{Operations} which is not required for my project.
 
-My extensions do not fit into the Waterfall method as they are research based in nature. I therefore switch to an Agile software development \cite{beck2001manifesto} to allow the project to adjust to the experimental results achieved during development.
+My extensions do not fit into the Waterfall method as they are research-based in nature. Therefore, I switch to an Agile software development \cite{beck2001manifesto} to allow the project to adjust to the experimental results achieved during development.
 
 \section{Testing}
 \label{sec:testing}
@@ -602,14 +602,14 @@ My extensions do not fit into the Waterfall method as they are research based in
 % comparison to paper baselines when dealing with model implementation
 
 Machine learning does not provide a precise metric against which the correctness of an implementation can be verified.
-This is due to the factors that contribute to a machine learning models performance such as hyperparameters, initialisation/random seeds, architecture and dataset.
-As an example a trained model may result in poor results because the underlying architecture is not suited to the dataset, there is too much noise in the data, or because there is a software bug.
+This is due to the factors that contribute to a machine learning model's performance such as hyperparameters, initialisation/random seeds, architecture and dataset.
+As an example a trained model may result in poor results because the underlying architecture is not suited to the dataset, there is too much noise in the data, or there is a software bug.
 Thus, unlike traditional software development, it is harder to verify that an ML model or algorithm has been implemented correctly.
-However, my project does include software that follows traditional software development and therefore a use the following two testing approaches:
+However, my project does include software that follows traditional software development and therefore use the following two testing approaches:
 
 \paragraph{Unit testing}
 is suitable for traditional software development where a specific result is required for specific input.
-The concept analysis and dataset handling fall into this category.
+Concept analysis and dataset handling fall into this category.
 These two aspects are therefore verified using unit testing described in \Sref{sec:testing-imp}.
 
 \paragraph{Reproduction of prior results}
@@ -644,7 +644,7 @@ In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pi
     \label{tab:licensing}
 \end{table}
 
-Table \ref{tab:licensing} includes information about the specific licenses for all the software dependencies in my project.
+Table \ref{tab:licensing} includes information about the specific licenses for the project's software dependencies.
 
 All software dependencies used in my project are under permissive licenses allowing me to use the code with no restrictions.
 Furthermore, I am free to use the Planetoid \cite{planetoid} and TUDataset \cite{Morris+2020} datasets available in \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} library.
@@ -659,6 +659,6 @@ This licensing complies with the licenses of my dependencies.
 
 My starting point is the same as the starting point declared in my proposal except for the additional information that the research paper over the summer has resulted in an acceptance to Learning on Graphs 2022.
 I use the \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} implementation of GCN layers to build the GCN network, as this is just a baseline model. I also rely on the libraries discussed in \Sref{sec:libraries}.
-Aside from these dependencies I built the project from scratch.
+Aside from these dependencies, I built the project from scratch.
 
 % Discussion of summer project using the same rough build environment
