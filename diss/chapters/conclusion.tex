@@ -12,7 +12,7 @@ To combat these limitations SGC and GCN are combined to utilise the benefits of 
 However, though this is successful the use of SGC is very limited with the GCN layers providing the majority of the inference.
 
 JSGC provides a novel extension to SGC with promising results highlighted in \Sref{sec:Jump-SGC} demonstrating graph structure awareness.
-JSGC provides SGC with intermediate node representations through techniques present in JKNs\cite{xu2018representation} allowing for better structural influences.
+JSGC provides SGC with intermediate node representations through techniques present in JKNs~\cite{xu2018representation} allowing for better structural influences.
 Importantly JSGC is negligibly non-linear demonstrating that graph structure awareness is possible within a linear architecture.
 
 \section{Lessons learned}
@@ -52,9 +52,9 @@ Furthermore, JSGC may be best utilised in conjunction with more sophisticated cl
 \paragraph{AMI mixed models}
 To combine SGC and GCN the extracted concepts are compared using AMI to determine where the two approaches are similar.
 As demonstrated in \Sref{sec:SGCN} in figure \ref{fig:SGCN-latent-spaces} the resulting model retains the influence of both models.
-%\textit{Shchur et al.}\cite{shchur2018pitfalls} and \textit{Purchase et al.}\cite{purchase2022revisiting} demonstrate the best performing GNN is highly dependent on training setup and dataset.
+%\textit{Shchur et al.}~\cite{shchur2018pitfalls} and \textit{Purchase et al.}\cite{purchase2022revisiting} demonstrate the best performing GNN is highly dependent on training setup and dataset.
 By combining the best performing GNN models in different environments using the AMI approach it may be possible to the overcome limitations in those environments.
 
 \paragraph{Other GNN architectures}
-The results of SGC are surprising given the comparable performance demonstrated in \textit{Wu et al.}\cite{wu2019simplifying}.
+The results of SGC are surprising given the comparable performance demonstrated in \textit{Wu et al.}~\cite{wu2019simplifying}.
 Multiple other GNN architectures that have been proposed since the inception of GNNs and though these achieve high performance this may not mean they have good graph structure awareness.

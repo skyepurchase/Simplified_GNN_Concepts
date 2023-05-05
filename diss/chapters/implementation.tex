@@ -3,10 +3,10 @@
 \section{Datasets}
 \label{sec:datasets-imp}
 \Sref{sec:datasets-theory} presents several datasets that cover a range of different GNN training styles and motifs.
-The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} as well as the Planetoid\cite{planetoid}\cite{citation} datasets.
+The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} as well as the Planetoid\cite{planetoid}\cite{citation} datasets.
 
 \paragraph{Synthetic datasets}
-The synthetic datasets discussed in \Sref{sec:synth} are available pre-built on GitHub and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} provide limited versions of a small subset.
+The synthetic datasets discussed in \Sref{sec:synth} are available pre-built on GitHub and \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} provide limited versions of a small subset.
 Rather than use these the datasets are reimplemented to allow for more rigorous testing described in \Sref{sec:testing-imp}.
 
 %The motifs described in \Sref{sec:synth} can be hard-coded.
@@ -52,7 +52,7 @@ For consistency and the concept evaluation functions described in \Sref{sec:conc
 \section{Models}
 \label{sec:models}
 
-\texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
+\texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
 \texttt{MessagePassing} extends the \texttt{PyTorch} \texttt{Module} class adding the \texttt{message\_passing} method which is called during the \texttt{forward} method passing node representations and associated adjacency.
 This method allows the implementation of the function
 \begin{equation}
@@ -124,17 +124,17 @@ In SGC the node representations from each successive filter application can be s
 This allows for multiple layers to be analysed without training which in turn can be used to optimise SGC before training.
 
 In comparison, GCN requires a function during the forward pass of the model to save the node representations.
-\texttt{PyTorch}\cite{paszke2019pytorch} provides this functionality through \emph{hooks} which are functions that can be attached to modules.
+\texttt{PyTorch}~\cite{paszke2019pytorch} provides this functionality through \emph{hooks} which are functions that can be attached to modules.
 This function will then run whenever the modules \texttt{forward} method is run and \texttt{PyTorch} will pass the input, output and module to the function.
 A hook function is created which saves the output of a layer to a dictionary, the dictionary is written to a file after the test loop is complete.
 %this means that the activations represent the final model.
 
 \paragraph{Clustering}
 %The described activation dictionaries can be loaded and
-For each of the layers, the node representations are clustered using $k$-means as it is the best-performing model as seen in \textit{Magister et al.}\cite{magister2021gcexplainer}.
+For each of the layers, the node representations are clustered using $k$-means as it is the best-performing model as seen in \textit{Magister et al.}~\cite{magister2021gcexplainer}.
 The specific implementation of $k$-means is provided by
 %Rather than implement my own $k$-means algorithm I utilise the algorithm already present within
-\texttt{scikit learn}\cite{scikit-learn}.
+\texttt{scikit learn}~\cite{scikit-learn}.
 The clustering is parameterised by the number of clusters which
 can be chosen based on the concept scores in \Sref{sec:GCE}.
 %can then motivate the choice of this value
@@ -152,7 +152,7 @@ The theory behind the two concept metrics of completeness and purity are outline
 
 \paragraph{Completeness}
 As discussed in \Sref{sec:GCE} completeness is determined by whether the extracted concepts can be used to infer node labels.
-This is achieved by fitting a decision tree\cite{kazhdan2020now} as proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} to the concepts and labels.
+This is achieved by fitting a decision tree~\cite{kazhdan2020now} as proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} to the concepts and labels.
 The accuracy of this decision tree on the hold-out test set represents the completeness of the concepts extracted.
 
 The decision tree predicts a label for each of the nodes in the graph based on the concept that the node belongs to.
@@ -180,9 +180,9 @@ This means the visual results may contradict the purity score as subgraphs furth
 For the synthetic graphs, the subgraphs are coloured with two colours, green indicating the node of interest and pink indicating neighbouring nodes.
 In some instances, one subgraph may contain a node of interest in another subgraph resulting in multiple green nodes appearing in both.
 %This represents the fact that the model does not distinguish between these nodes within the graph structure.
-The same process is used for REDDIT-BINARY\cite{Morris+2020}.
+The same process is used for REDDIT-BINARY~\cite{Morris+2020}.
 
-In the case of Mutagenicity\cite{Morris+2020} \textit{Magister et al.}\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept meaning that between concepts the colour scheme does not match.
+In the case of Mutagenicity~\cite{Morris+2020} \textit{Magister et al.}\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept meaning that between concepts the colour scheme does not match.
 To provide a better comparison between concepts a chemical colour scheme is chosen and each node is coloured according to this.
 
 Regardless of the dataset, each subgraph is titled by the label of the node of interest.
@@ -209,13 +209,13 @@ Three components of the software follow traditional software development and the
         Small test graphs are used to verify that these are correctly implemented.
     \item[] 
         \smalltitle{Concept evaluation}
-        %Though parts of this implementation use algorithms provided by \texttt{scikit learn}\cite{scikit-learn} the results of these functions needs to be verified in the new context.
+        %Though parts of this implementation use algorithms provided by \texttt{scikit learn}~\cite{scikit-learn} the results of these functions needs to be verified in the new context.
         Small graphs with pre-determined clusters verify the implementation by comparing the predicted clusters to the expected clusterings.
         In the case of purity isomorphic graphs and non-isomorphic of known GED are used.
 \end{itemize}
 
 \paragraph{Reproduction of prior results}
-for both \textit{Magister et al.}\cite{magister2021gcexplainer} and \textit{Wu et al.}\cite{wu2019simplifying} are presented in \Sref{sec:reproduction}.
+for both \textit{Magister et al.}~\cite{magister2021gcexplainer} and \textit{Wu et al.}\cite{wu2019simplifying} are presented in \Sref{sec:reproduction}.
 The hyperparameters used are available in \Aref{app:hyperparameters}.
 
 \section{Extensions}
@@ -227,13 +227,13 @@ The evaluation of the extensions is presented in \Sref{sec:extension-eval}.
 
 \subsection{SGC graph classification}
 \paragraph{Motivation}
-The datasets used in \textit{Magister et al.}\cite{magister2021gcexplainer} include two real-world datasets focusing on graph classification.
+The datasets used in \textit{Magister et al.}~\cite{magister2021gcexplainer} include two real-world datasets focusing on graph classification.
 %As discussed in \Sref{sec:datasets-theory} these graph classification datasets are also inductive rather than transductive which provides another test of the capabilities of SGC.
 Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
 
 \paragraph{Prior work}
-\textit{Wu et al.}\cite{wu2019simplifying} discuss graph classification for SGC and suggest replacing GCN in a deep graph convolutional neural network\cite{zhang2018end}.
-In comparison \textit{Magister et al.}\cite{magister2021gcexplainer} utilise pooling on the graph node representations from a GCN to achieve graph classification.
+\textit{Wu et al.}~\cite{wu2019simplifying} discuss graph classification for SGC and suggest replacing GCN in a deep graph convolutional neural network\cite{zhang2018end}.
+In comparison \textit{Magister et al.}~\cite{magister2021gcexplainer} utilise pooling on the graph node representations from a GCN to achieve graph classification.
 %The label of the entire graph can then be inferred from this single representation.
 The latter method is chosen as it allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.}.
 
@@ -274,10 +274,10 @@ In comparison, GCN can manipulate node representations and can therefore infer s
 This suggests that the low accuracy seen in \Sref{sec:comp-acc} and poor graph structure awareness seen in \Sref{sec:comp-concept} may be due to the linearity or lack of influence.
 
 Therefore the novel \emph{jump-SGC}(JSGC) is proposed which provides the classifier with node representations from each degree of the pre-computation.
-This idea mimics \emph{jumping knowledge networks} (JKNs) proposed by \textit{Xu et al.}\cite{xu2018representation} hence the name ``jump''.
+This idea mimics \emph{jumping knowledge networks} (JKNs) proposed by \textit{Xu et al.}~\cite{xu2018representation} hence the name ``jump''.
 
 \paragraph{Prior work}
-\textit{Xu et al.}\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing the neighbourhood of a node.
+\textit{Xu et al.}~\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing the neighbourhood of a node.
 They propose aggregating the node representations after successive neighbourhood aggregation layers together to provide a better representation.
 Three main methods of aggregation are proposed but, given the small size of the datasets, the concatenation method is chosen.
 

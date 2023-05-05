@@ -221,7 +221,7 @@ To prevent $\hat\mF_\theta$ growing with the dimension of the signal it can be d
     \hat\mF_{\bm{\theta}} = \sum_{j=0}^k\theta_j\bm{\Lambda}^j.
 \end{equation}
 
-%\textit{Kipf et al.}\cite{kipf2016semi} suggest using $k=1$ and define $\theta = \theta_0 = -\theta_1$ resulting in
+%\textit{Kipf et al.}~\cite{kipf2016semi} suggest using $k=1$ and define $\theta = \theta_0 = -\theta_1$ resulting in
 Using this new filter in equation \ref{eq:conv} yields the following formulation of the graph convolution
 \begin{equation}
     \label{eq:GCN-comp}
@@ -229,7 +229,7 @@ Using this new filter in equation \ref{eq:conv} yields the following formulation
     %= \theta(\mI - \mL)\vh_i.
 \end{equation}
 
-Computation of the eigendecomposition of $\mL$ is expensive for large graphs so \textit{Hammond et al.}\cite{hammond2011wavelets} suggest using Chebyshev polynomials (\Aref{app:chebyshev}).
+Computation of the eigendecomposition of $\mL$ is expensive for large graphs so \textit{Hammond et al.}~\cite{hammond2011wavelets} suggest using Chebyshev polynomials (\Aref{app:chebyshev}).
 %With the additional assumption that a NN can adapt to scaling we assume that the maximum eigenvalue is approximately $2$.
 Using the first order Chebyshev polynomial, $\mI + (\mL - \mI)$, and the normalised graph Laplacian, $\mL^{sym} = \mD^{-\frac12}\mL\mD^{-\frac12} = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$ equation \ref{eq:GCN-comp} can be written as 
 \begin{equation}
@@ -237,7 +237,7 @@ Using the first order Chebyshev polynomial, $\mI + (\mL - \mI)$, and the normali
     f_\theta *_\sG \vh_i \approx (\theta_1\mI + \theta_2(\mL - \mI))\vh_i \approx \theta(\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\vh_i,
 \end{equation}
 
-where $\theta = \theta_1 = - \theta_2$ as suggested by \textit{Kipf et al.}\cite{kipf2016semi}.
+where $\theta = \theta_1 = - \theta_2$ as suggested by \textit{Kipf et al.}~\cite{kipf2016semi}.
 The filter can then be used to update the node representations as such
 %Applying an individual paramaterised filter to each signal, that is each node, in the graph results in the following formulisation
 \begin{equation}
@@ -245,7 +245,7 @@ The filter can then be used to update the node representations as such
     \mH^{(l+1)} = \sigma((\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\mH^{(l)}\bm{\Theta}^{(l)})
 \end{equation}
 
-To reduce the size of eigenvalues, and thus vanishing/exploding gradients, \textit{Kipf et al.}\cite{kipf2016semi} apply the following renormalisation to equation \ref{eq:no-norm} 
+To reduce the size of eigenvalues, and thus vanishing/exploding gradients, \textit{Kipf et al.}~\cite{kipf2016semi} apply the following renormalisation to equation \ref{eq:no-norm} 
 \begin{equation}
     \label{eq:norm}
     \mI + \mD^{-\frac12}\mA\mD^{-\frac12} \to \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12} = \mS.
@@ -287,7 +287,7 @@ This means that the $k^{th}$-layer node representation requires the calculation 
 \paragraph{Linearization.}
 Considering the linear graph operation as a spectral filter as described in equation \ref{eq:norm} the non-linearity between layers may be considered non-critical to GCN performance.
 Instead, the benefit comes from the local averaging from successive filter applications as hypothesised by \textit{Wu et al.}.
-%\textit{Wu et al.}\cite{wu2019simplifying} consider this hypothesis citing the benefit arises from the local averaging as apparent in the graph operation formulation described in \Sref{sec:conv}.
+%\textit{Wu et al.}~\cite{wu2019simplifying} consider this hypothesis citing the benefit arises from the local averaging as apparent in the graph operation formulation described in \Sref{sec:conv}.
 %The resulting model is therefore a linear multiplication of the normalised spectral filters and parameter matrix.
 Removing the non-linear activation functions from equation \ref{eq:cls} results in
 \begin{equation}
@@ -358,7 +358,7 @@ As GNNs utilise both graph structure and node features concepts can provide a hu
 %% Again this requires proper reading in the subject see above
 
 A concept is a high-level unit of information that is more interpretable than standard input units such as individual pixels or characters.
-A precise definition of a concept in the general sense is hard to formalise so \textit{Ghorbani et al.}\cite{ghorbani2019towards} propose the following desired properties
+A precise definition of a concept in the general sense is hard to formalise so \textit{Ghorbani et al.}~\cite{ghorbani2019towards} propose the following desired properties
 \begin{itemize}
     \item[]
         \smalltitle{Meaningfulness}
@@ -402,7 +402,7 @@ Figure \ref{fig:concept-2} is an example graph concept created using the techniq
 %% The human in the loop aspect of this project
 %% Link in ideas from GNNExplainer
 
-\emph{Graph concept explainer} (GCExplainer) proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} focuses on unsupervised concept extraction with human input to achieve meaningfulness and coherency.
+\emph{Graph concept explainer} (GCExplainer) proposed by \textit{Magister et al.}~\cite{magister2021gcexplainer} focuses on unsupervised concept extraction with human input to achieve meaningfulness and coherency.
 GCExplainer automates concept extraction by clustering the node representations of a GNN model and mapping each cluster to a concept.
 The aim is to provide global explanations for a specific dataset class to better understand how a GNN model operates.
 
@@ -414,9 +414,9 @@ The aim is to provide global explanations for a specific dataset class to better
 %% Discussion of further benefits of latent space
 
 \paragraph{Concept extraction}
-uses $k$-Means clustering on the node representations of the final GNN layer as recommended by \textit{Magister et al.}\cite{magister2021gcexplainer}.
+uses $k$-Means clustering on the node representations of the final GNN layer as recommended by \textit{Magister et al.}~\cite{magister2021gcexplainer}.
 This clusters the input graph's nodes by the similarity of the representations as the model will treat a cluster's nodes the same.
-Subgraphs centred on a cluster's nodes provide the high-level unit required by \textit{Ghorbani et al.}\cite{ghorbani2019towards}.
+Subgraphs centred on a cluster's nodes provide the high-level unit required by \textit{Ghorbani et al.}~\cite{ghorbani2019towards}.
 An example of an extracted concept is presented in figure \ref{fig:concept-2}.
 %For the purposes of SGC the same process is carried out on $\bar\mX$, the pre-computed features.
 
@@ -426,7 +426,7 @@ These scores allow for further exploration of the concept space for a specific m
 \paragraph{Concept purity}
 relates to the coherence of a concept and is best represented by subgraph isomorphy.
 High concept purity indicates a coherent concept and therefore a global concept of the model.
-As concept purity is tied to graph similarity \textit{Magister et al.}\cite{magister2021gcexplainer} suggest using the \emph{graph edit distance} (GED) which calculated as 
+As concept purity is tied to graph similarity \textit{Magister et al.}~\cite{magister2021gcexplainer} suggest using the \emph{graph edit distance} (GED) which calculated as 
 \begin{equation}
     \label{eq:GED}
     \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
@@ -438,7 +438,7 @@ The concept in figure \ref{fig:concept-2} has a purity score of 0 as all the gra
 \paragraph{Concept completeness}
 relates to the importance of the concept determining whether the correct output can be predicted from the concepts alone.
 High accuracy in classifying the graph according to its concepts indicates that the concepts extracted are important.
-As the concept space is not easily separable by classifiers such as logistic regressors \textit{Magister et al.}\cite{magister2021gcexplainer} suggest using a decision tree\cite{kazhdan2020now}.
+As the concept space is not easily separable by classifiers such as logistic regressors \textit{Magister et al.}~\cite{magister2021gcexplainer} suggest using a decision tree\cite{kazhdan2020now}.
 
 % Detailing why this method was chosen
 
@@ -475,7 +475,7 @@ These differences give rise to the notion of transductive and inductive learning
 
 To better analyse concepts it is easier to construct graphs with specific properties that produce interpretable concepts.
 Because these graphs are generated based on desired properties they are considered synthetic graphs.
-To carry out the analysis of the concept extraction and evaluation described in \Sref{sec:GCE} the five synthetic graphs presented by \textit{Ying et al.}\cite{ying2019gnnexplainer} are used.
+To carry out the analysis of the concept extraction and evaluation described in \Sref{sec:GCE} the five synthetic graphs presented by \textit{Ying et al.}~\cite{ying2019gnnexplainer} are used.
 
 The construction of these graphs includes a base graph onto which multiple copies of the same \emph{motif} are attached.
 A motif is a simple graph structure that should be easily recognised by a GNN and is human-interpretable.
@@ -509,15 +509,15 @@ All datasets have no discerning node features except for BA Community which dist
 % Demonstrating that these techniques are important for real world use
 % Discussions of the short comings of this approach
 
-\textit{Wu et al.}\cite{wu2019simplifying} evaluate the performance of SGC on a variety of datasets including Cora, Citeseer and PubMed\cite{citation}.
+\textit{Wu et al.}~\cite{wu2019simplifying} evaluate the performance of SGC on a variety of datasets including Cora, Citeseer and PubMed\cite{citation}.
 %These three datasets match the size of the datasets that are used in \textit{Magister et al.} and therefore are used for results reproduction.
 Each graph represents a citation network where nodes are articles and edges are citations.
 The node features are bag-of-word embeddings generated from the article text.
-These datasets are available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} under the Planetoid\cite{planetoid} datasets.
+These datasets are available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} under the Planetoid\cite{planetoid} datasets.
 
 To produce meaningful results that reflect real-world applications of GNNs two real-world datasets are used.
 These two datasets are graph classification datasets and therefore inductive datasets compared to the transductive synthetic datasets.
-These datasets are part of TUDataset \cite{Morris+2020} available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
+These datasets are part of TUDataset~\cite{Morris+2020} available through \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019}.
 
 \paragraph{REDDIT BINARY}
 is a dataset where each graph represents a discussion on Reddit with users as nodes and comments as edges.
@@ -547,20 +547,20 @@ To allow for easier reproducibility and iteration I utilise YAML files to store 
 \paragraph{Software development}
 
 A personal configuration of \texttt{NeoVim} was used to develop the code as this has high customizability allowing personalised linters.
-Additionally, local \texttt{Tensorboard}\cite{tensorflow2015-whitepaper} instances help visualise and analyse the progress of experiments in realtime, \texttt{Git} and \texttt{Github} implement version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup for experiment results.
+Additionally, local \texttt{Tensorboard}~\cite{tensorflow2015-whitepaper} instances help visualise and analyse the progress of experiments in realtime, \texttt{Git} and \texttt{Github} implement version control with \texttt{scp} and the \texttt{Student Run Computing Facility} as a third backup for experiment results.
 \texttt{Google Colab} was occasionally used for compute units to run the large experiment batches.
 
 \paragraph{Libraries}
 \label{sec:libraries}
 
-The major libraries used where \texttt{PyTorch}\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
-\texttt{PyTorch} was chosen over \texttt{Tensorflow}\cite{tensorflow2015-whitepaper} as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
+The major libraries used where \texttt{PyTorch}~\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
+\texttt{PyTorch} was chosen over \texttt{Tensorflow}~\cite{tensorflow2015-whitepaper} as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
 To help with running experiments, logging results and reproducibility I use \texttt{Lightning AI} which handles the underlying training and testing loop with Tensorboard support.
-\texttt{Hyperopt}\cite{bergstra2013making} is also used as \textit{Wu et al.}\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
+\texttt{Hyperopt}~\cite{bergstra2013making} is also used as \textit{Wu et al.}\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
 
-For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}\cite{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX}\cite{SciPyProceedings_11} to draw the graphs and \texttt{Matplotlib}\cite{Hunter:2007} to visualise the result and hyperparameter surfaces. \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
+For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}~\cite{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX}\cite{SciPyProceedings_11} to draw the graphs and \texttt{Matplotlib}\cite{Hunter:2007} to visualise the result and hyperparameter surfaces. \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
 
-For unit tests I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built-in typing functionality of the other libraries. Additionally, I use \texttt{tqdm}\cite{casper_da_costa_luis_2023_7697295} to visualise progress during concept analysis.
+For unit tests I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built-in typing functionality of the other libraries. Additionally, I use \texttt{tqdm}~\cite{casper_da_costa_luis_2023_7697295} to visualise progress during concept analysis.
 
 \section{Requirements analysis}
 
@@ -583,7 +583,7 @@ Risk represents how critical a requirement's success is given how difficult it w
 % But iterative when looking at the results and direction forward
 % sprint work style between meetings
 
-For the core of my project I adopt a Waterfall method \cite{royce1970managing} for the project:
+For the core of my project I adopt a Waterfall method~\cite{royce1970managing} for the project:
 
 \begin{equation*}
     \textit{Requirements analysis} \longrightarrow \textit{Design} \longrightarrow \textit{Implementation} \longrightarrow \textit{Testing} \longrightarrow \textit{Evaluation}
@@ -593,7 +593,7 @@ During the \textit{Design} phase I start with a skeleton implementation of the M
 At each stage I confirm that the implemented requirement integrates with the rest of the project using dummy data if a module is not implemented.
 The \textit{Evaluation} stage includes all the experiment runs and concept analysis required to meet my success criteria replacing \textit{Operations} which is not required for my project.
 
-My extensions do not fit into the Waterfall method as they are research-based in nature. Therefore, I switch to an Agile software development \cite{beck2001manifesto} to allow the project to adjust to the experimental results achieved during development.
+My extensions do not fit into the Waterfall method as they are research-based in nature. Therefore, I switch to an Agile software development~\cite{beck2001manifesto} to allow the project to adjust to the experimental results achieved during development.
 
 \section{Testing}
 \label{sec:testing}
@@ -613,8 +613,8 @@ Concept analysis and dataset handling fall into this category.
 These two aspects are therefore verified using unit testing described in \Sref{sec:testing-imp}.
 
 \paragraph{Reproduction of prior results}
-The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}.
-The hyperparameters for the GCN model baseline are available in \textit{Magister et al.}\cite{magister2021gcexplainer} where accuracy scores are also published.
+The two main models I use, GCN and SGC, directly follow implementations of the work by \textit{Kipf et al.}~\cite{kipf2016semi} and \textit{Wu et al.}\cite{wu2019simplifying}.
+The hyperparameters for the GCN model baseline are available in \textit{Magister et al.}~\cite{magister2021gcexplainer} where accuracy scores are also published.
 In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pipeline, NN implementations and dataset integration.
 
 \section{Licensing}
@@ -647,7 +647,7 @@ In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pi
 Table \ref{tab:licensing} includes information about the specific licenses for the project's software dependencies.
 
 All software dependencies used in my project are under permissive licenses allowing me to use the code with no restrictions.
-Furthermore, I am free to use the Planetoid \cite{planetoid} and TUDataset \cite{Morris+2020} datasets available in \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} library.
+Furthermore, I am free to use the Planetoid~\cite{planetoid} and TUDataset \cite{Morris+2020} datasets available in \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} library.
 Though some licenses have additional restrictions on source code modification and/or redistribution my project does neither of these actions and only uses the libraries as is.
 
 I license my source code under the MIT license to support further developers and researchers.
@@ -657,8 +657,8 @@ This licensing complies with the licenses of my dependencies.
 
 \section{Starting point}
 
-I have worked with \texttt{PyTorch}\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} and have experience building graph datasets and GNN models.
-I use the \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} implementation of GCN layers to build the GCN network, as this is just a baseline model. I also rely on the libraries discussed in \Sref{sec:libraries}.
+I have worked with \texttt{PyTorch}~\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} and have experience building graph datasets and GNN models.
+I use the \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} implementation of GCN layers to build the GCN network, as this is just a baseline model. I also rely on the libraries discussed in \Sref{sec:libraries}.
 Aside from these dependencies, I built the project from scratch.
 
 % Discussion of summer project using the same rough build environment
