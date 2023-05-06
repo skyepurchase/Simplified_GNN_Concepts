@@ -5,11 +5,13 @@
 
 Chebyshev polynomials are recursively defined as the following
 
-\begin{align}
-    T_k(x) &= 2xT_{k-1}(x) - T_{k-2}(x), \\
-    T_0(x) &= 1, \\
-    T_1(x) &= x.
-\end{align}
+\begin{equation}
+    \begin{aligned}
+        T_k(x) &= 2xT_{k-1}(x) - T_{k-2}(x), \\
+        T_0(x) &= 1, \\
+        T_1(x) &= x.
+    \end{aligned}
+\end{equation}
 
 Rather than define $\hat\mF_\theta$ as a power series on the eigenvalues of the graph Laplacian, $\bm{\Theta}$ it can be defined as a Chebyshev polynomial
 
