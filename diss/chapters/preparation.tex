@@ -557,7 +557,7 @@ Additionally, local \texttt{Tensorboard}~\cite{tensorflow2015-whitepaper} instan
 
 The major libraries used where \texttt{PyTorch}~\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
 \texttt{PyTorch} was chosen over \texttt{Tensorflow}~\cite{tensorflow2015-whitepaper} as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
-To help with running experiments, logging results and reproducibility I use \texttt{Lightning AI} which handles the underlying training and testing loop with Tensorboard support.
+To help with running experiments, logging results and reproducibility I use \texttt{Lightning AI}~\cite{Falcon_PyTorch_Lightning_2019} which handles the underlying training and testing loop with Tensorboard support.
 \texttt{Hyperopt}~\cite{bergstra2013making} is also used as \textit{Wu et al.}\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
 
 For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}~\cite{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX}\cite{SciPyProceedings_11} to draw the graphs and \texttt{Matplotlib}\cite{Hunter:2007} to visualise the result and hyperparameter surfaces. \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
@@ -659,8 +659,9 @@ This licensing complies with the licenses of my dependencies.
 
 \section{Starting point}
 
-I have worked with \texttt{PyTorch}~\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} and have experience building graph datasets and GNN models.
-I use the \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} implementation of GCN layers to build the GCN network, as this is just a baseline model. I also rely on the libraries discussed in \Sref{sec:libraries}.
+I worked with \texttt{PyTorch}~\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}\cite{Fey/Lenssen/2019} over the summer building new graph datasets and GNN models.
+Before starting I read \textit{Simplifying Graph Convolutions}~\cite{wu2019simplifying} and \textit{GCExplainer}~\cite{magister2021gcexplainer}
+I rely on the libraries discussed in \Sref{sec:libraries}.
 Aside from these dependencies, I built the project from scratch.
 
 % Discussion of summer project using the same rough build environment
