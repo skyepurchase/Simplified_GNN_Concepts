@@ -342,9 +342,9 @@ These drawbacks motivate the extensions presented in \Sref{sec:extensions-imp} a
 % This probably requires reading some papers "yay"
 
 NNs are presented as black-box models where the decision process used to infer an output based on input is opaque to a user.
-This results in mistrust in NNs especially deep NNs where the relationship between input and output is complex.
+This results in mistrust in NNs especially deep NNs where the relationship between input and output is complex~\cite{haibe2020transparency,wang2022revise}.
 
-The goal of explainability is to provide a human interpretable representation of the model's decision process.
+The goal of explainability is to provide a human-interpretable representation of the model's decision process.
 Ideally, global explanations are provided allowing insight into the model's full decision process rather than a local feature.
 
 The proposed approach to explainability that this dissertation follows is that of concepts as these can be inferred after training and thus do not affect model performance.
@@ -420,8 +420,8 @@ Subgraphs centred on a cluster's nodes provide the high-level unit required by \
 An example of an extracted concept is presented in figure \ref{fig:concept-2}.
 %For the purposes of SGC the same process is carried out on $\bar\mX$, the pre-computed features.
 
-\paragraph{Concept scores} are generated for each concept representing how meaningful, coherent and important a specific set of concepts are.
-These scores allow for further exploration of the concept space for a specific model.
+%\paragraph{Concept scores} are generated for each concept representing how meaningful, coherent and important a specific set of concepts are.
+%These scores allow for further exploration of the concept space for a specific model.
 
 \paragraph{Concept purity}
 relates to the coherence of a concept and is best represented by subgraph isomorphy.
@@ -447,7 +447,9 @@ As the concept space is not easily separable by classifiers such as logistic reg
 
 \paragraph{Comparing concepts} between two models trained on the same dataset can give an indication as to how the two models differ in their inference.
 Furthermore, the differences present between the two models provide further insight into how the model reason.
-Therefore, the described process of concept extraction and evaluation is used in comparing how SGC and GCN operate to analyse the importance of non-linearity in GNNs.  
+The described concept scores give two metrics which can be used to compare concepts between models quantitatively.
+Further qualitative analysis between concepts can provide further insight into how the different models operate.
+%Therefore, the described process of concept extraction and evaluation is used in comparing how SGC and GCN operate to analyse the importance of non-linearity in GNNs.  
 
 \section{Datasets}
 \label{sec:datasets-theory}
