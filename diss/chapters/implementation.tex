@@ -30,7 +30,23 @@ The \texttt{Data} object includes train and test split masks randomly assigning 
 %randomness also applies to the generation of the graph 
 This creates significantly different graphs for each generation meaning that nodes for one seed value are unseen for a different seed value.
 
-\paragraph{SGC}
+\section{Models}
+\label{sec:models}
+
+\texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
+\texttt{MessagePassing} extends the \texttt{PyTorch}~\cite{paszke2019pytorch} \texttt{Module} class adding the \texttt{message\_passing} method which is called during the \texttt{forward} method passing node representations and associated adjacency.
+This method allows the implementation of the function
+\begin{equation}
+    \mH^{(l+1)} = \mS\mH^{(l)}\bm{\Theta}^{(l)},
+\end{equation}
+described in \ref{sec:GCN} as equation \ref{eq:GCN1}.
+During the \texttt{message\_passing} method the normalised adjacency $\mS$ is applied to the node representations $\mH^{(l)}$.
+After \texttt{message\_passing} a linear layer is applied to the representations.
+
+These GCN layers (provided by \texttt{PyTorch Geometric}) can then be combined with a ReLU activation function to form a GCN model.
+In comparison, SGC needs only to be a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
+
+\subsection{SGC}
 The majority of SGC is the pre-computation
 \begin{equation}
     \label{eq:pre-comp}
@@ -49,30 +65,14 @@ Equation \ref{eq:SGC} shows that SGC does not need any adjacency information and
 For consistency and the concept evaluation functions described in \Sref{sec:concepts} the adjacency matrix is kept.
 %A new \texttt{Data} object is created copying the labels, data splits and adjacency of the input graph but with the pre-computation matrix as the feature matrix.
 
-\section{Models}
-\label{sec:models}
-
-\texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} provides an abstract \texttt{MessagePassing} class which defines a generic GNN layer.
-\texttt{MessagePassing} extends the \texttt{PyTorch} \texttt{Module} class adding the \texttt{message\_passing} method which is called during the \texttt{forward} method passing node representations and associated adjacency.
-This method allows the implementation of the function
-\begin{equation}
-    \mH^{(l+1)} = \mS\mH^{(l)}\bm{\Theta}^{(l)},
-\end{equation}
-described in \ref{sec:GCN} as equation \ref{eq:GCN1}.
-During the \texttt{message\_passing} method the normalised adjacency $\mS$ is applied to the node representations $\mH^{(l)}$.
-After \texttt{message\_passing} a linear layer is applied to the representations.
-
-These GCN layers (provided by \texttt{PyTorch Geometric}) can then be combined with a ReLU activation function to form a GCN model.
-In comparison, SGC needs only to be a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
-
 \section{Machine Learning Pipeline}
 \label{sec:pipeline}
 
 The ML pipeline is the infrastructure that links the datasets, pre-computation, data loaders, and models together to train and evaluate the models.
 This allows for specific experiment configurations to be run changing each component individually or together.
-As the main aspect of this project is concept extraction, evaluation, and interpretation I use \texttt{PyTorch Lightning} as the main component of the pipeline.
+As the main aspect of this project is concept extraction, evaluation, and interpretation I use \texttt{PyTorch Lightning}~\cite{Falcon_PyTorch_Lightning_2019} as the main component of the pipeline.
 
-\texttt{PyTorch Lightning} provides \texttt{Lightning Modules} that act as wrappers around standard \texttt{PyTorch} (and therefore \texttt{PyTorch Geometric}) modules and carry out all the required training, validation and testing loops.
+\texttt{PyTorch Lightning} provides \texttt{Lightning Modules} that act as wrappers around standard \texttt{PyTorch}~\cite{paszke2019pytorch} (and therefore \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019}) modules and carry out all the required training, validation and testing loops.
 Unfortunately, for the core project and extensions, a single wrapper is not possible.
 This is because the wrappers need to behave differently for SGC and GCN as GCN needs additional adjacency information.
 Additionally, the real-world graph classification datasets require one-hot encoding when calculating loss whereas the synthetic datasets do not.
@@ -293,6 +293,7 @@ This non-linearity remains constant regardless of how the model scales and there
 
 \section{Repository}
 
+\begin{figure}
 \dirtree{%
 .1 \myfolder{black}{}.
 .2   \myfolder{red}{README.md}.
@@ -333,9 +334,12 @@ This non-linearity remains constant regardless of how the model scales and there
 .4  \myfolder{blue}{layers.............................................custom layers}.
 .3  \myfolder{blue}{wrappers.................................pytorch lightning wrappers}.
 }
+    \caption{Repository structure for the project. \hlc[blue!50]{blue} icons represent directories, \hlc[red!50]{red} icons represent files, and \hlc[green!50]{green} icons represent executables.}
+    \label{fig:repo}
+\end{figure}
 
-The repository structure for my project.
-The structure loosely follows ML project structures such as those provided by \texttt{cookiecutter} but is mainly driven by the requirements of \texttt{PyTorch Lighntning}.
+Figure \ref{fig:repo} presents the overall repository structure.
+This structure loosely follows ML project structures such as those provided by \texttt{cookiecutter} but is mainly driven by the requirements of \texttt{PyTorch Lighntning}.
 Data folders are kept at the top level including folders for bash scripts allowing the scripts to access all the source code and folders necessary.
 the \texttt{src} folder contains all the python code with top-level python files such as \texttt{main.py} and \texttt{eval.py} acting as control code for the algorithms in the subfolders.
-\hlc[blue!50]{blue} icons represent directories, \hlc[red!50]{red} icons represent files, and \hlc[green!50]{green} icons represent executables.
+
