@@ -58,7 +58,7 @@ As the underlying graph operator is the same for both GCN and SGC the degree of 
 This is the approach that \textit{Wu et al.}~\cite{wu2019simplifying} use to create their SGC models.
 
 The learning rate for SGC models is likely to be different from the GCN models due to the reformulation.
-Furthermore, \textit{Wu et al.}~\cite{wu2019simplifying} suggest using weight decay to keep weight values close to $0$
+Furthermore, \textit{Wu et al.}~\cite{wu2019simplifying} suggest using weight decay to keep weight values close to $0$.
 %as would be assumed from the multiplication of weight matrices in equation \ref{eq:theta}.
 Rather than stochastic approaches to finding hyperparameters a sweep of values is tested.
 
@@ -76,8 +76,8 @@ The number of epochs for each dataset matches those proposed in \textit{Magister
 \label{sec:evaluation}
 
 \paragraph{Concept evaluation}
-Criterion \ref{crit3} requires evaluation of the models u concept purity and completeness.
-Concepts lend themselves to qualitative analysis which focuses on visual similarities and will help in understanding the differences in how the two architectures work.
+Criterion \ref{crit3} requires quantitative evaluation of the models using concept purity and completeness.
+Concepts also lend themselves to qualitative analysis which focuses on visual similarities and will help in understanding the differences in how the two architectures work.
 
 For qualitative analysis only BA Shapes and Mutagenicity will be covered in detail.
 A brief analysis of the other datasets is presented in \Aref{app:concepts}.
@@ -126,8 +126,6 @@ The machine does have an AMD ATI Lucienne GPU but since \texttt{PyTorch Geometri
 
 To speed up the retrieval of experimental results for extensions I utilised a Google Colab Pro account with 1 hyperthreaded Intel Xeon Processor @ 2.3GHz with 1 core and 12 Gigabytes of Ram.
 The account also has access to a Tesla K80 GPU with 12GB of RAM.
-
-\note{Include figures demonstrating system use later.}
 
 \section{Results Reproduction}
 \label{sec:reproduction}
@@ -183,8 +181,8 @@ Though average purity has little correlation between the two results this is due
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.45\textwidth]{figures/GCN-BA-Shapes}
-    \includegraphics[width=0.45\textwidth]{figures/Magister-BA-Shapes}
+    \includegraphics[width=0.49\textwidth]{figures/GCN-BA-Shapes}
+    \includegraphics[width=0.49\textwidth]{figures/Magister-BA-Shapes}
     \caption{A subset of concepts discovered for BA-Shapes from the best performing GCN model compared to those published in figures 2, 3, and 5 in \textit{Magister et al.}~\cite{magister2021gcexplainer}. Green nodes highlight the node of interest and pink nodes highlight the neighbourhood used for inference. Each row represents an individual concept.}
     \label{fig:GCN-BA-Shapes}
 \end{figure}
@@ -289,7 +287,15 @@ Overall, this demonstrates that though SGC does not perform as well as GCN it do
 \label{sec:concept-analysis}
 
 \paragraph{BA Shapes}
-\fig{SGC-BA-Shapes}{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textheight]{figures/SGC-BA-Shapes}
+    \caption{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
+    \label{fig:SGC-BA-Shapes}
+\end{figure}
+
+%\fig{SGC-BA-Shapes}{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
 
 Figure \ref{fig:SGC-BA-Shapes} visualises a subset of the concepts extracted for SGC on BA Shapes.
 Concepts 1 to 4 demonstrate the purer concepts extracted for SGC with concepts 5 to 7 representing the common impure concepts.
@@ -356,6 +362,14 @@ As these are extensions a smaller subset of the graph datasets are considered lo
 
 \subsection{SGC graph classification}
 \label{SGC-graph}
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.4\textheight]{figures/SGC-Mutagenicity}
+%    \caption{Concepts from SGC and GCN for Mutagenicity comparing the complexity of the inferred graph structure. The numbered concepts are a subset of SGC concepts and the lettered concepts are a subset of GCN. The colour scheme matches standard chemical colours.}
+%    \label{fig:SGC-Mutagenicity}
+%\end{figure}
+
 \fig{SGC-Mutagenicity}{Concepts from SGC and GCN for Mutagenicity comparing the complexity of the inferred graph structure. The numbered concepts are a subset of SGC concepts and the lettered concepts are a subset of GCN. The colour scheme matches standard chemical colours.}
 
 Tables \ref{tab:SGC-acc}, \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} include the results achieved by SGC on Mutagenicity.
@@ -416,6 +430,14 @@ An analysis of the concepts extracted for SGCN is presented in \Sref{app:concept
 \input{tables/JSGC-acc}
 \input{tables/JSGC-completeness}
 \input{tables/JSGC-purity}
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.4\textheight]{figures/JSGC-latent-space}
+%    \caption{The final layer in the GCN, SGC and JSGC architectures for BA Shapes. As shown JSGC has clear clusterings for the different labels similar to GCN but the clustering is not as pronounced likely leading to the lower accuracy. In comparison, SGC exhibits no clear clustering.}
+%    \label{fig:JSGC-latent-space}
+%\end{figure}
+
 \fig{JSGC-latent-space}{The final layer in the GCN, SGC and JSGC architectures for BA Shapes. As shown JSGC has clear clusterings for the different labels similar to GCN but the clustering is not as pronounced likely leading to the lower accuracy. In comparison, SGC exhibits no clear clustering.}
 
 Tables \ref{tab:JSGC-acc}, \ref{tab:JSGC-completeness} and \ref{tab:JSGC-purity} show the results achieved by JSGC.
@@ -423,6 +445,13 @@ Overall these demonstrate that JSGC does outperform SGC significantly and is mor
 The accuracy achieved by JSGC is still lower than the 95\% suggested by \textit{Ying et al.}~\cite{ying2019gnnexplainer} but significantly better.
 This improvement is seen in table \ref{tab:JSGC-completeness} as the completeness scores are closer to 1 with BA Community producing better-performing concepts than GCN.\footnote{The high score signifies that good concepts are being utilised by the model but the model still does not appear to be capable.}
 The purity presented in table \ref{tab:JSGC-purity} is higher though more concepts were considered and BA Community is a very complex graph.
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.4\textheight]{figures/JSGC-BA-Community}
+%    \caption{A subset of concepts from JSGC for BA Community demonstrating the improved graph structure awareness. The concepts are chosen to represent the GCN concepts presented in \ref{fig:BA-Community}. The colour scheme is the same as fig \ref{fig:GCN-BA-Shapes}.}
+%    \label{fig:JSGC-BA-Community}
+%\end{figure}
 
 \fig{JSGC-BA-Community}{A subset of concepts from JSGC for BA Community demonstrating the improved graph structure awareness. The concepts are chosen to represent the GCN concepts presented in \ref{fig:BA-Community}. The colour scheme is the same as fig \ref{fig:GCN-BA-Shapes}.}
 
