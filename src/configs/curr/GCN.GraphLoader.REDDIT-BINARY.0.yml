@@ -1,0 +1,25 @@
+model:
+  name: gcn
+  kwargs:
+    num_conv_layers: 4
+    num_lin_layers: 1
+    hid_features: [40, 40, 40, 40]
+    pooling: True
+
+sampler:
+  name: GraphLoader
+  train:
+    batch_size: 20
+  test:
+    batch_size: 20
+
+wrapper:
+  name: Pool
+  kwargs:
+    learning_rate: 0.005
+
+trainer:
+  dir: ../logs
+  accelerator: cpu
+  devices: 1
+  max_epochs: 3000

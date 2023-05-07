@@ -1,0 +1,25 @@
+model:
+  name: psgc 
+  kwargs: {}
+
+sampler:
+  name: GraphSGC
+  degree: 3
+  train:
+    batch_size: 20
+  val:
+    batch_size: 20
+  test:
+    batch_size: 20
+
+wrapper:
+  name: PoolLinear
+  kwargs:
+    learning_rate: 0.004
+    weight_decay: 0.37
+
+trainer:
+  dir: ../logs
+  accelerator: cpu
+  devices: 1
+  max_epochs: 100

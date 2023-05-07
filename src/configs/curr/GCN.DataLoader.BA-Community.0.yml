@@ -1,0 +1,20 @@
+model:
+  name: gcn
+  kwargs:
+    num_conv_layers: 6 
+    num_lin_layers: 1
+    hid_features: [50, 50, 50, 50, 50, 50]
+
+sampler:
+  name: DataLoader
+
+wrapper:
+  name: Graph 
+  kwargs:
+    learning_rate: 0.001
+
+trainer:
+  dir: ../logs
+  accelerator: cpu
+  devices: 1
+  max_epochs: 6000 

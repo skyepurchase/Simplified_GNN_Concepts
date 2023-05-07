@@ -1,0 +1,23 @@
+model:
+  name: sgc 
+  kwargs: {}
+
+sampler:
+  name: SGC
+  degree: 3
+  train:
+    num_parts: 1
+  test:
+    num_parts: 1
+
+wrapper:
+  name: GraphLinear
+  kwargs:
+    learning_rate: 0.2
+    weight_decay: 0.37
+
+trainer:
+  dir: ../logs
+  accelerator: cpu
+  devices: 1
+  max_epochs: 100

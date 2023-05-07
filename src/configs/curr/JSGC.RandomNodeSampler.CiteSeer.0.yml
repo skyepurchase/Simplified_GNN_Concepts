@@ -1,0 +1,27 @@
+model:
+  name: jsgc
+  kwargs: 
+    jump_degree: 3
+
+sampler:
+  name: SGC
+  degree: 2
+  jump: true
+  train:
+    num_parts: 1
+  val:
+    num_parts: 1
+  test:
+    num_parts: 1
+
+wrapper:
+  name: Linear
+  kwargs:
+    learning_rate: 0.001
+    weight_decay: 0.01
+
+trainer:
+  dir: ../logs
+  accelerator: cpu
+  devices: 1
+  max_epochs: 100

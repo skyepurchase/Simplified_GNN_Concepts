@@ -1,0 +1,25 @@
+model:
+  name: jsgc
+  kwargs:
+    jump_degree: 8
+
+sampler:
+  name: SGC
+  degree: 7
+  jump: true
+  train:
+    num_parts: 1
+  test:
+    num_parts: 1
+
+wrapper:
+  name: GraphLinear
+  kwargs:
+    learning_rate: 0.01
+    weight_decay: 0.001
+
+trainer:
+  dir: ../logs
+  accelerator: cpu
+  devices: 1
+  max_epochs: 1000

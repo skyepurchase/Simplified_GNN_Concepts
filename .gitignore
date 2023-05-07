@@ -9,7 +9,7 @@ output/
 activations/
 
 # configs
-src/configs/
+src/configs/old/
 
 # run scripts
 run/
