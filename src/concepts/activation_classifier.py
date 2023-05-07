@@ -21,15 +21,15 @@ class Activation_Classifier(nn.Module):
         super().__init__()
         self.data: Union[Data, Dataset] = data
         if isinstance(self.data, Dataset):
-            #TODO: discuss the difference in shuffling
-            temp = self.data.shuffle()
-            if isinstance(temp, Dataset):
-                self.data = temp
-            else:
-                raise ValueError(f"Expected shuffled data to be type {Dataset} received type {type(temp)}")
-            self.train_idx: int = int(len(self.data) * 0.8)
+            raise NotImplementedError
+#            temp = self.data.shuffle()
+#            if isinstance(temp, Dataset):
+#                self.data = temp
+#            else:
+#                raise ValueError(f"Expected shuffled data to be type {Dataset} received type {type(temp)}")
+#            self.train_idx: int = int(len(self.data) * 0.8)
 
-        activation: NDArray = torch.squeeze(activations).detach().numpy()
+        activation: NDArray = activations.detach().numpy()
         self.predictions: NDArray = model.predict(activation)
 
         self.accuracy: float
@@ -48,10 +48,10 @@ class Activation_Classifier(nn.Module):
         elif isinstance(self.data, Dataset):
             raise NotImplementedError
             # Code not suitable yet
-            train_y = [self.data.get(i).y for i in range(self.train_idx)]
-            test_y = [self.data.get(i + self.train_idx).y for i in range(self.train_idx)]
-            classifier = classifier.fit(train_data, train_y)
-            temp = classifier.score(test_data, test_y)
+#            train_y = [self.data.get(i).y for i in range(self.train_idx)]
+#            test_y = [self.data.get(i + self.train_idx).y for i in range(self.train_idx)]
+#            classifier = classifier.fit(train_data, train_y)
+#            temp = classifier.score(test_data, test_y)
         else:
             raise ValueError(f"Expected self.data to be type {Data} or {Dataset} received type {type(self.data)}")
 
@@ -74,9 +74,9 @@ class Activation_Classifier(nn.Module):
         elif isinstance(self.data, Dataset):
             raise NotImplementedError
             # Code not suitable yet
-            concept_data: NDArray = np.array([[self._node_to_concept(node_idx)] for node_idx in range(len(self.data))])
-            train_data: NDArray = concept_data[:self.train_idx]
-            test_data: NDArray = concept_data[self.train_idx:]
+#            concept_data: NDArray = np.array([[self._node_to_concept(node_idx)] for node_idx in range(len(self.data))])
+#            train_data: NDArray = concept_data[:self.train_idx]
+#            test_data: NDArray = concept_data[self.train_idx:]
         else:
             raise ValueError(f"Expected self.data to be type {Data} or {Dataset} received type {type(self.data)}")
 

@@ -270,8 +270,8 @@ class TestSyntheticGraphs(unittest.TestCase):
 
         # Act
         edge_index, node_label = syngraph._gen_graph()
-        new_edge_index, new_node_label = syngraph._join(edge_index,
-                                                        node_label)
+        new_edge_index, new_node_label, _ = syngraph._join(edge_index,
+                                                           node_label)
 
         # Assert
         self.assertEqual(new_edge_index.shape[1], (2 * edge_index.shape[1]) + (2 * num_join_edges))
@@ -291,8 +291,8 @@ class TestSyntheticGraphs(unittest.TestCase):
 
         # Act
         edge_index, node_label = syngraph._gen_graph()
-        new_edge_index, new_node_label = syngraph._join(edge_index,
-                                                        node_label)
+        new_edge_index, new_node_label, _ = syngraph._join(edge_index,
+                                                           node_label)
 
         unique_nodes = len(new_edge_index.unique())
         unique_labels = len(new_node_label.unique())
@@ -312,11 +312,11 @@ class TestSyntheticGraphs(unittest.TestCase):
                                                         num_shapes=80)
 
         # Act
-        train_mask: NDArray = syngraph.data.train_mask
-        test_mask: NDArray = syngraph.data.test_mask
+        train_mask: Tensor = syngraph.data.train_mask
+        test_mask: Tensor = syngraph.data.test_mask
 
         # Assert
-        self.assertTrue(np.all(train_mask + test_mask == np.ones(len(train_mask))))
+        self.assertTrue(torch.all(train_mask + test_mask))
 
 
 if __name__=='__main__':

@@ -1,6 +1,6 @@
 import networkx as nx
 
-from models.activation_classifier import Activation_Classifier
+from .activation_classifier import Activation_Classifier
 
 # Typing
 from sklearn.cluster import KMeans
@@ -9,17 +9,14 @@ from networkx import Graph
 from typing import Union, Dict
 from torch import Tensor
 
-
-PURITY_TEST = True
-
-
 def same_label(n1: Dict[str, int],
                n2: Dict[str, int]):
     return n1["label"] == n2["label"]
 
 
 def purity(Graphs: list[Graph],
-           max_nodes: int = 13) -> float:
+           max_nodes: int = 13,
+           use_features: bool = False) -> float:
     purity: float = 0
     num_pairs: int = 0
 
@@ -31,7 +28,7 @@ def purity(Graphs: list[Graph],
             if G1.number_of_nodes() > max_nodes:
                 continue
             else:
-                if PURITY_TEST:
+                if use_features:
                     score: Union[float, None] = nx.graph_edit_distance(top_graph, G1, same_label)
                 else:
                     score: Union[float, None] = nx.graph_edit_distance(top_graph, G1)
