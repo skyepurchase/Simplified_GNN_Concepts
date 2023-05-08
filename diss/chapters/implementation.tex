@@ -3,7 +3,7 @@
 \section{Datasets}
 \label{sec:datasets-imp}
 \Sref{sec:datasets-theory} presents several datasets that cover a range of different GNN training styles and motifs.
-The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} as well as the Planetoid\cite{planetoid}\cite{citation} datasets.
+The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} as well as the Planetoid~\cite{planetoid,citation} datasets.
 
 \paragraph{Synthetic datasets}
 The synthetic datasets discussed in \Sref{sec:synth} are available pre-built on GitHub and \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} provide limited versions of a small subset.
@@ -152,7 +152,7 @@ The theory behind the two concept metrics of completeness and purity are outline
 
 \paragraph{Completeness}
 As discussed in \Sref{sec:GCE} completeness is determined by whether the extracted concepts can be used to infer node labels.
-This is achieved by fitting a decision tree~\cite{kazhdan2020now} as proposed by \textit{Magister et al.}\cite{magister2021gcexplainer} to the concepts and labels.
+This is achieved by fitting a decision tree~\cite{kazhdan2020now} as proposed by \textit{Magister et al.}~\cite{magister2021gcexplainer} to the concepts and labels.
 The accuracy of this decision tree on the hold-out test set represents the completeness of the concepts extracted.
 
 The decision tree predicts a label for each of the nodes in the graph based on the concept that the node belongs to.
@@ -182,7 +182,7 @@ In some instances, one subgraph may contain a node of interest in another subgra
 %This represents the fact that the model does not distinguish between these nodes within the graph structure.
 The same process is used for REDDIT-BINARY~\cite{Morris+2020}.
 
-In the case of Mutagenicity~\cite{Morris+2020} \textit{Magister et al.}\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept meaning that between concepts the colour scheme does not match.
+In the case of Mutagenicity~\cite{Morris+2020} \textit{Magister et al.}~\cite{magister2021gcexplainer} assign a unique colour to each atom within a concept meaning that between concepts the colour scheme does not match.
 To provide a better comparison between concepts a chemical colour scheme is chosen and each node is coloured according to this.
 
 Regardless of the dataset, each subgraph is titled by the label of the node of interest.
@@ -215,7 +215,7 @@ Three components of the software follow traditional software development and the
 \end{itemize}
 
 \paragraph{Reproduction of prior results}
-for both \textit{Magister et al.}~\cite{magister2021gcexplainer} and \textit{Wu et al.}\cite{wu2019simplifying} are presented in \Sref{sec:reproduction}.
+for both \textit{Magister et al.}~\cite{magister2021gcexplainer} and \textit{Wu et al.}~\cite{wu2019simplifying} are presented in \Sref{sec:reproduction}.
 The hyperparameters used are available in \Aref{app:hyperparameters}.
 
 \section{Extensions}
@@ -232,7 +232,7 @@ The datasets used in \textit{Magister et al.}~\cite{magister2021gcexplainer} inc
 Furthermore, though \Sref{sec:comp-acc} suggests SGC performs poorly, this could be because of the synthetic nature of the datasets.
 
 \paragraph{Prior work}
-\textit{Wu et al.}~\cite{wu2019simplifying} discuss graph classification for SGC and suggest replacing GCN in a deep graph convolutional neural network\cite{zhang2018end}.
+\textit{Wu et al.}~\cite{wu2019simplifying} discuss graph classification for SGC and suggest replacing GCN in a deep graph convolutional neural network~\cite{zhang2018end}.
 In comparison \textit{Magister et al.}~\cite{magister2021gcexplainer} utilise pooling on the graph node representations from a GCN to achieve graph classification.
 %The label of the entire graph can then be inferred from this single representation.
 The latter method is chosen as it allows for a fairer comparison between SGC and the results achieved by \textit{Magister et al.}.

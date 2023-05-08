@@ -8,11 +8,11 @@ These datasets are such that during training the node representations of nodes o
 The model is tested on the labels of these ``unseen'' nodes without access to the training sets labels.
 This is because the training, validation and test sets are sampled from the nodes of a single graph, if only these nodes where given to the model the structure of the graph is lost and a large proportion of the nodes will no longer be connected.
 This dataset forces the model to transfer knowledge about existing (representation, label) pairs to unlabelled nodes.
-This concept is present in figure \ref{fig:inductive-vs-transductive}(a).
+This concept is present in Figure \ref{fig:inductive-vs-transductive}(a).
 
 \section{Inductive datasets}
 These datasets are such that the nodes ``seen'' during training, validation and testing are completely disjoint.
 This is generally the case in graph classification tasks where each data point is a unique graph with a classification thus the test set is a new set of graphs with completely unseen nodes.
 This dataset forces the model to induce information of relationships between nodes and optimal representations.
-This concept is present in figure \ref{fig:inductive-vs-transductive}(b).
+This concept is present in Figure \ref{fig:inductive-vs-transductive}(b).
 

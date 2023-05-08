@@ -42,11 +42,11 @@ Additionally, \Sref{sec:comp-acc} presents a comparison between the accuracy of 
 \textit{Magister et al.}~\cite{magister2021gcexplainer} use a GCN model to evaluate their proposed graph concept explainer on the 5 synthetic node classification datasets described in \Sref{sec:synth}.
 The hyperparameters used are presented in table 15 from \textit{Magister et al.}. 
 
-\textit{Wu et al.}~\cite{wu2019simplifying} use hyperopt to find the weight decay parameter for the Planetoid\cite{kipf2016semi} datasets.
+\textit{Wu et al.}~\cite{wu2019simplifying} use hyperopt to find the weight decay parameter for the Planetoid~\cite{kipf2016semi} datasets.
 This process was repeated however it was found that the learning rates were different from those stated.
 
-The hyperparameters for these models are available in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params}.
-Additionally, the concept extraction metrics are presented in table \ref{tab:GCN-concept-params}.
+The hyperparameters for these models are available in Tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params}.
+Additionally, the concept extraction metrics are presented in Table \ref{tab:GCN-concept-params}.
 
 %\input{tables/GCN-params}
 %\input{tables/SGC-reproduction-params}
@@ -62,15 +62,15 @@ Furthermore, \textit{Wu et al.}~\cite{wu2019simplifying} suggest using weight de
 %as would be assumed from the multiplication of weight matrices in equation \ref{eq:theta}.
 Rather than stochastic approaches to finding hyperparameters a sweep of values is tested.
 
-The result of these searches is presented in figures \ref{fig:SGC-surfaces} and \ref{fig:JSGC-surfaces}.
+The result of these searches is presented in Figures \ref{fig:SGC-surfaces} and \ref{fig:JSGC-surfaces}.
 The majority of sweeps demonstrate minimal impact on model accuracy and therefore a learning rate of $0.01$ and weight decay constant of $0.1$ is chosen.
-The hyperparameters used are presented in table \ref{tab:SGC-params}.
+The hyperparameters used are presented in Table \ref{tab:SGC-params}.
 
 %\input{tables/SGC-params}
 
 \paragraph{Datasets}
-The batch sizes for all the datasets match those described in \textit{Ying et al.}~\cite{ying2019gnnexplainer} and \textit{Kipf et al.}\cite{kipf2016semi}.
-The number of epochs for each dataset matches those proposed in \textit{Magister et al.}~\cite{magister2021gcexplainer} and \textit{Wu et al.}\cite{wu2019simplifying} or until convergence for SGC.
+The batch sizes for all the datasets match those described in \textit{Ying et al.}~\cite{ying2019gnnexplainer} and \textit{Kipf et al.}~\cite{kipf2016semi}.
+The number of epochs for each dataset matches those proposed in \textit{Magister et al.}~\cite{magister2021gcexplainer} and \textit{Wu et al.}~\cite{wu2019simplifying} or until convergence for SGC.
 
 \subsection{Model Evaluation}
 \label{sec:evaluation}
@@ -101,7 +101,7 @@ It is important to note several drawbacks of the GCExplainer in comparing two di
 \paragraph{Accuracy evaluation}
 Drawback \ref{nb:accuracy} motivates the additional evaluation metric of accuracy as \Sref{sec:comp-acc} demonstrates that SGC does not meet the desired accuracy.
 To achieve this each synthetic dataset is split into a train and test set using an 80:20 split.
-Note that TUDataset~\cite{Morris+2020} and Planetoid\cite{kipf2016semi} use their own train/test splits.
+Note that TUDataset~\cite{Morris+2020} and Planetoid~\cite{kipf2016semi} use their own train/test splits.
 
 The synthetic datasets are generated randomly along with the train/test split and thus each random seed produces a new variation.
 This means that using the same seed results in the same train/test split.
@@ -130,16 +130,16 @@ The account also has access to a Tesla K80 GPU with 12GB of RAM.
 \section{Results Reproduction}
 \label{sec:reproduction}
 
-As discussed in \Sref{sec:testing} the testing strategy includes the reproduction of prior results from \textit{Magister et al.}~\cite{magister2021gcexplainer} on GCN and \textit{Wu et al.}\cite{wu2019simplifying} on SGC.
+As discussed in \Sref{sec:testing} the testing strategy includes the reproduction of prior results from \textit{Magister et al.}~\cite{magister2021gcexplainer} on GCN and \textit{Wu et al.}~\cite{wu2019simplifying} on SGC.
 I reproduce all of the experiments from \textit{Magister et al.} and the Planetoid~\cite{kipf2016semi} from \textit{Wu et al.} as these are most relevant.
 
 \paragraph{Success criterion}
 \Sref{sec:GCN-reproduction} demonstrates an implementation of GCN trained on the synthetic datasets with concept extraction.
-Tables \ref{tab:GCN-acc} and \ref{tab:GCN-concepts} and figure \ref{fig:GCN-BA-Shapes} demonstrate the results achieved.
+Tables \ref{tab:GCN-acc} and \ref{tab:GCN-concepts} and Figure \ref{fig:GCN-BA-Shapes} demonstrate the results achieved.
 This fulfills the \ref{crit2}$^{nd}$ success criterion.
 
 \paragraph{Method}
-In both cases across all datasets the hyperparameters presented in tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params} are used.
+In both cases across all datasets the hyperparameters presented in Tables \ref{tab:GCN-params} and \ref{tab:SGC-reproduction-params} are used.
 Each experiment is run 10 times with different randomly pre-selected seeds and the mean and confidence intervals are presented.
 The implementation of the SGC pre-computation is presented in \Sref{sec:datasets-imp}.
 The implementation of GCN uses the layers provided by \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019}.
@@ -151,7 +151,7 @@ Table \ref{tab:SGC-reproduction} presents the accuracy achieved by the reproduce
 As can be seen in both Cora and Citeseer the accuracies are closely correlated.
 In comparison, Pubmed presents a large discrepancy between the published results and the reproduced results with large variation in the reproduced results.
 These discrepancies are due to the uncertainty in hyperparameters as the exact weight decay constant used is unknown.
-Furthermore, the published learning rate of 0.2 yields worse results and so new learning rates are used (table \ref{tab:SGC-reproduction-params}).
+Furthermore, the published learning rate of 0.2 yields worse results and so new learning rates are used (Table \ref{tab:SGC-reproduction-params}).
 Based on these considerations I consider my implementation of SGC to be correct.
 
 \subsection{GCN}
@@ -252,7 +252,7 @@ Furthermore, the concepts highlight the shortcomings of SGC when it comes to gra
 Therefore, though the analysis of the concept scores is limited the qualitative concept analysis provides insight into where SGC fails.
 
 \paragraph{Success criterion}
-Table \ref{tab:SGC-acc} demonstrates an implementation of SGC trained on the synthetic datasets with tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} showing concept extraction.
+Table \ref{tab:SGC-acc} demonstrates an implementation of SGC trained on the synthetic datasets with Tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} showing concept extraction.
 Figures \ref{fig:SGC-BA-Shapes} and \ref{fig:BA-Community} visualise the extracted concepts from the relevant SGC model. These fulfill the \ref{crit1}$^{st}$ success criterion.
 
 Table \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} also include a comparison to the scores achieved by GCN.
@@ -269,7 +269,7 @@ However, the completeness scores are relatively close to GCN except in the case 
 
 These high completeness scores are because completeness relates to the importance of concepts and not directly to the performance of the model.
 The relatively high completeness scores for SGC signify that the concepts have some relevance to the node class.
-However, as demonstrated by table \ref{tab:SGC-completeness}, this relevance is not as strong as that in GCN.
+However, as demonstrated by Table \ref{tab:SGC-completeness}, this relevance is not as strong as that in GCN.
 
 \paragraph{Purity}
 \input{tables/SGC-purity}
@@ -302,7 +302,7 @@ Concepts 1 to 4 demonstrate the purer concepts extracted for SGC with concepts 5
 Concept 5 demonstrates a shortcoming of calculating purity: this is considered a ``pure'' concept as the Barabasi-Albert graphs, having more than 13 nodes, are not considered. 
 
 Concepts 2, 3 and 4 demonstrate that SGC can identify pure concepts with important graph structure components.
-These concepts can be directly compared to concepts 3, 2 and 4 in figure \ref{fig:GCN-BA-Shapes} respectively.
+These concepts can be directly compared to concepts 3, 2 and 4 in Figure \ref{fig:GCN-BA-Shapes} respectively.
 As with GCN, the attaching arm is important to the classification of the nodes and there is some distinction between ``inside'' and ``outside'' nodes.
 However, as can be seen in concept 2, this distinction is not as strong as GCN.
 
@@ -342,7 +342,7 @@ Though particularly apparent in BA Community these affect the performance on oth
 %However, table \ref{tab:SGC-completeness} does suggest that SGC does not produce useful concepts even though table \ref{tab:SGC-purity} suggests that these concepts are coherent.
 
 SGC is not as capable as GCN when dealing with synthetic datasets where graph structure is important.
-Table \ref{tab:SGC-acc} demonstrates poor performance across all of the synthetic datasets and tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} show the corresponding low concept scores.
+Table \ref{tab:SGC-acc} demonstrates poor performance across all of the synthetic datasets and Tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} show the corresponding low concept scores.
 Attempts to improve the performance by increasing the parameters of SGC have resulted in no substantial improvement in accuracy or concept score.
 
 The concepts extracted from SGC across the datasets demonstrate a lack of graph structure awareness which is a key feature of any GNN.
@@ -406,18 +406,18 @@ As the process of finding the optimal model, training and evaluating requires ma
 Figure \ref{fig:SGCN-latent-spaces} shows the t-SNE reduced latent space of each layer and model.
 Tables \ref{tab:SGCN-acc} and \ref{tab:SGCN-completeness} demonstrate the results achieved by SGCN in both accuracy and concept completeness.
 
-Layer 0 in figure \ref{fig:SGCN-latent-spaces} demonstrates the first layer which has the highest AMI between GCN and SGC.
+Layer 0 in Figure \ref{fig:SGCN-latent-spaces} demonstrates the first layer which has the highest AMI between GCN and SGC.
 The similarity is not very high but is significantly higher than the similarity between SGC and GCN for the remaining layers.
 This does present a potential issue in combining models where no significant mutual information is present.
 
-Layer 1 in figure \ref{fig:SGCN-latent-spaces} demonstrates that the second layer of SGCN is very similar to that of SGC.
+Layer 1 in Figure \ref{fig:SGCN-latent-spaces} demonstrates that the second layer of SGCN is very similar to that of SGC.
 This is due to the previous layer being an SGC layer and so the GCN layer applied to a different feature space.
 The spread green labelled nodes (representing the ``floor'') are present in the GCN layer 0 and SGCN layer 1 demonstrating a mixture of representation.
 
-Layer 2 in figure \ref{fig:SGCN-latent-spaces} shows that the final layer of SGCN has a latent space that is very similar to that of GCN.
+Layer 2 in Figure \ref{fig:SGCN-latent-spaces} shows that the final layer of SGCN has a latent space that is very similar to that of GCN.
 Given the increase in performance by SGCN this latent space is likely to be better.
 
-Though SGCN does not surpass the performance of GCN as shown in table \ref{tab:SGCN-acc} it can surpass it in completeness score highlighted in table \ref{tab:SGCN-completeness}.
+Though SGCN does not surpass the performance of GCN as shown in Table \ref{tab:SGCN-acc} it can surpass it in completeness score highlighted in Table \ref{tab:SGCN-completeness}.
 This happens across all layers (noting that the first layer is identical to the SGC layer) and highlights a major benefit of the model.
 GCN takes all 3 layers to reach a high completeness score whereas SGC starts high but then decreases as more layers are added.
 By combining the layers the completeness score remains high throughout.
@@ -443,8 +443,8 @@ An analysis of the concepts extracted for SGCN is presented in \Sref{app:concept
 Tables \ref{tab:JSGC-acc}, \ref{tab:JSGC-completeness} and \ref{tab:JSGC-purity} show the results achieved by JSGC.
 Overall these demonstrate that JSGC does outperform SGC significantly and is more comparable to GCN.
 The accuracy achieved by JSGC is still lower than the 95\% suggested by \textit{Ying et al.}~\cite{ying2019gnnexplainer} but significantly better.
-This improvement is seen in table \ref{tab:JSGC-completeness} as the completeness scores are closer to 1 with BA Community producing better-performing concepts than GCN.\footnote{The high score signifies that good concepts are being utilised by the model but the model still does not appear to be capable.}
-The purity presented in table \ref{tab:JSGC-purity} is higher though more concepts were considered and BA Community is a very complex graph.
+This improvement is seen in Table \ref{tab:JSGC-completeness} as the completeness scores are closer to 1 with BA Community producing better-performing concepts than GCN.\footnote{The high score signifies that good concepts are being utilised by the model but the model still does not appear to be capable.}
+The purity presented in Table \ref{tab:JSGC-purity} is higher though more concepts were considered and BA Community is a very complex graph.
 
 %\begin{figure}
 %    \centering
@@ -456,13 +456,13 @@ The purity presented in table \ref{tab:JSGC-purity} is higher though more concep
 \fig{JSGC-BA-Community}{A subset of concepts from JSGC for BA Community demonstrating the improved graph structure awareness. The concepts are chosen to represent the GCN concepts presented in \ref{fig:BA-Community}. The colour scheme is the same as fig \ref{fig:GCN-BA-Shapes}.}
 
 Figure \ref{fig:JSGC-BA-Community} highlights the improvements that JSGC has made compared to SGC.
-Comparing these concepts to those achieved by GCN presented in figure \ref{fig:BA-Community} shows a clear improvement.
-Concepts 1 to 5 in figure \ref{fig:JSGC-BA-Community} correspond to A to E in figure \ref{fig:JSGC-BA-Community}.\footnote{A similar direct mapping was also achieved for BA Shapes.}
+Comparing these concepts to those achieved by GCN presented in Figure \ref{fig:BA-Community} shows a clear improvement.
+Concepts 1 to 5 in Figure \ref{fig:JSGC-BA-Community} correspond to A to E in Figure \ref{fig:JSGC-BA-Community}.\footnote{A similar direct mapping was also achieved for BA Shapes.}
 JSGC is now able to distinguish between the two communities highlighted by concepts 1 \& 2 and 3 \& 4.
 Furthermore, within a community JSGC correctly distinguishes between the different nodes as concepts 2, 3 and 4 show.
 Most importantly all concepts, except for concept 1, show consistent labelling throughout, particularly in concept 3 where all nodes are ``outside'' nodes.
 
-To further highlight the similarity between JSGC and GCN as well as the improvement on SGC figure \ref{fig:JSGC-latent-space} demonstrates the latent space of the concatenation layer in JSGC.
+To further highlight the similarity between JSGC and GCN as well as the improvement on SGC Figure \ref{fig:JSGC-latent-space} demonstrates the latent space of the concatenation layer in JSGC.
 This demonstrates that JSGC has comparable graph structure awareness to GCN and does not require the non-linearity of GCN to achieve this.
 The lower accuracy of JSGC still suggests that there are elements of GCN that are important to its success and generally GRL.
 However, further studies into the importance of non-linearity in GRL are required.
