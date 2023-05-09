@@ -112,7 +112,7 @@ This leads to a general invariant node representation update function
 
 %% Expand on the convolutional approach to discuss this formulation
 
-To motivate the idea of the SGC consider applying a parameterised convolutional filter to the graph data rather than a parameterised function. A convolution is a multiplication, a signal, represented by the node representation\footnote{The signal is a function $\vh: \sV \to \R^n$ but, given nodes are fixed, define $\vh_i \equiv \vh(v_i)$.}
+To motivate the idea of the SGC consider applying a parameterised convolutional filter to the graph data rather than a parameterised function. A convolution is a multiplication between a signal, represented by the node representation\footnote{The signal is a function $\vh: \sV \to \R^n$ but, given nodes are fixed, define $\vh_i \equiv \vh(v_i)$.}
 $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
 
 As an analogy to Fourier analysis, $f_\theta \star_\sG \vh_i$ is defined in the graph spectral domain.
@@ -179,7 +179,7 @@ Using the first order Chebyshev polynomial, $\mI + (\mL - \mI)$, and the normali
 \end{equation}
 
 where $\theta = \theta_1 = - \theta_2$ as suggested by \textit{Kipf et al.}~\cite{kipf2016semi}.
-To reduce the size of eigenvalues, and thus vanishing/exploding gradients, \textit{Kipf et al.}~\cite{kipf2016semi} apply the following renormalisation to Equation \ref{eq:no-norm}
+To reduce the size of eigenvalues, and thus vanishing/exploding gradients, \textit{Kipf et al.}~\cite{kipf2016semi} apply the following renormalisation
 
 \begin{equation}
     \label{eq:norm}
@@ -195,7 +195,7 @@ The filter updates the node representations through successive applications and 
 \end{align}
 
 It remains to show that this formulation maintains the desired properties of a GNN laid out in \Sref{sec:GNNs}.
-Note that the application of the normalised graph filter, $\mS$, in Equation \ref{eq:GCN2} can be rewritten as a matrix-valued function, $F$
+Note that the application of the normalised graph filter, $\mS$, in Equation \ref{eq:GCN2} can be rewritten as a matrix-valued function, $F$,
 
 \begin{equation}
     F(\mH^{(l)}, \mA) = \mS\mH^{(l)} = (\mD + \mI)^{-\frac12}(\mA + \mI)(\mD + \mI)^{-\frac12}\mH^{(l)},
@@ -321,7 +321,7 @@ where the filter is applied $k$ times to allow for the retention of the receptiv
 As $\bm{\Theta}^{(i)}$ is a learnable parameter the model may instead learn a single parameter
 \begin{equation}
     \label{eq:theta}
-    \bm{\Theta} = \underbrace{\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}}_k.
+    \bm{\Theta} = \bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}.
 \end{equation}
 
 Thus the final model becomes
@@ -679,7 +679,7 @@ Furthermore, I am free to use the Planetoid~\cite{planetoid} and TUDataset ~\cit
 Though some licenses have additional restrictions on source code modification and/or redistribution my project does neither of these actions and only uses the libraries as is.
 
 I license my source code under the MIT license to support further developers and researchers.
-This licensing complies with the licenses of my dependencies.
+This complies with the licenses of my dependencies.
 
 % Definitely need to research this aspect
 

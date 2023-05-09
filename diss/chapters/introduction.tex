@@ -23,9 +23,9 @@
 
 \emph{Neural networks} (NN) are able to infer complex relationships within data, \emph{graph neural networks} (GNN) extend this functionality to connected systems where predetermined relationships exist between data points.
 In these systems, such as social networks~\cite{pmlr-v70-gilmer17a} and molecules~\cite{DBLP:journals/corr/abs-1806-01973}, the data can be represented as nodes connected by edges in a graph.
-However, the popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for GNNs.~\cite{wu2019simplifying}
-This is because, unlike standard NNs, the power of GNNs is hypothesised to arise from utilising the graph topology rather than approximating arbitrary functions on feature data.
-Thus the ability for deep NNs to approximate functions through non-linearity may not be required.
+However, the deep learning approach, of multiple layers separated by non-linear activations, has been criticised as unnecessarily complex for GNNs.~\cite{wu2019simplifying}
+This is because, unlike standard NNs, the power of GNNs is hypothesised to arise from utilising the graph topology.
+Thus, the ability for deep NNs to approximate arbitrary functions using non-linearity may not be required.
 Instead \emph{simplified GNNs} have been proposed~\cite{chanpuriya2022simplified,chien2020adaptive,wu2019simplifying} which are either entirely linear or quasi-linear, using one or two non-linear layers.
 
 \begin{figure}
@@ -163,7 +163,8 @@ The method achieves this by adapting \textit{automatic concept extraction}~\cite
 Attempts to linearise GNNs have mostly focused on linearising GCN~\cite{kipf2016semi} such as \textit{Wu et al.}~\cite{wu2019simplifying} who proposed the original linearised GNN, SGC, by removing the non-linearity from the GCN architecture.
 %The argument is that the non-linearity in GCN is derived from the current NN research at the time and that this approach was unnecessary.
 By removing non-linearity SGC removes the computation of activation functions resulting in a fixed pre-computation and learnable classifier.
-SGC is chosen as the linear model to compare to the non-linear GCN, furthermore the proposed SGCN (\Sref{sec:SGCN-imp}) extends SGC by reintroducing some non-linearity from GCN.
+SGC is chosen as the linear model to compare to the non-linear GCN.
+Furthermore, the proposed SGCN (\Sref{sec:SGCN-imp}) extends SGC by reintroducing some non-linearity from GCN.
 
 \textit{Chanpuriya et al.}~\cite{chanpuriya2022simplified} propose adaptive SGC (ASGC) which introduces learnable parameters to the pre-computation allowing the model to adapt to heterophilic data.
 \textit{Chien et al.}~\cite{chien2020adaptive} identify heterophilic data as a general problem and propose generalised pagerank GNN (GPR-GNN) as a solution.

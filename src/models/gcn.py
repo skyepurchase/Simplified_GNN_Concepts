@@ -64,6 +64,7 @@ class GCN(nn.Module):
 
         for layer in self.lins:
             x = layer(x)
+            x = F.relu(x)
 
         return F.log_softmax(x, dim=-1)
 
