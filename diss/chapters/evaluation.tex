@@ -226,7 +226,7 @@ SGC does not perform significantly better than random guesses except in the case
 In the cases of the Tree datasets, this can be attributed to the sparsity of the base graph where the motif structure and BST structure share similar connectivity.
 In comparison, the dense BA graph allows for a better distinction between the motifs and the base graph.
 
-This distinction is attributed to the degree of normalisation demonstrated in equation \ref{eq:GCN-as-GNN}.
+This distinction is attributed to the degree normalisation present in Equation \ref{eq:op}.
 This advantage is not present in BA Community due to the communities and the possibility of a motif having multiple connections to different base graphs.
 
 These results are not due to poor hyperparameter selection as demonstrated in \Aref{app:hyperparameters} and discussed in \Sref{sec:hyperparameters}.
@@ -288,14 +288,14 @@ Overall, this demonstrates that though SGC does not perform as well as GCN it do
 
 \paragraph{BA Shapes}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.4\textheight]{figures/SGC-BA-Shapes}
-    \caption{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
-    \label{fig:SGC-BA-Shapes}
-\end{figure}
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.4\textheight]{figures/SGC-BA-Shapes}
+%    \caption{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
+%    \label{fig:SGC-BA-Shapes}
+%\end{figure}
 
-%\fig{SGC-BA-Shapes}{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
+\fig{SGC-BA-Shapes}{A subset of concepts extracted from the best performing SGC model. The subset includes both pure and impure concepts. The same colour scheme as fig. \ref{fig:GCN-BA-Shapes} is used.}
 
 Figure \ref{fig:SGC-BA-Shapes} visualises a subset of the concepts extracted for SGC on BA Shapes.
 Concepts 1 to 4 demonstrate the purer concepts extracted for SGC with concepts 5 to 7 representing the common impure concepts.
@@ -310,7 +310,7 @@ Concepts 5, 6 and 7 demonstrate the impure concepts that are extracted from SGC.
 This demonstrates that SGC cannot consistently distinguish between the base graph and the motif.
 %Given that the nodes of interest in house motif are all consistent across these concepts suggests that there is an element of structure being identified.
 These observations are hypothesised to be a result of limited learnable influence on node representations in SGC.
-Though equation \ref{eq:theta} suggests that the GCN node manipulation should be preserved the reality is that only the final filter output is manipulated.
+Though Equation \ref{eq:theta} suggests that the GCN node manipulation should be preserved the reality is that only the final filter output is manipulated.
 This observation leads to the extension presented in \Sref{sec:Jump-SGC} allowing SGC to access individual filter applications.
 
 \paragraph{BA Community}
@@ -385,7 +385,7 @@ Concept 3 highlights the focus on grouping by atom as chlorine is the main consi
 In comparison, concept C highlights how GCN can identify very large structures with two cyclic rings consistently identified.
 
 \subsection{SGC and GCN mixed model}
-\label{sec:SGCN}
+\label{sec:SGCN-eval}
 
 \begin{figure}
     \centering
@@ -446,7 +446,7 @@ The accuracy achieved by JSGC is still lower than the 95\% suggested by \textit{
 This improvement is seen in Table \ref{tab:JSGC-completeness} as the completeness scores are closer to 1 with BA Community producing better-performing concepts than GCN.\footnote{The high score signifies that good concepts are being utilised by the model but the model still does not appear to be capable.}
 The purity presented in Table \ref{tab:JSGC-purity} is higher though more concepts were considered and BA Community is a very complex graph.
 
-%\begin{figure}
+%begin{figure}
 %    \centering
 %    \includegraphics[width=0.4\textheight]{figures/JSGC-BA-Community}
 %    \caption{A subset of concepts from JSGC for BA Community demonstrating the improved graph structure awareness. The concepts are chosen to represent the GCN concepts presented in \ref{fig:BA-Community}. The colour scheme is the same as fig \ref{fig:GCN-BA-Shapes}.}

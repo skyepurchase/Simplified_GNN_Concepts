@@ -11,8 +11,9 @@ Extending SGC to graph classification also shows the same lack of graph structur
 To combat these limitations SGC and GCN are combined to utilise the benefits of both approaches.
 However, though this is successful the use of SGC is very limited with the GCN layers providing the majority of the inference.
 
-JSGC provides a novel extension to SGC with promising results highlighted in \Sref{sec:Jump-SGC} demonstrating graph structure awareness.
-JSGC provides SGC with intermediate node representations through techniques present in JKNs~\cite{xu2018representation} allowing for better structural influences.
+JSGC provides a novel extension to SGC with promising results highlighted in \Sref{sec:Jump-SGC} demonstrating graph structure awareness with an improvement of up to $50\%$ in accuracy compared to SGC.
+JSGC provides SGC with intermediate node representations through the techniques present in JKNs~\cite{xu2018representation} allowing for influence and thus structural inference.
+This demonstrates the performance of GNNs lies in manipulating and utilising the graph topology and from the non-linearity as is the case for standard NNs.
 Importantly JSGC is negligibly non-linear demonstrating that graph structure awareness is possible within a linear architecture.
 
 \section{Lessons learned}
@@ -20,11 +21,11 @@ My project aimed to understand the effect that linearising GNN architectures had
 This effect depends as much on the dataset, the method of GNN explainability, and architecture as it does on the method of linearization.
 Regardless, the project explored an area of this space and provided important insights.
 
-Importantly, as shown by the proposed JSGC architecture, it is possible to achieve high graph structure awareness whilst remaining negligibly non-linear.
+Importantly, as shown by the proposed JSGC architecture, it is possible to achieve high graph structure awareness, achieving completeness scores of $0.943$ nearly reaching maximum completeness, whilst remaining negligibly non-linear.
 This presents a new avenue of GNN architecture design outside of the standard deep learning approach and has utility in efficient graph structure inference.
 But, as demonstrated by the poor performance of SGC, care must be taken in producing linear architectures to retain graph structure awareness.
 
-The project did however demonstrate that non-linearity does provides higher accuracy when compared to linear architectures.
+The project did however demonstrate that non-linearity does provides higher accuracy when compared to linear architectures (GCN beats quasi-linear methods by at least $10\%$ and fully linear methods by $\approx 40\%$).
 The results presented do not suggest that non-linearity in NNs in general is ideal but rather that graph structure awareness may be achieved without non-linearity.
 This is demonstrated by the poor performance of SGC and the inability for JSGC to match the accuracy of GCN whilst achieving comparable graph structure awareness.
 These drawbacks may potentially be solved by utilising more complex classifiers such as MLPs.
@@ -46,12 +47,12 @@ These drawbacks may potentially be solved by utilising more complex classifiers 
 \paragraph{JSGC}
 Graph structure awareness has been shown within a near linear model suggesting that the current approach to GNN architecture may be overly complex.
 The capabilities and limitations of JSGC have not been explored fully in this dissertation but the results in \Sref{sec:Jump-SGC} are worthy of further consideration.
-Though the accuracy of JSGC is not as high as GCN it is important to note that JSGC uses only 350 parameters compared to GCN's $>$1000 on BA Shapes.
-Furthermore, JSGC may be best utilised in conjunction with more sophisticated classifiers separating graph structure inference from node label inference.
+%Though the accuracy of JSGC is not as high as GCN it is important to note that JSGC uses only 350 parameters compared to GCN's $>$1000 on BA Shapes.
+Though the performance of JSGC is low it may be best utilised in conjunction with more sophisticated classifiers separating graph structure inference from node label inference.
 
 \paragraph{AMI mixed models}
 To combine SGC and GCN the extracted concepts are compared using AMI to determine where the two approaches are similar.
-As demonstrated in \Sref{sec:SGCN} in figure \ref{fig:SGCN-latent-spaces} the resulting model retains the influence of both models.
+As demonstrated in \Sref{sec:SGCN-eval} in figure \ref{fig:SGCN-latent-spaces} the resulting model retains the influence of both models.
 %\textit{Shchur et al.}~\cite{shchur2018pitfalls} and \textit{Purchase et al.}~\cite{purchase2022revisiting} demonstrate the best performing GNN is highly dependent on training setup and dataset.
 By combining the best performing GNN models in different environments using the AMI approach it may be possible to the overcome limitations in those environments.
 

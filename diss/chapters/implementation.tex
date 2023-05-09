@@ -38,9 +38,10 @@ This creates significantly different graphs for each generation meaning that nod
 This method allows the implementation of the function
 \begin{equation}
     \mH^{(l+1)} = \mS\mH^{(l)}\bm{\Theta}^{(l)},
+    %f(\vh_i^{(l)}, \mA) = f(\vh_i^{(l)}, \mA) = \frac1{d_i + 1}\vh_i^{(l)} + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{(l)}
 \end{equation}
-described in \ref{sec:GCN} as equation \ref{eq:GCN1}.
-During the \texttt{message\_passing} method the normalised adjacency $\mS$ is applied to the node representations $\mH^{(l)}$.
+described in Equation \ref{eq:GCN2}.
+The \texttt{forward} method calculates the normalised adjacency, $\mS$, and passes it to \texttt{message\_passing} along with the node representations, $\mH$.
 After \texttt{message\_passing} a linear layer is applied to the representations.
 
 These GCN layers (provided by \texttt{PyTorch Geometric}) can then be combined with a ReLU activation function to form a GCN model.
@@ -52,10 +53,10 @@ The majority of SGC is the pre-computation
     \label{eq:pre-comp}
     \mS^k\mX
 \end{equation}
-of equation \ref{eq:SGC} where $\mS$ is the filter defined in equations \ref{eq:op} and \ref{eq:norm}.
+of Equation \ref{eq:SGC} where $\mS$ is the filter defined in equations \ref{eq:op} and \ref{eq:norm}.
 As $\mS$ 
 %is defined in terms of the adjacency matrix which 
-does not change during training equation \ref{eq:pre-comp} can be applied before training.
+does not change during training Equation \ref{eq:pre-comp} can be applied before training.
 This process is achieved with three functions that calculate the normalised filter $\mS$,
 %by computing the required matrices and multiplications, 
 convert the matrix form and successively apply the filter to the node representations.
@@ -245,7 +246,7 @@ This is solved by broadcasting the graph label to each of the nodes in the graph
 Calculation of concept scores and the visualisation of a concept remains the same as that presented in \Sref{sec:concept-eval} and \Sref{sec:vis}.
 
 \subsection{SGC and GCN mixed model}
-\label{sec:SGCN}
+\label{sec:SGCN-imp}
 \paragraph{Motivation}
 The benefit of SGC is to reduce the complexity of GCN and pre-compute the successive applications of the graph filter, described in equations \ref{eq:op} and \ref{eq:norm}, by removing the non-linearity between layers.
 This pre-computation reduces the cost of training a model as it can be calculated before training unlike in GCN.

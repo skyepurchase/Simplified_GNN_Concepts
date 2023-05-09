@@ -21,23 +21,32 @@
 
 %% Wide spread of ML systems in general prevalent in every day use
 
-\fig{linear-vs-non-linear}{An overview of how traditional, non-linear GNNs work compared to linear GNNs. The distinction between GNN layers and graph filters is made as linearisation has focused on graph filters ignoring the more complex GNN layer approaches.}
-
 \emph{Neural networks} (NN) are able to infer complex relationships within data, \emph{graph neural networks} (GNN) extend this functionality to connected systems where predetermined relationships exist between data points.
 In these systems, such as social networks~\cite{pmlr-v70-gilmer17a} and molecules~\cite{DBLP:journals/corr/abs-1806-01973}, the data can be represented as nodes connected by edges in a graph.
-However, the popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for these GNN architectures.~\cite{wu2019simplifying}
-Instead \emph{simplified GNNs} have been proposed~\cite{chanpuriya2022simplified,chien2020adaptive,wu2019simplifying} which are either linear or quasi-linear, using one or two non-linear layers.
+However, the popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for GNNs.~\cite{wu2019simplifying}
+This is becauase, unlike standard NNs, the power of GNNs is hypothesised to arise from utilising the graph topology rather than approximating arbitrary functions on feature data.
+Thus the ability for deep NNs to approximate functions through non-linearity may not be required.
+Instead \emph{simplified GNNs} have been proposed~\cite{chanpuriya2022simplified,chien2020adaptive,wu2019simplifying} which are either fully linear or quasi-linear, using one or two non-linear layers.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/linear-vs-non-linear}
+    \caption{An overview of how traditional, non-linear GNNs work compared to linear GNNs. The distinction between GNN layers and graph filters is made as linearisation has focused on graph filters ignoring the more complex GNN layer approaches.}
+    \label{fig:linear-vs-non-linear}
+\end{figure}
+
 Figure \ref{fig:linear-vs-non-linear} demonstrates the difference in architecture between traditional, non-linear GNNs and linear GNNs.
 These linear models have been shown to match the performance of non-linear GNNs on a limited number of datasets.
-However, these datasets represent a small portion of possible graph datasets and little work has been done to understand how these linear GNNs work.
+However, these datasets represent a small portion of possible graph datasets and little work has been done to understand how linear GNNs work.
 
 \fig{concept}{An example graph concept from GCN~\cite{kipf2016semi} demonstrating that when classifying the top node the model identifies the house structure and attaching arm. The consistency of the structure suggests that this is important to classifying the top node.}
 
-The lack of understanding extends generally to NNs where explaining how a model works is largely ignored in favour of higher accuracy.
+This lack of understanding extends generally to NNs where explaining how a model works is largely ignored in favour of higher accuracy.
 However, both may be achieved as explainability does not fundamentally limit higher accuracy~\cite{zarlenga2022concept}.
-Instead, NNs can be described by their input subspaces, referred to as \emph{concepts}, which influence the classification the most.
+Rather than alter the architecture, NNs can be described by subspaces in their input, referred to as \emph{concepts}, which influence the classification the most.
 As an example, Figure \ref{fig:concept} presents a graph concept which can be interpretted as ``a house structure with an attaching arm''.
-This demonstrates that the neighbouring nodes and attaching arm are key to classifying the highlighted green node, this information would not be clear when looking at the green node's feature vector.
+This demonstrates that the neighbouring nodes and attaching arm are influence to classification of the highlighted green node the most.
+This information would not be clear when looking at the green node's feature vector in isolation.
 
 Concepts can highlight the limitations of linear GNN models, by demonstrating which graph structures and node features cannot be distinguished, and provide further insight into how linearity influences graph structure awareness, by comparing the differences in concepts between linear and non-linear models.
 This capability motivates the project which aims to provide a deeper insight into graph representational learning and provide novel techniques to graph structure inference.
@@ -154,7 +163,7 @@ The method achieves this by adapting \textit{automatic concept extraction}~\cite
 Attempts to linearise GNNs have mostly focused on linearising GCN~\cite{kipf2016semi} such as \textit{Wu et al.}~\cite{wu2019simplifying} who proposed the original linearised GNN, SGC, by removing the non-linearity from the GCN architecture.
 %The argument is that the non-linearity in GCN is derived from the current NN research at the time and that this approach was unnecessary.
 By removing non-linearity SGC removes the computation of activation functions resulting in a fixed pre-computation and learnable classifier.
-SGC is chosen as the linear model to compare to the non-linear GCN, furthermore the proposed SGCN (\Sref{sec:SGCN}) extends SGC by reintroducing some non-linearity from GCN.
+SGC is chosen as the linear model to compare to the non-linear GCN, furthermore the proposed SGCN (\Sref{sec:SGCN-imp}) extends SGC by reintroducing some non-linearity from GCN.
 
 \textit{Chanpuriya et al.}~\cite{chanpuriya2022simplified} propose adaptive SGC (ASGC) which introduces learnable parameters to the pre-computation allowing the model to adapt to heterophilic data.
 \textit{Chien et al.}~\cite{chien2020adaptive} identify heterophilic data as a general problem and propose generalised pagerank GNN (GPR-GNN) as a solution.
@@ -178,18 +187,20 @@ The proposed JSGC (\Sref{sec:Jump-SGC}) is closely related to GPR-GNN removing t
 This project applies the graph explainability tools proposed by \textit{Magister et al.}~\cite{magister2021gcexplainer} to the linear model SGC~\cite{wu2019simplifying}.
 This provides a new analysis of linear GNN models and their limitations providing new insight into how graph structure is inferred.
 These results demonstrate that purely linear models, such as SGC, cannot infer fine-grained graph structure.
-The lack of graph structure awareness suggest the SGC is primarily focused on tabular data rather than graph data.
+The lack of graph structure awareness suggests that SGC is primarily focused on tabular data rather than graph data.
 
 Two novel extensions are proposed to improve the accuracy and graph structure awareness of SGC.
 \begin{enumerate}
     \item
-        A new model which uses SGC pre-computation with GCN~\cite{kipf2016semi} layers to utilise the efficient pre-computation with the high accuracy GCN layers.
+        A new model which uses SGC~\cite{wu2019simplifying} pre-computation with GCN~\cite{kipf2016semi} layers to utilise the efficient pre-computation with the high accuracy GCN layers.
         The architecture removes unnecessary non-linearity from the initial layers of a GCN model by finding an SGC pre-computation that closely resembles the GCN latent space.
         This means that the effect on the final layers of the GCN model is minimised.
+        The model maintains the accuracy of GCN ($95\%$ compared to $98\%$ in a pure GCN), whilst maintaining the initially high concept importance of SGC ($0.8$ compared to $0.736$ in GCN where $1$ is maximal).
     \item
         A new architecture which uses SGC within an adaptation of jumping knowledge networks~\cite{xu2018representation}.
         The architecture aggregates each successive SGC pre-computation so that the model has more control of the node representations.
-        This improves the graph structure awareness of SGC whilst remaining quasi-linear.
+        The architecture improves the accuracy of SGC by $16.8\%$ and up to $\approx 50\%$ in specific cases.
+        Furthermore the concept importance matches or surpasses the scores achieved by GCN.
 \end{enumerate}
 Both approaches are successful in increasing both graph structure awareness and accuracy demonstrating that graph structure awareness is achievable whilst remaining quasi-linear.
 

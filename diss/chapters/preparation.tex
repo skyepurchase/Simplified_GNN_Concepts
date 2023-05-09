@@ -58,6 +58,7 @@ This project focuses on node classification, where each node is assigned a label
 %Comparitively graph classification aggregates all of the node representations and classifies the entire graph accordingly.
 
 \subsection{Graph neural networks}
+\label{sec:GNNs}
 
 %% Formal definition of a function on this graph
 %%      Think about Petars talk here
@@ -111,73 +112,11 @@ This leads to a general invariant node representation update function
 
 %% Expand on the convolutional approach to discuss this formulation
 
-\subsubsection{As a GNN}
+To motivate the idea of the SGC consider applying a parameterised convolutional filter to the graph data rather than a parameterised function. A convolution is a multiplication of two functions, in this case a signal, represented by the node representation\footnote{The signal is a function $\vh : \sV \to \R^n$ but, given nodes are fixed, define $\vh_i \equiv \vh(v_i)$.}
+$\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
 
-The GCN is the simplest implementation of the formulation outlined above.
-The principle is to add the degree-weighted sum of a node's neighbour representations to the current node representation.
-%This maintainsd the invariance constraint but nodes with a high degree are overly represented and so each term is normalised by the degree of the connecting nodes.
-This results in the common representation of GCN as
-
-\begin{equation}
-    \label{eq:GCN-as-GNN}
-    f(\vh_i^{(l)}, \mA) = \frac1{d_i + 1}\vh_i^{(l)} + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{(l)},
-\end{equation}
-%\begin{equation}
-%    \vh_i^{(l+1)} = \sigma(f(\vh_i^{(l)}, \mA)\theta_i^{(l)})
-%\end{equation}
-
-where $d_i = \sum_j^N \emA_{i,j}$ (the degree of node $v_i$), $\theta_i^{(l)}$ is a learnable parameter, and $\sigma$ is an activation function. Comparing to equation \ref{eq:conv-def} $c_{ij} = \frac1{\sqrt{(d_i + 1)(d_j + 1)}}$ and $\sum_j^N$ is equivalent to $\bigoplus_{\vx_j \in \mX_{\sN_i}}$. 
-
-%\begin{align*}
-%    &\vx_j \in \mX_{\sN_i} \\
-%    \iff &j \in \sN_i &&\text{by def. \ref{eq:neighbour-reps}} \\
-%    \iff &(v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE &&\text{by def. \ref{eq:neighbour}} \\
-%    \iff &A_{ij} = 1 &&\text{by def. \ref{eq:adj}}
-%\end{align*}
-
-%To better demonstrate that the same operation is being applied to each neighbouring representation (including the nodes current representation) 
-equation \ref{eq:GCN-as-GNN} may be rewritten as
-
-\begin{equation}
-    \label{eq:same-op}
-    f(\vh_i^{(l)}, \mA) = (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^{(l)} + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_i + 1)^{-\frac12}\vh_j^{(l)}.
-\end{equation}
-
-Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$ then
-%and $\mH^{(l)}$ the node representations of the graph after layer $l$
-equation \ref{eq:same-op} becomes
-
-\begin{equation}
-    F(\mH^{(l)}, \mA) = (\mD + \mI)^{-\frac12}(\mA + \mI)(\mD + \mI)^{-\frac12}\mH^{(l)}.
-\end{equation}
-
-Let $\widetilde{\mA} = \mA + \mI$, then $\widetilde{\emD}_{ii} = \sum_j^N \widetilde{\emA}_{ij} = \sum_j^N [\emA_{ij} + 1] = \emD_{ii} + 1$ thus $\widetilde{\mD} = \mD + \mI$.
-This reformulation gives the following graph operator 
-\begin{equation}
-    \label{eq:op}
-    \mS = \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12}.
-\end{equation}
-
-Thus a GCN layer can be interpreted as a graph operator and non-linear activation
-\begin{equation}
-    \label{eq:GCN1}
-    \mH^{(l+1)} = \sigma(\mS\mH^{(l)}\bm{\Theta}^{(l)}).
-\end{equation}
-%resulting in the following formulation
-%\begin{equation}
-%    F(\mH^{(l)}, \mA) = \mS\mH.
-%\end{equation}
-
-%The function is parameterised by a weight matrix, $\bm{\Theta}$, to give a single layer 
-
-\subsubsection{As a convolution}
-\label{sec:conv}
-
-To motivate the idea of the SGC it is important to think of $\mS$ from a different perspective, as a graph convolution filter. A convolution is a multiplication of two functions, in this case a signal,\footnote{The signal is a function $\vh : \sV \to \R^n$, however, the nodes are fixed so define $\vh_i \equiv \vh(v_i)$.}
-represented by the node representation $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
-
-As an analogy to Fourier analysis $f_\theta \star_\sG \vh_i$ is defined in the graph spectral domain.
-Any signal on a graph can be projected onto the eigenvectors of the graph Laplacian, $\mL = \mD - \mA = \mU\bm{\Lambda}\mU^T$, where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$.
+As an analogy to Fourier analysis, $f_\theta \star_\sG \vh_i$ is defined in the graph spectral domain.
+Any signal on a graph can be projected onto the eigenvectors of the graph Laplacian, $\mL = \mD - \mA = \mU\bm{\Lambda}\mU^T$, where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$, the eigenvalue matrix, and $\emD_{ii} = \sum_j^N \emA_{ij}$, the degree matrix.
 Therefore the graph Fourier transform of a graph function $g$ is
 \begin{equation}
     \hat{g} = \mU^Tg
@@ -222,7 +161,8 @@ To prevent $\hat\mF_\theta$ growing with the dimension of the signal it can be d
 \end{equation}
 
 %\textit{Kipf et al.}~\cite{kipf2016semi} suggest using $k=1$ and define $\theta = \theta_0 = -\theta_1$ resulting in
-Using this new filter in equation \ref{eq:conv} yields the following formulation of the graph convolution
+Using this new filter in Equation \ref{eq:conv} yields the following formulation of the graph convolution
+
 \begin{equation}
     \label{eq:GCN-comp}
     f_\theta *_\sG \vh_i = \sum_{j=0}^1\theta_j(\mU\bm{\Lambda}\mU^T)^j\vh_i.\footnote{$\mU\bm{\Lambda}^j\mU^T = \mU\underbrace{\bm{\Lambda}\cdots\bm{\Lambda}}_j\mU^T = \underbrace{\mU\bm{\Lambda}\mU^T\mU\cdots\mU^T\mU\bm{\Lambda}\mU^T}_j = (\mU\bm{\Lambda}\mU^T)^j$}
@@ -231,32 +171,56 @@ Using this new filter in equation \ref{eq:conv} yields the following formulation
 
 Computation of the eigendecomposition of $\mL$ is expensive for large graphs so \textit{Hammond et al.}~\cite{hammond2011wavelets} suggest using Chebyshev polynomials (\Aref{app:chebyshev}).
 %With the additional assumption that a NN can adapt to scaling we assume that the maximum eigenvalue is approximately $2$.
-Using the first order Chebyshev polynomial, $\mI + (\mL - \mI)$, and the normalised graph Laplacian, $\mL^{sym} = \mD^{-\frac12}\mL\mD^{-\frac12} = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$ equation \ref{eq:GCN-comp} can be written as 
+Using the first order Chebyshev polynomial, $\mI + (\mL - \mI)$, and the normalised graph Laplacian, $\mL^{sym} = \mD^{-\frac12}\mL\mD^{-\frac12} = \mI - \mD^{-\frac12}\mA\mD^{-\frac12}$ Equation \ref{eq:GCN-comp} can be written as 
+
 \begin{equation}
     \label{eq:no-norm}
     f_\theta *_\sG \vh_i \approx (\theta_1\mI + \theta_2(\mL - \mI))\vh_i \approx \theta(\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\vh_i,
 \end{equation}
 
 where $\theta = \theta_1 = - \theta_2$ as suggested by \textit{Kipf et al.}~\cite{kipf2016semi}.
-The filter can then be used to update the node representations as such
-%Applying an individual paramaterised filter to each signal, that is each node, in the graph results in the following formulisation
-\begin{equation}
-    \label{eq:GCN2}
-    \mH^{(l+1)} = \sigma((\mI + \mD^{-\frac12}\mA\mD^{-\frac12})\mH^{(l)}\bm{\Theta}^{(l)})
-\end{equation}
+To reduce the size of eigenvalues, and thus vanishing/exploding gradients, \textit{Kipf et al.}~\cite{kipf2016semi} apply the following renormalisation to Equation \ref{eq:no-norm}
 
-To reduce the size of eigenvalues, and thus vanishing/exploding gradients, \textit{Kipf et al.}~\cite{kipf2016semi} apply the following renormalisation to equation \ref{eq:no-norm} 
 \begin{equation}
     \label{eq:norm}
-    \mI + \mD^{-\frac12}\mA\mD^{-\frac12} \to \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12} = \mS.
+    \mI + \mD^{-\frac12}\mA\mD^{-\frac12} \to \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12} = \mS,
 \end{equation}
 
-This renormalisation matches the graph operator in equation \ref{eq:op} demonstrating that GCN behaves as a graph filter.
-If either formulation is used for node classification a linear classifier is appended to the computation resulting in 
+where $\widetilde{\mA} = \mA + \mI$, and so $\widetilde{\emD}_{ii} = \sum_j^N \widetilde{\emA}_{ij} = \sum_j^N [\emA_{ij} + 1] = \emD_{ii} + 1$ thus $\widetilde{\mD} = \mD + \mI$.
+The filter updates the node representations through successive applications and the final node representation is used in a linear classifier
+%Applying an individual paramaterised filter to each signal, that is each node, in the graph results in the following formulisation
+\begin{align}
+    &\mH^{(l+1)} = \sigma(\mS\mH^{(l)}\bm{\Theta}^{(l)}), \label{eq:GCN2}\\
+    &\hat\mY = \operatorname{softmax}(\mS\mH^{(k-1)}\bm{\Theta}^{(k)}). \label{eq:cls}
+\end{align}
+
+It remains to show that this formulation maintains the desired properties of a GNN laid out in \Sref{sec:GNNs}.
+Note that the application of the normalised graph filter, $\mS$, in Equation \ref{eq:GCN2} can be rewritten as a matrix-valued function, $F$
+
 \begin{equation}
-    \label{eq:cls}
-    \hat\mY = \operatorname{softmax}(\mS\mH^{(k-1)}\bm{\Theta}^{(k)}).
+    F(\mH^{(l)}, \mA) = \mS\mH^{(l)} = (\mD + \mI)^{-\frac12}(\mA + \mI)(\mD + \mI)^{-\frac12}\mH^{(l)},
 \end{equation}
+
+corresponding to a node-level function, $f$
+
+\begin{equation}
+    \begin{aligned}
+        \label{eq:op}
+        f(\vh_i^{(l)}, \mA) &= (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^{(l)} + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_j + 1)^{-\frac12}\vh_j^{(l)} \\
+        &= f(\vh_i^{(l)}, \mA) = \frac1{d_i + 1}\vh_i^{(l)} + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{(l)},
+    \end{aligned}
+\end{equation}
+
+where $d_i$ is the degree of node $v_i$, $d_i = \emD_{ii}$.
+Comparing Equation \ref{eq:op} to Equation \ref{eq:conv-def}, $c_{ij} = \frac1{\sqrt{(d_i + 1)(d_j + 1)}}$ and $\sum_j^N$ is an invariant aggregation function.
+Therefore the notion of graph convolution filters maintains the desired invariant and equivariant properties.
+
+%This renormalisation matches the graph operator in equation \ref{eq:op} demonstrating that GCN behaves as a graph filter.
+
+%\begin{equation}
+%    \label{eq:cls}
+%    \hat\mY = \operatorname{softmax}(\mS\mH^{(k-1)}\bm{\Theta}^{(k)}).
+%\end{equation}
 
 
 %= \widetilde{\textbf{D}}^{-\frac12}\widetilde{\mA}\widetilde{\textbf{D}}^{-\frac12}\mX\textbf{\Theta}$
@@ -272,6 +236,65 @@ If either formulation is used for node classification a linear classifier is app
 %% Description of the fact that this is the first graph approach
 %% Maybe a link to DeepSet
 
+%\subsubsection{As a GNN}
+%
+%The GCN is the simplest implementation of the formulation outlined above.
+%The principle is to add the degree-weighted sum of a node's neighbour representations to the current node representation.
+%%This maintainsd the invariance constraint but nodes with a high degree are overly represented and so each term is normalised by the degree of the connecting nodes.
+%This results in the common representation of GCN as
+%
+%\begin{equation}
+%    \label{eq:GCN-as-GNN}
+%    f(\vh_i^{(l)}, \mA) = \frac1{d_i + 1}\vh_i^{(l)} + \sum_j^N\frac{\emA_{ij}}{\sqrt{(d_i + 1)(d_j + 1)}}\vh_j^{(l)},
+%\end{equation}
+%%\begin{equation}
+%%    \vh_i^{(l+1)} = \sigma(f(\vh_i^{(l)}, \mA)\theta_i^{(l)})
+%%\end{equation}
+%
+%where $d_i = \sum_j^N \emA_{i,j}$ (the degree of node $v_i$), $\theta_i^{(l)}$ is a learnable parameter, and $\sigma$ is an activation function. Comparing to Equation \ref{eq:conv-def} $c_{ij} = \frac1{\sqrt{(d_i + 1)(d_j + 1)}}$ and $\sum_j^N$ is equivalent to $\bigoplus_{\vx_j \in \mX_{\sN_i}}$. 
+%
+%%\begin{align*}
+%%    &\vx_j \in \mX_{\sN_i} \\
+%%    \iff &j \in \sN_i &&\text{by def. \ref{eq:neighbour-reps}} \\
+%%    \iff &(v_i, v_j) \in \sE \vee (v_j, v_i) \in \sE &&\text{by def. \ref{eq:neighbour}} \\
+%%    \iff &A_{ij} = 1 &&\text{by def. \ref{eq:adj}}
+%%\end{align*}
+%
+%%To better demonstrate that the same operation is being applied to each neighbouring representation (including the nodes current representation) 
+%Equation \ref{eq:GCN-as-GNN} may be rewritten as
+%
+%\begin{equation}
+%    \label{eq:same-op}
+%    f(\vh_i^{(l)}, \mA) = (d_i + 1)^{-\frac12}1(d_i + 1)^{-\frac12}\vh_i^{(l)} + \sum_j^N(d_i + 1)^{-\frac12}\emA_{ij}(d_i + 1)^{-\frac12}\vh_j^{(l)}.
+%\end{equation}
+%
+%Let $\mD$ be the degree matrix, $\emD_{ii} = \sum_j^N \emA_{ij}$ then
+%%and $\mH^{(l)}$ the node representations of the graph after layer $l$
+%Equation \ref{eq:same-op} becomes
+%
+%\begin{equation}
+%    F(\mH^{(l)}, \mA) = (\mD + \mI)^{-\frac12}(\mA + \mI)(\mD + \mI)^{-\frac12}\mH^{(l)}.
+%\end{equation}
+%
+%Let $\widetilde{\mA} = \mA + \mI$, then $\widetilde{\emD}_{ii} = \sum_j^N \widetilde{\emA}_{ij} = \sum_j^N [\emA_{ij} + 1] = \emD_{ii} + 1$ thus $\widetilde{\mD} = \mD + \mI$.
+%This reformulation gives the following graph operator 
+%\begin{equation}
+%    \label{eq:op}
+%    \mS = \widetilde{\mD}^{-\frac12}\widetilde{\mA}\widetilde{\mD}^{-\frac12}.
+%\end{equation}
+%
+%Thus a GCN layer can be interpreted as a graph operator and non-linear activation
+%\begin{equation}
+%    \label{eq:GCN1}
+%    \mH^{(l+1)} = \sigma(\mS\mH^{(l)}\bm{\Theta}^{(l)}).
+%\end{equation}
+%resulting in the following formulation
+%\begin{equation}
+%    F(\mH^{(l)}, \mA) = \mS\mH.
+%\end{equation}
+
+%The function is parameterised by a weight matrix, $\bm{\Theta}$, to give a single layer 
+
 \subsection{Simplified graph convolution}
 \label{sec:SGC}
 
@@ -280,16 +303,16 @@ If either formulation is used for node classification a linear classifier is app
 %% Reiterate the points made in the introduction
 %% Now specifically highlight these areas in the GCN formulisation
 
-As both approaches in \Sref{sec:GCN} demonstrate a GCN can be broken down into individual layers, containing a linear graph operation, stacked together using a non-linear activation function.
+As \Sref{sec:GCN} demonstrates, a GCN can be broken down into individual layers, containing a linear graph filter, stacked together using a non-linear activation function.
 This means that the $k^{th}$-layer node representation requires the calculation of all the non-linear activations up until $k$.
 %This is apparent when looking at the formulation in equation \ref{eq:GCN1}.
 
 \paragraph{Linearization.}
-Considering the linear graph operation as a spectral filter as described in equation \ref{eq:norm} the non-linearity between layers may be considered non-critical to GCN performance.
+Considering the linear graph operation, $\mS$, as a normalised spectral filter (Equation \ref{eq:norm}) the non-linearity between layers may be considered non-critical to GCN performance.
 Instead, the benefit comes from the local averaging from successive filter applications as hypothesised by \textit{Wu et al.}.
 %\textit{Wu et al.}~\cite{wu2019simplifying} consider this hypothesis citing the benefit arises from the local averaging as apparent in the graph operation formulation described in \Sref{sec:conv}.
 %The resulting model is therefore a linear multiplication of the normalised spectral filters and parameter matrix.
-Removing the non-linear activation functions from equation \ref{eq:cls} results in
+Removing these non-linear activation functions from Equation \ref{eq:cls} results in
 \begin{equation}
     \hat\mY = \operatorname{softmax}(\underbrace{\mS\cdots\mS}_k\mX\underbrace{\bm{\Theta}^{(1)}\cdots\bm{\Theta}^{(k)}}_k),
 \end{equation}
@@ -306,8 +329,8 @@ Thus the final model becomes
     \hat\mY = \operatorname{softmax}(\mS^{k}\mX\bm{\Theta}).
 \end{equation}
 
-As $\mS$ is fixed for a specific graph $\mS^k\mX$ is fixed if $\mX$ is fixed.
-Thus SGC can be broken down into representation extraction, $\bar\mX = \mS^k\mX$, and a classification
+As $\mS$ is fixed for a specific graph, $\mS^k\mX$ is fixed if $\mX$ is fixed.
+Thus SGC can be broken down into representation extraction, $\bar\mX = \mS^k\mX$, and classification
 \begin{equation}
     \label{eq:SGC}
     \hat\mY = \operatorname{softmax}(\bar\mX\bm{\Theta}).
@@ -607,7 +630,7 @@ Machine learning does not provide a precise metric against which the correctness
 This is due to the factors that contribute to a machine learning model's performance such as hyperparameters, initialisation/random seeds, architecture and dataset.
 As an example a trained model may result in poor results because the underlying architecture is not suited to the dataset, there is too much noise in the data, or there is a software bug.
 Thus, unlike traditional software development, it is harder to verify that an ML model or algorithm has been implemented correctly.
-However, my project does include software that follows traditional software development and therefore use the following two testing approaches:
+However, my project does include software that follows traditional software development and therefore use the following approaches:
 
 \paragraph{Unit testing}
 is suitable for traditional software development where a specific result is required for specific input.
@@ -621,7 +644,7 @@ In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pi
 
 \section{Licensing}
 %%\include{tables/licensing}
-\begin{table}
+\begin{wraptable}{r}{8cm}
     \centering
     \begin{tabular}{cc}
         \multicolumn{1}{c}{\textbf{Software dependency}} &
@@ -631,7 +654,7 @@ In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pi
         scikit-learn & \\
         NetworkX & \\
         PyTorch & \\
-        hyperopt \tablefootnote{The license is unnamed but matches the 3-clause BSD license verbatim.} & \\
+        hyperopt \footnotemark[9] & \\
         \rowcolor{gray!20} tensorboard & \\
         \rowcolor{gray!20} Lightning AI &  \multirow{-2}{*}{Apache 2.0}\\
         matplotlib & \\
@@ -640,11 +663,14 @@ In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pi
         PyTorch Geometric & \\
         \rowcolor{gray!20}
         tqdm & \multirow{-2}{*}{MIT} \\
-        tqdm & MPL\tablefootnote{tqdm is distributed under both licenses.} \\
+        tqdm & MPL\footnotemark[10] \\
     \end{tabular}
-    \caption{Licenses for the project dependencies}
+    \caption{Project dependency licenses}
     \label{tab:licensing}
-\end{table}
+\end{wraptable}
+
+\footnotetext[9]{The license is unnamed but matches the 3-clause BSD license verbatim.}
+\footnotetext[10]{tqdm is distributed under both the MIT and MPL license.}
 
 Table \ref{tab:licensing} includes information about the specific licenses for the project's software dependencies.
 
