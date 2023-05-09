@@ -68,9 +68,9 @@ This project focuses on node classification, where each node is assigned a label
 The updated node representations should depend on the local neighbourhood of each node.
 If the same local neighbourhood representations were to be permuted the updated representation should remain the same as the neighbourhood topology is the same.
 Therefore consider a vector valued function, $\vf$, taking neighbourhood representations, $\mX_{\sN_i}$, and adjacency matrix, $\mA$, and producing a neighbourhood representation $\vf(\mX_{\sN_i}, \mA)$.
-Given some permutation, $\mP$, $\vf(\mP\mX_{\sN_i}, \mP\mA\mP^T) \equiv \vf(\mX_{\sN_i}, \mA)$.\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the premultiplication transposed to permute the columns.}
+Given some permutation, $\mP$, $\vf(\mP\mX_{\sN_i}, \mP\mA\mP^T) \equiv \vf(\mX_{\sN_i}, \mA)$.\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the pre-multiplication transposed to permute the columns.}
 
-Furthermore, if the node features are permutated then the updated node representations should be as well.
+Furthermore, if the node features are permuted then the updated node representations should be as well.
 Thus consider a matrix-valued function, $F$, taking the input representations and adjacency matrix, and producing a new representation matrix.
 It must be the case that $F(\mP\mX, \mP\mA\mP^T) \equiv \mP F(\mX, \mA)$.
 
@@ -112,7 +112,7 @@ This leads to a general invariant node representation update function
 
 %% Expand on the convolutional approach to discuss this formulation
 
-To motivate the idea of the SGC consider applying a parameterised convolutional filter to the graph data rather than a parameterised function. A convolution is a multiplication of two functions, in this case a signal, represented by the node representation\footnote{The signal is a function $\vh : \sV \to \R^n$ but, given nodes are fixed, define $\vh_i \equiv \vh(v_i)$.}
+To motivate the idea of the SGC consider applying a parameterised convolutional filter to the graph data rather than a parameterised function. A convolution is a multiplication, a signal, represented by the node representation\footnote{The signal is a function $\vh: \sV \to \R^n$ but, given nodes are fixed, define $\vh_i \equiv \vh(v_i)$.}
 $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
 
 As an analogy to Fourier analysis, $f_\theta \star_\sG \vh_i$ is defined in the graph spectral domain.
@@ -136,7 +136,7 @@ Therefore the graph Fourier transform of a graph function $g$ is
 
 This transformation is applied to $\vh_i$ and $f_\theta$ so that $\hat\vh_i$ and $\hat f_\theta$ are projected onto the graph eigenvectors.
 As the graph Laplacian is symmetric the inverse transform exists, applying $\mU$ instead of $\mU^T$.
-Thus the graph convolution is defined as $f_\theta \star_\sG \vh_i = \mU(\hat f_\theta \odot \hat\vh_i)$ where $\odot$ is the hadamard product.
+Thus the graph convolution is defined as $f_\theta \star_\sG \vh_i = \mU(\hat f_\theta \odot \hat\vh_i)$ where $\odot$ is the Hadamard product.
 To simplifying the calculation let $\hat\mF_\theta = \operatorname{diag}(f_\theta)$,
 \begin{equation}
     \label{eq:conv}
@@ -468,7 +468,7 @@ As the concept space is not easily separable by classifiers such as logistic reg
 %% The improvements seen in the paper in regards to visual comparison
 %% The clear metrics for comparison
 
-\paragraph{Comparing concepts} between two models trained on the same dataset can give an indication as to how the two models differ in their inference.
+\paragraph{Comparing concepts} between two models trained on the same dataset can indicate how the two models differ in their inference.
 Furthermore, the differences present between the two models provide further insight into how the model reason.
 The described concept scores give two metrics which can be used to compare concepts between models quantitatively.
 Further qualitative analysis between concepts can provide further insight into how the different models operate.
@@ -585,7 +585,7 @@ To help with running experiments, logging results and reproducibility I use \tex
 
 For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}~\cite{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX}~\cite{SciPyProceedings_11} to draw the graphs and \texttt{Matplotlib}~\cite{Hunter:2007} to visualise the result and hyperparameter surfaces. \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
 
-For unit tests I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built-in typing functionality of the other libraries. Additionally, I use \texttt{tqdm}~\cite{casper_da_costa_luis_2023_7697295} to visualise progress during concept analysis.
+For unit tests, I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built-in typing functionality of the other libraries. Additionally, I use \texttt{tqdm}~\cite{casper_da_costa_luis_2023_7697295} to visualise progress during concept analysis.
 
 \section{Requirements analysis}
 
@@ -608,14 +608,14 @@ Risk represents how critical a requirement's success is given how difficult it w
 % But iterative when looking at the results and direction forward
 % sprint work style between meetings
 
-For the core of my project I adopt a Waterfall method~\cite{royce1970managing} for the project:
+I adopt an adjusted Waterfall method~\cite{royce1970managing} for the core of my project:
 
 \begin{equation*}
     \textit{Requirements analysis} \longrightarrow \textit{Design} \longrightarrow \textit{Implementation} \longrightarrow \textit{Testing} \longrightarrow \textit{Evaluation}
 \end{equation*}
 
 During the \textit{Design} phase I start with a skeleton implementation of the ML pipeline and focus on each of the requirements in turn carrying out both \texttt{Implementation} and \texttt{Testing} together where possible.
-At each stage I confirm that the implemented requirement integrates with the rest of the project using dummy data if a module is not implemented.
+At each stage, I confirm that the implemented requirement integrates with the rest of the project using dummy data if a module is not implemented.
 The \textit{Evaluation} stage includes all the experiment runs and concept analysis required to meet my success criteria replacing \textit{Operations} which is not required for my project.
 
 My extensions do not fit into the Waterfall method as they are research-based in nature. Therefore, I switch to an Agile software development~\cite{beck2001manifesto} to allow the project to adjust to the experimental results achieved during development.
@@ -630,7 +630,7 @@ Machine learning does not provide a precise metric against which the correctness
 This is due to the factors that contribute to a machine learning model's performance such as hyperparameters, initialisation/random seeds, architecture and dataset.
 As an example a trained model may result in poor results because the underlying architecture is not suited to the dataset, there is too much noise in the data, or there is a software bug.
 Thus, unlike traditional software development, it is harder to verify that an ML model or algorithm has been implemented correctly.
-However, my project does include software that follows traditional software development and therefore use the following approaches:
+However, my project does include software that follows traditional software development and therefore uses the following approaches:
 
 \paragraph{Unit testing}
 is suitable for traditional software development where a specific result is required for specific input.
@@ -670,7 +670,7 @@ In \Sref{sec:reproduction} I reproduce the experiment results to verify my ML pi
 \end{wraptable}
 
 \footnotetext[9]{The license is unnamed but matches the 3-clause BSD license verbatim.}
-\footnotetext[10]{tqdm is distributed under both the MIT and MPL license.}
+\footnotetext[10]{tqdm is distributed under both the MIT and MPL licenses.}
 
 Table \ref{tab:licensing} includes information about the specific licenses for the project's software dependencies.
 
@@ -686,8 +686,8 @@ This licensing complies with the licenses of my dependencies.
 \section{Starting point}
 
 I worked with \texttt{PyTorch}~\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} over the summer building new graph datasets and GNN models.
-Before starting I read \textit{Simplifying Graph Convolutions}~\cite{wu2019simplifying} and \textit{GCExplainer}~\cite{magister2021gcexplainer}
+Before starting I read both \textit{Simplifying Graph Convolutions}~\cite{wu2019simplifying} and \textit{GCExplainer}~\cite{magister2021gcexplainer}.
 I rely on the libraries discussed in \Sref{sec:libraries}.
-Aside from these dependencies, I built the project from scratch.
+Aside from these dependencies, I built the project from scratch re-implementing both papers.
 
 % Discussion of summer project using the same rough build environment

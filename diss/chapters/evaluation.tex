@@ -40,7 +40,7 @@ Additionally, \Sref{sec:comp-acc} presents a comparison between the accuracy of 
 
 \paragraph{Reproduction}
 \textit{Magister et al.}~\cite{magister2021gcexplainer} use a GCN model to evaluate their proposed graph concept explainer on the 5 synthetic node classification datasets described in \Sref{sec:synth}.
-The hyperparameters used are presented in table 15 from \textit{Magister et al.}. 
+The hyperparameters used are presented in Table 15 from \textit{Magister et al.}. 
 
 \textit{Wu et al.}~\cite{wu2019simplifying} use hyperopt to find the weight decay parameter for the Planetoid~\cite{kipf2016semi} datasets.
 This process was repeated however it was found that the learning rates were different from those stated.
@@ -117,7 +117,7 @@ An outlier is defined as being outside the range $[m - 1.5 \times \text{ITR}, m 
 
 
 \subsection{Reproducibility}
-The project fulfills the requirements and suggestions for machine learning projects and experimental results in \href{https://www.cs.mcgill.ca/~jpineau/ReproducibilityChecklist-v2.0.pdf}{\textit{The Machine Learning Reproducibility Checklist}}~\cite{pineau2021improving} 
+The project fulfils the requirements and suggestions for machine learning projects and experimental results in \href{https://www.cs.mcgill.ca/~jpineau/ReproducibilityChecklist-v2.0.pdf}{\textit{The Machine Learning Reproducibility Checklist}}~\cite{pineau2021improving} 
 
 \subsection{System specifications}
 The experiments are not resource-intensive due to the incredibly small datasets and so carrying out the hyperparameter search and multiple final runs can be completed on my machine.
@@ -226,7 +226,7 @@ SGC does not perform significantly better than random guesses except in the case
 In the cases of the Tree datasets, this can be attributed to the sparsity of the base graph where the motif structure and BST structure share similar connectivity.
 In comparison, the dense BA graph allows for a better distinction between the motifs and the base graph.
 
-This distinction is attributed to the degree normalisation present in Equation \ref{eq:op}.
+This ability to distinguish structures based on density is attributed to the degree normalisation present in Equation \ref{eq:op}.
 This advantage is not present in BA Community due to the communities and the possibility of a motif having multiple connections to different base graphs.
 
 These results are not due to poor hyperparameter selection as demonstrated in \Aref{app:hyperparameters} and discussed in \Sref{sec:hyperparameters}.
@@ -244,7 +244,7 @@ These claims are further explored in \Sref{sec:comp-concept}.
 \label{sec:comp-concept}
 
 To achieve the \ref{crit1}$^{st}$ and \ref{crit3}$^{rd}$ success criterion concepts need to be extracted from SGC and compared to GCN concepts.
-However, concept extraction and analysis is only suggested for models that achieved $95$\% or higher on synthetic datasets by \textit{Ying et al.}~\cite{ying2019gnnexplainer}.
+However, concept extraction and analysis are only suggested for models that achieved $95$\% or higher on synthetic datasets by \textit{Ying et al.}~\cite{ying2019gnnexplainer}.
 \Sref{sec:comp-acc} demonstrates that SGC does not reach this threshold in any experiment.
 
 However, the concepts will still provide insight into the claims in \Sref{sec:comp-acc}.
@@ -335,7 +335,7 @@ Additionally, GCN can distinguish between different communities as concepts A an
 GCN always treats the two communities differently regardless of structural similarity which is clear in concepts D and E compared to concept 3.
 
 Overall SGC can infer basic graph structure or communities but is unable to achieve fine-grained awareness.
-Though particularly apparent in BA Community these affect the performance on other datasets.
+Though particularly apparent in BA Community these affect the performance of SGC on other datasets.
 
 \subsection{Summary}
 %The low accuracy of SGC means that the data present in tables \ref{tab:SGC-completeness} and \ref{tab:SGC-purity} does not carry much meaning.
@@ -462,7 +462,7 @@ JSGC is now able to distinguish between the two communities highlighted by conce
 Furthermore, within a community JSGC correctly distinguishes between the different nodes as concepts 2, 3 and 4 show.
 Most importantly all concepts, except for concept 1, show consistent labelling throughout, particularly in concept 3 where all nodes are ``outside'' nodes.
 
-To further highlight the similarity between JSGC and GCN as well as the improvement on SGC Figure \ref{fig:JSGC-latent-space} demonstrates the latent space of the concatenation layer in JSGC.
+To further highlight the similarity between JSGC and GCN as well as the improvement made in comparison to SGC, Figure \ref{fig:JSGC-latent-space} demonstrates the latent space of the concatenation layer in JSGC.
 This demonstrates that JSGC has comparable graph structure awareness to GCN and does not require the non-linearity of GCN to achieve this.
 The lower accuracy of JSGC still suggests that there are elements of GCN that are important to its success and generally GRL.
 However, further studies into the importance of non-linearity in GRL are required.

@@ -5,7 +5,7 @@
 \emph{
     This dissertation explores the effect that simplifying graph neural network (GNN) architectures through linearization has on performance and graph structure awareness.
     It demonstrates that the current approach to linearising GNNs results in poor graph structure awareness. In response, I present two novel approaches to graph representational learning in response.
-    The first approach splices together a linear and non-linear GNNs into a single model and the second demonstrates accurate graph structure awareness whilst remaining quasi-linear.
+    The first approach splices together elements of linear and non-linear GNNs into a single model and the second demonstrates accurate graph structure awareness whilst remaining quasi-linear.
 %Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the model's choice of label.
 %These concepts are compared to the original Graph Convolution Network (GCN~\cite{kipf2016semi}) using the metrics of concept purity and completeness proposed in \textit{Magister et al.}~\cite{magister2021gcexplainer}.
 %The specific linear model chosen is the Simplified Graph Convolution (SGC) proposed in \textit{Wu et al.}~\cite{wu2019simplifying} due to claims that it matches the performance of GCN~\cite{kipf2016semi}.
@@ -24,9 +24,9 @@
 \emph{Neural networks} (NN) are able to infer complex relationships within data, \emph{graph neural networks} (GNN) extend this functionality to connected systems where predetermined relationships exist between data points.
 In these systems, such as social networks~\cite{pmlr-v70-gilmer17a} and molecules~\cite{DBLP:journals/corr/abs-1806-01973}, the data can be represented as nodes connected by edges in a graph.
 However, the popular deep learning approach, of multiple layers separated by non-linear activation functions, has been criticised as unnecessarily complex for GNNs.~\cite{wu2019simplifying}
-This is becauase, unlike standard NNs, the power of GNNs is hypothesised to arise from utilising the graph topology rather than approximating arbitrary functions on feature data.
+This is because, unlike standard NNs, the power of GNNs is hypothesised to arise from utilising the graph topology rather than approximating arbitrary functions on feature data.
 Thus the ability for deep NNs to approximate functions through non-linearity may not be required.
-Instead \emph{simplified GNNs} have been proposed~\cite{chanpuriya2022simplified,chien2020adaptive,wu2019simplifying} which are either fully linear or quasi-linear, using one or two non-linear layers.
+Instead \emph{simplified GNNs} have been proposed~\cite{chanpuriya2022simplified,chien2020adaptive,wu2019simplifying} which are either entirely linear or quasi-linear, using one or two non-linear layers.
 
 \begin{figure}
     \centering
@@ -39,13 +39,13 @@ Figure \ref{fig:linear-vs-non-linear} demonstrates the difference in architectur
 These linear models have been shown to match the performance of non-linear GNNs on a limited number of datasets.
 However, these datasets represent a small portion of possible graph datasets and little work has been done to understand how linear GNNs work.
 
-\fig{concept}{An example graph concept from GCN~\cite{kipf2016semi} demonstrating that when classifying the top node the model identifies the house structure and attaching arm. The consistency of the structure suggests that this is important to classifying the top node.}
+\fig{concept}{An example graph concept from GCN~\cite{kipf2016semi} demonstrating that when classifying the top node the model identifies the house structure and attaching arm. The consistency of the structure suggests that this is important when classifying the top node.}
 
 This lack of understanding extends generally to NNs where explaining how a model works is largely ignored in favour of higher accuracy.
 However, both may be achieved as explainability does not fundamentally limit higher accuracy~\cite{zarlenga2022concept}.
 Rather than alter the architecture, NNs can be described by subspaces in their input, referred to as \emph{concepts}, which influence the classification the most.
-As an example, Figure \ref{fig:concept} presents a graph concept which can be interpretted as ``a house structure with an attaching arm''.
-This demonstrates that the neighbouring nodes and attaching arm are influence to classification of the highlighted green node the most.
+As an example, Figure \ref{fig:concept} presents a graph concept which can be interpreted as ``a house structure with an attaching arm''.
+This demonstrates that the neighbouring nodes and attaching arm influence the classification of the highlighted green node the most.
 This information would not be clear when looking at the green node's feature vector in isolation.
 
 Concepts can highlight the limitations of linear GNN models, by demonstrating which graph structures and node features cannot be distinguished, and provide further insight into how linearity influences graph structure awareness, by comparing the differences in concepts between linear and non-linear models.
@@ -145,7 +145,7 @@ This capability motivates the project which aims to provide a deeper insight int
 This project focuses on two different areas of graph representational learning: explainability and linearisation.
 Within graph explainability there have been many different methods presented to explain how GNNs work.
 
-\textit{Ying et al.}~\cite{ying2019gnnexplainer} identifies subgraphs as ideal explainability tools for GNNs as it provides both node and edge information, which are key to graph representational leaerning, simultaneously. 
+\textit{Ying et al.}~\cite{ying2019gnnexplainer} identifies subgraphs as ideal explainability tools for GNNs as it provides both node and edge information, which are key to graph representational learning, simultaneously. 
 %Subgraphs are generated by perturbing the input graph and comparing the model predictions to the original predictions.
 %By maximising mutual information it identifies important structures and node features in the input which can be masked to generate subgraphs.
 However, their approach focuses on perturbing the input graph resulting in local explanations for each classification rather than desired global explanations.
@@ -154,7 +154,7 @@ Both techniques learn an additional model to explain the GNN on a specific graph
 
 Instead, \textit{Magister et al.}~\cite{magister2021gcexplainer} provide global, model-level explanations by producing graph concepts.
 Concepts are human-interpretable units~\cite{ghorbani2019towards}, in the case of graph concepts these are best represented by subgraphs as demonstrated in Figure \ref{fig:concept}.
-These differ from the subgraphs in \textit{Ying et al.}~\cite{ying2019gnnexplainer} and \textit{Luo et al.}~\cite{luo2020parameterized} as they are extracted from the models activations rather than from input perturbations.
+These differ from the subgraphs in \textit{Ying et al.}~\cite{ying2019gnnexplainer} and \textit{Luo et al.}~\cite{luo2020parameterized} as they are extracted from the model's activations rather than from input perturbations.
 The method achieves this by adapting \textit{automatic concept extraction}~\cite{ghorbani2019towards} to GNNs and graph data.
 %Rather than perturb the input the model's predictions are clustered based on similarity and subgraphs are generated by considering a node's neighbourhood.
 %They present two metrics, purity and completeness, to compare different clusterings and identify the optimal subgraphs.
@@ -200,7 +200,7 @@ Two novel extensions are proposed to improve the accuracy and graph structure aw
         A new architecture which uses SGC within an adaptation of jumping knowledge networks~\cite{xu2018representation}.
         The architecture aggregates each successive SGC pre-computation so that the model has more control of the node representations.
         The architecture improves the accuracy of SGC by $16.8\%$ and up to $\approx 50\%$ in specific cases.
-        Furthermore the concept importance matches or surpasses the scores achieved by GCN.
+        Furthermore, the importance of the concepts matches or exceeds those achieved by GCN.
 \end{enumerate}
 Both approaches are successful in increasing both graph structure awareness and accuracy demonstrating that graph structure awareness is achievable whilst remaining quasi-linear.
 
