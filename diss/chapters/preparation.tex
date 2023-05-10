@@ -68,11 +68,11 @@ This project focuses on node classification, where each node is assigned a label
 The updated node representations should depend on the local neighbourhood of each node.
 If the same local neighbourhood representations were to be permuted the updated representation should remain the same as the neighbourhood topology is the same.
 Therefore consider a vector valued function, $\vf$, taking neighbourhood representations, $\mX_{\sN_i}$, and adjacency matrix, $\mA$, and producing a neighbourhood representation $\vf(\mX_{\sN_i}, \mA)$.
-Given some permutation, $\mP$, $\vf(\mP\mX_{\sN_i}, \mP\mA\mP^T) \equiv \vf(\mX_{\sN_i}, \mA)$.\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the pre-multiplication transposed to permute the columns.}
+$\vf$ is invariant, that is given some permutation, $\mP$, $\vf(\mP\mX_{\sN_i}, \mP\mA\mP^T) \equiv \vf(\mX_{\sN_i}, \mA)$.\footnote{As the rows and columns of the adjacency matrix must be permuted the permutation matrix is applied twice, with the pre-multiplication transposed to permute the columns.}
 
 Furthermore, if the node features are permuted then the updated node representations should be as well.
 Thus consider a matrix-valued function, $F$, taking the input representations and adjacency matrix, and producing a new representation matrix.
-It must be the case that $F(\mP\mX, \mP\mA\mP^T) \equiv \mP F(\mX, \mA)$.
+$F$ is equivariant, that is $F(\mP\mX, \mP\mA\mP^T) \equiv \mP F(\mX, \mA)$.
 
 For the node representation update function, $F$, to be equivariant it suffices for the neighbourhood representation function to be invariant, \Aref{app:perm}.
 For the neighbourhood representation to be invariant an invariant aggregation function, $\bigoplus$, combines updated neighbourhood representations.
@@ -116,7 +116,7 @@ To motivate the idea of the SGC consider applying a parameterised convolutional 
 $\vh_i \in \R^n$, and a filter, $f_\theta$ paramaterised by $\theta$.
 
 As an analogy to Fourier analysis, $f_\theta \star_\sG \vh_i$ is defined in the graph spectral domain.
-Any signal on a graph can be projected onto the eigenvectors of the graph Laplacian, $\mL = \mD - \mA = \mU\bm{\Lambda}\mU^T$, where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$, the eigenvalue matrix, and $\emD_{ii} = \sum_j^N \emA_{ij}$, the degree matrix.
+That is, any signal on a graph can be projected onto the eigenvectors of the graph Laplacian, $\mL = \mD - \mA = \mU\bm{\Lambda}\mU^T$, where $\bm{\Lambda} = \operatorname{diag}(\lambda_0, ..., \lambda_{n-1})$, is the eigenvalue matrix, and $\emD_{ii} = \sum_j^N \emA_{ij}$, is the degree matrix.
 Therefore the graph Fourier transform of a graph function $g$ is
 \begin{equation}
     \hat{g} = \mU^Tg
@@ -303,13 +303,13 @@ Therefore the notion of graph convolution filters maintains the desired invarian
 %% Reiterate the points made in the introduction
 %% Now specifically highlight these areas in the GCN formulisation
 
-As \Sref{sec:GCN} demonstrates, a GCN can be broken down into individual layers, containing a linear graph filter, stacked together using a non-linear activation function.
+As \Sref{sec:GCN} demonstrates, a GCN model can be broken down into individual layers, containing a linear graph filter, stacked together using a non-linear activation function.
 This means that the $k^{th}$-layer node representation requires the calculation of all the non-linear activations up until $k$.
 %This is apparent when looking at the formulation in equation \ref{eq:GCN1}.
 
 \paragraph{Linearization.}
 Considering the linear graph operation, $\mS$, as a normalised spectral filter (Equation \ref{eq:norm}) the non-linearity between layers may be considered non-critical to GCN performance.
-Instead, the benefit comes from the local averaging from successive filter applications as hypothesised by \textit{Wu et al.}.
+Instead, the benefit comes from leveraging graph topology through successive filter applications as hypothesised by \textit{Wu et al.}.
 %\textit{Wu et al.}~\cite{wu2019simplifying} consider this hypothesis citing the benefit arises from the local averaging as apparent in the graph operation formulation described in \Sref{sec:conv}.
 %The resulting model is therefore a linear multiplication of the normalised spectral filters and parameter matrix.
 Removing these non-linear activation functions from Equation \ref{eq:cls} results in
@@ -343,8 +343,8 @@ Rather than considering how many layers an SGC model has the equivalent notion o
 This directly corresponds to the receptive field of the model where a $k$-degree SGC model has the same receptive field as a $k$-layer GCN model.
 
 \paragraph{Drawbacks}
-SGC suffers from vanishing/exploding values in $\bm{\Theta}$ and over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of the nodes of the graph.}.
-SGC has a fixed feature extraction step preventing influence on intermediate node representations.
+SGC suffers from over-smoothing\footnote{where the node representations become increasingly uniform as the increased receptive field of the model results in a global averaging of the nodes of the graph.}.
+and has a fixed feature extraction step preventing influence on intermediate node representations.
 These drawbacks motivate the extensions presented in \Sref{sec:extensions-imp} and \Sref{sec:extension-eval}.
 
 %The fomulation in equation \ref{GCN-as-GNN} highlights that at after each layer each node representation includes a representation of its immediate neighbours.
@@ -365,13 +365,13 @@ These drawbacks motivate the extensions presented in \Sref{sec:extensions-imp} a
 % This probably requires reading some papers "yay"
 
 NNs are presented as black-box models where the decision process used to infer an output based on input is opaque to a user.
-This results in mistrust in NNs especially deep NNs where the relationship between input and output is complex~\cite{haibe2020transparency,wang2022revise}.
+This results in mistrust in NNs especially deep NNs where the relationship between input and output is complex.~\cite{haibe2020transparency,wang2022revise}
 
 The goal of explainability is to provide a human-interpretable representation of the model's decision process.
 Ideally, global explanations are provided allowing insight into the model's full decision process rather than a local feature.
 
 The proposed approach to explainability that this dissertation follows is that of concepts as these can be inferred after training and thus do not affect model performance.
-As GNNs utilise both graph structure and node features concepts can provide a human interpretable representation of a GNNs decision process.
+As GNNs utilise both graph structure and node features, graph concepts can provide a human interpretable representation of a GNNs decision process.
 
 \subsection{Concepts}
 \fig{concept-2}{A graph concept from BA Shapes demonstrating the desired properties of meaningfulness, coherency and importance. Green highlights the node of interest and pink represents the local neighbourhood.}
@@ -408,8 +408,8 @@ A precise definition of a concept in the general sense is hard to formalise so \
 %% Potentially a motivating example
 
 \paragraph{Graph concepts} can therefore be described by exemplar subgraphs of the input graph.
-These subgraphs represent both the structure and the node features defining the properties of a concept.
-The graph concepts satisfy the above desiderata: meaningfulness relates to the size of the subgraph, coherency relates to subgraph isomorphy, and importance relates to classification based on subgraphs alone.
+These subgraphs represent the important graph structure and node features used in classification.
+Graph concepts satisfy the above desiderata: meaningfulness relates to the size of the subgraph, coherency relates to subgraph isomorphy, and importance relates to classification based on subgraphs alone.
 Figure \ref{fig:concept-2} is an example graph concept created using the techniques in \Sref{sec:GCE}.
 
 % Discussion of complications when looking at graph classification
@@ -440,7 +440,7 @@ The aim is to provide global explanations for a specific dataset class to better
 uses $k$-Means clustering on the node representations of the final GNN layer as recommended by \textit{Magister et al.}~\cite{magister2021gcexplainer}.
 This clusters the input graph's nodes by the similarity of the representations as the model will treat a cluster's nodes the same.
 Subgraphs centred on a cluster's nodes provide the high-level unit required by \textit{Ghorbani et al.}~\cite{ghorbani2019towards}.
-An example of an extracted concept is presented in Figure \ref{fig:concept-2}.
+An example of an extracted concept is presented in Figure \ref{fig:concept-2} where the highlighted nodes belong to one cluster.
 %For the purposes of SGC the same process is carried out on $\bar\mX$, the pre-computed features.
 
 %\paragraph{Concept scores} are generated for each concept representing how meaningful, coherent and important a specific set of concepts are.
@@ -449,7 +449,7 @@ An example of an extracted concept is presented in Figure \ref{fig:concept-2}.
 \paragraph{Concept purity}
 relates to the coherence of a concept and is best represented by subgraph isomorphy.
 High concept purity indicates a coherent concept and therefore a global concept of the model.
-As concept purity is tied to graph similarity \textit{Magister et al.}~\cite{magister2021gcexplainer} suggest using the \emph{graph edit distance} (GED) which calculated as 
+As concept purity is tied to graph similarity \textit{Magister et al.}~\cite{magister2021gcexplainer} suggest using the \emph{graph edit distance} (GED) which is calculated by 
 \begin{equation}
     \label{eq:GED}
     \operatorname{GED}(\sG_1, \sG_2) = \underset{e_i,...,e_k \in \gamma(\sG_1, \sG_2)}{\operatorname{min}} \sum_{i=1}^{k}c(e_i)
@@ -469,9 +469,9 @@ As the concept space is not easily separable by classifiers such as logistic reg
 %% The clear metrics for comparison
 
 \paragraph{Comparing concepts} between two models trained on the same dataset can indicate how the two models differ in their inference.
-Furthermore, the differences present between the two models provide further insight into how the model reason.
+Furthermore, the differences present between the two models provide further insight into how the models reason.
 The described concept scores give two metrics which can be used to compare concepts between models quantitatively.
-Further qualitative analysis between concepts can provide further insight into how the different models operate.
+Further qualitative analysis between concepts can provide insight into how the different models operate.
 %Therefore, the described process of concept extraction and evaluation is used in comparing how SGC and GCN operate to analyse the importance of non-linearity in GNNs.  
 
 \section{Datasets}
@@ -483,7 +483,7 @@ Further qualitative analysis between concepts can provide further insight into h
 
 To evaluate different GNN models using the metrics described in \Sref{sec:GCE} a trained model is evaluated on specific graph data and concepts extracted from the result.
 %To train the model the a notion of a graph dataset needs to be defined.
-As described in \Sref{sec:GRL} there are two different classification tasks of interest:
+As described in \Sref{sec:GRL} there are two different classification datasets of interest:
 Node classification datasets, assigning a class to each node, and graph classification datasets, assigning a class to the entire graph.
 A graph dataset is therefore described by a collection of graphs and corresponding class labels.
 
@@ -520,7 +520,7 @@ a densely connected graph where nodes are probabilistically connected to each ot
 The probability of a node connecting to another is proportional to the degree of the node thus creating hubs of densely connected nodes.
 
 \paragraph{Tree}
-a binary symmetric tree (BST) as this is very sparse in comparison to Barabasi.
+a binary symmetric tree (BST) which is very sparse in comparison to Barabasi.
 These two base graphs provide two different scenarios to compare a model's ability to identify the motifs accurately.
 
 Not all motifs and base graphs are paired together and only BA Shapes\footnote{Which utilises the house motif}, BA Grid, Tree Grid and Tree Cycles are considered.
@@ -540,7 +540,7 @@ Each graph represents a citation network where nodes are articles and edges are 
 The node features are bag-of-word embeddings generated from the article text.
 These datasets are available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} under the Planetoid~\cite{planetoid} datasets.
 
-To produce meaningful results that reflect real-world applications of GNNs two real-world datasets are used.
+To produce meaningful results that reflect real-world applications of GNNs two additional real-world datasets are used.
 These two datasets are graph classification datasets and therefore inductive datasets compared to the transductive synthetic datasets.
 These datasets are part of TUDataset~\cite{Morris+2020} available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019}.
 
@@ -566,7 +566,7 @@ The task is to classify the graphs as to whether or not they are mutagens.
 I use Python to write the majority of the software as there is a lot of existing support for machine learning frameworks.
 Furthermore, Python is easy to read, debug and experiment with which is useful for developing new models.
 
-To reduce the need for human input when running multiple experiments to get confidence intervals or hyperparameter tuning dynamically generated bash scripts were used.
+To reduce the need for human input when running multiple experiments, for confidence intervals or hyperparameter tuning, dynamically generated bash scripts were used.
 To allow for easier reproducibility and iteration I utilise YAML files to store build configurations for all of my models.
 
 \paragraph{Software development}
@@ -581,9 +581,9 @@ Additionally, local \texttt{Tensorboard}~\cite{tensorflow2015-whitepaper} instan
 The major libraries used where \texttt{PyTorch}~\cite{paszke2019pytorch} and \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} an extension to \texttt{PyTorch} which includes support for GRL.
 \texttt{PyTorch} was chosen over \texttt{Tensorflow}~\cite{tensorflow2015-whitepaper} as it is more ``pythonic'' and \texttt{PyTorch Geometric} is a simpler framework to use.
 To help with running experiments, logging results and reproducibility I use \texttt{Lightning AI}~\cite{Falcon_PyTorch_Lightning_2019} which handles the underlying training and testing loop with Tensorboard support.
-\texttt{Hyperopt}~\cite{bergstra2013making} is also used as \textit{Wu et al.}~\cite{wu2019simplifying} state this method was used to find the weight decay hyperparameter.
+\texttt{Hyperopt}~\cite{bergstra2013making} is also used as \textit{Wu et al.}~\cite{wu2019simplifying} state this method was used to find the weight decay constant.
 
-For scientific computing when analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}~\cite{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX}~\cite{SciPyProceedings_11} to draw the graphs and \texttt{Matplotlib}~\cite{Hunter:2007} to visualise the result and hyperparameter surfaces. \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
+When analysing concepts I use \texttt{Numpy} and \texttt{scikit-learn}~\cite{scikit-learn}. For the visualisation of graphs I use \texttt{NetworkX}~\cite{SciPyProceedings_11} to draw the graphs and \texttt{Matplotlib}~\cite{Hunter:2007} to visualise the result and hyperparameter surfaces. \texttt{NetworkX} is included in the \texttt{PyTorch Geometric} library.
 
 For unit tests, I use Python's own \texttt{unittest} library and to help with software development I use Python's \texttt{typing} library alongside the built-in typing functionality of the other libraries. Additionally, I use \texttt{tqdm}~\cite{casper_da_costa_luis_2023_7697295} to visualise progress during concept analysis.
 
@@ -633,7 +633,7 @@ Thus, unlike traditional software development, it is harder to verify that an ML
 However, my project does include software that follows traditional software development and therefore uses the following approaches:
 
 \paragraph{Unit testing}
-is suitable for traditional software development where a specific result is required for specific input.
+Suitable for traditional software development where a specific result is required for specific input.
 Concept analysis and dataset handling fall into this category.
 These two aspects are therefore verified using unit testing described in \Sref{sec:testing-imp}.
 

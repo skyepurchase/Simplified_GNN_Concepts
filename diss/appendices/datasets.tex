@@ -10,9 +10,13 @@ This is because the training, validation and test sets are sampled from the node
 This dataset forces the model to transfer knowledge about existing (representation, label) pairs to unlabelled nodes.
 This concept is present in Figure \ref{fig:inductive-vs-transductive}(a).
 
+The synthetic datasets including Planetoid~\cite{planetoid} are all transductive datasets.
+
 \section{Inductive datasets}
 These datasets are such that the nodes ``seen'' during training, validation and testing are completely disjoint.
 This is generally the case in graph classification tasks where each data point is a unique graph with a classification thus the test set is a new set of graphs with completely unseen nodes.
 This dataset forces the model to induce information of relationships between nodes and optimal representations.
 This concept is present in Figure \ref{fig:inductive-vs-transductive}(b).
+
+Mutagenicity and REDDIT-BINARY are both inductive datasets.
 

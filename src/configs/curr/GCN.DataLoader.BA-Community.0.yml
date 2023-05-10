@@ -17,4 +17,4 @@ trainer:
   dir: ../logs
   accelerator: cpu
   devices: 1
-  max_epochs: 6000 
+  max_epochs: 10000 

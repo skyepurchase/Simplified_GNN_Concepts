@@ -3,7 +3,7 @@
 \section{Datasets}
 \label{sec:datasets-imp}
 \Sref{sec:datasets-theory} presents several datasets that cover a range of different GNN training styles and motifs.
-The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} as well as the Planetoid~\cite{planetoid,citation} datasets.
+The inductive datasets discussed in \Sref{sec:RWD} are already packaged and available through \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} as well as the Planetoid~\cite{citation,planetoid} datasets.
 
 \paragraph{Synthetic datasets}
 The synthetic datasets discussed in \Sref{sec:synth} are available pre-built on GitHub and \texttt{PyTorch Geometric}~\cite{Fey/Lenssen/2019} provide limited versions of a small subset.
@@ -45,7 +45,7 @@ The \texttt{forward} method calculates the normalised adjacency, $\mS$, and pass
 After \texttt{message\_passing} a linear layer is applied to the representations.
 
 These GCN layers (provided by \texttt{PyTorch Geometric}) can then be combined with a ReLU activation function to form a GCN model.
-In comparison, SGC needs only to be a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
+In comparison, SGC only needs a classifier as explained in \Sref{sec:datasets-imp} and so contains a single linear layer.
 
 \subsection{SGC}
 The majority of SGC is the pre-computation
@@ -79,13 +79,13 @@ This is because the wrappers need to behave differently for SGC and GCN as GCN n
 Additionally, the real-world graph classification datasets require one-hot encoding when calculating loss whereas the synthetic datasets do not.
 Therefore the project implements 5 different wrappers.
 
-The datasets, pre-computation and data loaders discussed in \Sref{sec:datasets-imp}, the models described in \Sref{sec:models} are controlled by \texttt{main.py}.
+The datasets, pre-computation and data loaders discussed in \Sref{sec:datasets-imp}, and the models described in \Sref{sec:models} are controlled by \texttt{main.py}.
 To run a single experiment the specific model build, dataset, seed, save destinations, etc. need to be passed to this function.
 To reduce this overhead multiple bash scripts are dynamically created to run single quick experiments or full experiments which test the model on prechosen random seeds.
 
 \subsection{Reproducibility}
 \label{sec:reproducibility}
-It is important that all the results presented in \Sref{ch:evaluation} can be replicated later.
+It is important that all the results presented in Chapter \ref{ch:evaluation} can be replicated later.
 %This is both for the results presented in this dissertation but also for results found during experimentation in the extension phase.
 To achieve this every experiment must set a seed value which is saved along with the results.
 %This way when running the same configuration again using the same seed the expected outcome should be the same within very small bounds.
@@ -95,9 +95,9 @@ Furthermore, the results achieved are linked to the model build which specifies 
 %in a completely different ML pipeline.
 Thus the build files need to be human-readable and easily expandable.
 
-To achieve these two requirements YAML files are used as they are very readable and integrate with the rest of the pipeline.
+To achieve these two requirements, YAML files are used as they are very readable and integrate with the rest of the pipeline.
 Each build has a unique YAML file following the convention \texttt{<model>.<dataloader>.<dataset>.<version>.yml}.
-Storing the YAML filename, seed and timestamp with every set of results allows for accurate reproduction.
+Storing the YAML filename, seed and timestamp with every set of results allowing for accurate reproduction.
 
 \subsection{Experimentation}
 The infrastructure used in \Sref{sec:reproducibility} also aids experimentation by linking results to configurations.
@@ -257,7 +257,7 @@ Utilising both the SGC pre-computation and GCN layers, referred to as SGCN, coul
 \paragraph{Implementation}
 For simplicity and to utilise the pre-computation SGCN starts with SGC layers followed by GCN layers.
 For a fair comparison, the total number of layers remains the same as the corresponding SGC and GCN models.
-This reduces the problem of finding where SGC and GCN agree the most.
+This reduces the problem to finding where the SGC and GCN latent spaces agree the most.
 
 This is achieved using \emph{adjusted mutual information}(AMI) between the two models.
 Mutual information gives a measure for the dependence of the two models' clusters and therefore how similar the models are.
@@ -272,17 +272,17 @@ This clusters similar representations together allowing these clusters to be com
 \Sref{sec:concept-analysis} discusses the limited influence that SGC has on node representations.
 This is because an SGC model, of degree $k$, can only infer graph structure from the aggregated node representations within $k$ hops.
 In comparison, GCN can manipulate node representations and can therefore infer structure from each $k$-depth neighbourhood.
-This suggests that the low accuracy seen in \Sref{sec:comp-acc} and poor graph structure awareness seen in \Sref{sec:comp-concept} may be due to the linearity or lack of influence.
+This suggests that the low accuracy seen in \Sref{sec:comp-acc} and poor graph structure awareness seen in \Sref{sec:comp-concept} may be due to the lack of influence.
 
 Therefore the novel \emph{jump-SGC}(JSGC) is proposed which provides the classifier with node representations from each degree of the pre-computation.
-This idea mimics \emph{jumping knowledge networks} (JKNs) proposed by \textit{Xu et al.}~\cite{xu2018representation} hence the name ``jump''.
+This idea mimics \emph{jumping-knowledge networks} (JKNs) proposed by \textit{Xu et al.}~\cite{xu2018representation} hence the name ``jump''.
 
 \paragraph{Prior work}
 \textit{Xu et al.}~\cite{xu2018representation} identify the drawbacks of node aggregation in accurately representing the neighbourhood of a node.
 They propose aggregating the node representations after successive neighbourhood aggregation layers together to provide a better representation.
 Three main methods of aggregation are proposed but, given the small size of the datasets, the concatenation method is chosen.
 
-By concatenating successive neighbourhood aggregations and then reducing the dimensionality uniform influence across all $k$-depth neighbourhoods is achieved.
+By concatenating successive neighbourhood aggregations, and then reducing the dimensionality, uniform influence across all $k$-depth neighbourhoods is achieved.
 This is because the detail present in the smaller neighbourhoods can be combined with the wider awareness of larger neighbourhoods.
 
 \paragraph{Implementation}
@@ -340,7 +340,7 @@ This non-linearity remains constant regardless of how the model scales and there
 \end{figure}
 
 Figure \ref{fig:repo} presents the overall repository structure.
-This structure loosely follows ML project structures such as those provided by \texttt{cookiecutter} but is mainly driven by the requirements of \texttt{PyTorch Lighntning}.
+This structure loosely follows ML project structures such as those provided by \texttt{cookiecutter} but is mainly driven by the requirements of \texttt{PyTorch Lighntning}~\cite{Falcon_PyTorch_Lightning_2019}.
 Data folders are kept at the top level including folders for bash scripts allowing the scripts to access all the source code and folders necessary.
 the \texttt{src} folder contains all the Python code with top-level Python files such as \texttt{main.py} and \texttt{eval.py} acting as control code for the algorithms in the subfolders.
 
