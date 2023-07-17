@@ -1,130 +1,71 @@
-\documentclass[12pt,a4paper,openany,openright]{report}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[margin=20mm]{geometry}
-\usepackage[pdfborder={0 0 0},backref=page]{hyperref}
-\usepackage{dissertation}
+\documentclass{article}
+\usepackage{log_2022}            % for camera-ready version
+% \usepackage[review]{log_2022}  % for anonymous submission
+% \usepackage[preprint]{log_2022}
+%                                % for preprint version
+% \usepackage[eatrack]{log_2022}
+%                                % for accepted extended abstracts
 
-\include{math_commands}
+\usepackage{booktabs}            % professional-quality tables
+\usepackage{multirow}            % tabular cells spanning multiple rows
+\usepackage{amsfonts}            % blackboard math symbols
+\usepackage{graphicx}            % figures
+\usepackage{duckuments}          % sample images
 
-\hypersetup{
-    colorlinks=true,
-    urlcolor=blue,
-    linkcolor=black,
-    citecolor=black}
+% If you want to use natbib:
+\usepackage[numbers,compress,sort]{natbib}
+%                                % for numerical citations
+% \usepackage[sort,round]{natbib}
+%                                % for textual citations
 
-\begin{document}
-\pagenumbering{roman}
+% If you want to use bibLaTeX, uncomment statements below:
+% \usepackage[
+%      backend=biber,
+%      style=numeric-comp,
+%      backref=true,
+%      natbib=true]{biblatex}
+% \addbibresource{reference.bib}
 
-\include{metadata}
+\newcommand\note[1]{\textcolor{blue}{\textsc{\textbf{[NB:} #1\textbf{]}}}}
+\newcommand\error[1]{\textcolor{red}{\textsc{\textbf{[Error: #1]}}}}
 
-\bibliographystyle{plain}
+\title[Extracting Concepts from Simplified Graph Neural Networks]{Extracting Concepts from Simplified Graph Neural Networks}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Title
-
-\thispagestyle{empty}
-
-\rightline{\LARGE \textbf{\mfullname}}
-
-\vspace*{60mm}
-\begin{center}
-    \Huge
-    \textbf{\mtitle} \\[5mm]
-    \mexamination \\[5mm]
-    \mcollege \\[5mm]
-    \mdate
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Proforma
-
-\pagestyle{plain}
-
-\newpage
-\newpage
-\section*{Declaration of originality}
-
-I, \mfullname{} of \mcollege, being a candidate for Part II of the Computer Science Tripos, hereby declare that this dissertation and the work described in it are my own work, unaided except as may be specified below, and that the dissertation does not contain material that has already been used to any substantial extent for a comparable purpose. In preparation of this dissertation I did not use text from AI-assisted platforms generating natural language answers to user queries, including but not limited to ChatGPT. \mconsent
-
-\bigskip
-\leftline{Signed \msignature}
-\bigskip
-\leftline{Date \today}
-
-\chapter*{Proforma}
-
-{\large
-\begin{tabular}{p{0.3\linewidth}p{0.6\linewidth}}
-    Candidate Number:   & \bf \mcandidate                   \\
-    Project Title:      & \bf \mtitle                       \\
-    Examination:        & \bf \mexamination, 2023           \\
-    Word Count:         & \bf \mwordcount\footnotemark[1]   \\
-    Code Line Count:    & \bf \mlinecount\footnotemark[2]   \\
-    Project Originator: & \moriginator                      \\
-    Supervisor:         & \msupervisor                      \\ 
-\end{tabular}
+\author[S. Purchase et al.]{%
+Skye Purchase\\
+\institute{University of Cambridge}\\
+\email{skyepurchase@gmail.com}\And
+Lucy Charlotte Magister\\
+\institute{University of Cambridge}\\
+\email{Fillin}\And
+Pietro Lio\\
+\institute{University of Cambridge}\\
+\email{Fillin}
 }
 
-\footnotetext[1]{This word count was computed by \texttt{texcount} using the options \texttt{\%group table 0 1} and \texttt{\%group tabular 1 1} to count tables.}
-\footnotetext[2]{This word count was computed by \texttt{cloc}. Only generating bash scripts where considered as the generated files are all structurally identical.}
-\stepcounter{footnote}
+\begin{document}
 
-\section*{Original Aims of the Project}
+\bibliographystyle{unsrtnat}
 
-As highly-connected data becomes more prevalent \emph{graph neural networks}(GNNs) are becoming more important for real-world applications. 
-Understanding how they work and how to reduce the cost of training is therefore important.
-This project works towards this goal by analysing how simplifying GNNs effects model performance and graph structure awareness.
-The analysis compares the linear \emph{simplified graph convolution}(SGC)~\cite{wu2019simplifying} to the non-linear \emph{graph convolution network}(GCN)~\cite{kipf2016semi} using the explainability framework proposed by \textit{Magister et. al}~\cite{magister2021gcexplainer}.
-The insights gained guide extensions to improve the accuracy of linear GNN architectures whilst maintaining the reduced computational cost due to linearisation.
-%Further extensions then build on SGC to see which techniques can improve accuracy and concept metrics.
+\maketitle
 
-\section*{Work Completed}
+\begin{abstract}
+    \error{Complete once the direction of the paper is decided.}
+% Short introduction giving a full overview
 
-The project was a success in gaining insight into the graph structure awareness of both linear and non-linear models.
-The insight gained led to two new approaches to graph learning:
+    This paper explores the effect that simplifying graph neural network (GNN) architectures through linearization has on performance and graph structure awareness.
+    It demonstrates that the current approach to linearising GNNs results in poor graph structure awareness. In response, I present two novel approaches to graph representational learning in response.
+    The first approach splices together elements of linear and non-linear GNNs into a single model and the second demonstrates accurate graph structure awareness whilst remaining quasi-linear.
+%Specifically it focuses on the ideas of graph concepts which are extracted from the trained model to provide a visual demonstration of which subspaces of the input influence the model's choice of label.
+%These concepts are compared to the original Graph Convolution Network (GCN~\cite{kipf2016semi}) using the metrics of concept purity and completeness proposed in \citet{magister2021gcexplainer}.
+%The specific linear model chosen is the Simplified Graph Convolution (SGC) proposed in \citet{wu2019simplifying} due to claims that it matches the performance of GCN~\cite{kipf2016semi}.
+%Further studies are conducted extending the basic architecture of SGC, whilst keeping with the theme of simplified graph neural networks, to see the effect on the accuracy and concept scores.
 
-\begin{enumerate}[nolistsep]
-    \item Splicing together elements of two GNNs to gain the benefit of both architectures. In this case using a linear and non-linear GNN to produce an efficient and high-accuracy model.
-    \item A linear GNN which aggregates the output of successive graph filters achieving accurate graph structure awareness.
-\end{enumerate}
+\end{abstract}
 
-The project further demonstrated that the SGC architecture proposed by \textit{Wu et al.}~\cite{wu2019simplifying} does not have fine-grained graph structure awareness and demonstrates poor performance on a range of new datasets.
-%Furthermore, it demonstrated that in the case of highly synthetic data SGC is unable to match the performance of GCN by a significant margin.
-%My extensions demonstrate that in the case of real-world graph datasets, where graph structure is important, SGC continues to underperform compared to GCN and does not produce comparable concepts.
-%To combat this a novel extension to SGC using jumping knowledge networks~\cite{xu2018representation} is presented that demonstrates graph structure awareness in a linear model.
-%However, overall SGC does not appear to be a suitable candidate for graph representational learning on its own.
-%I additionally set out to create a new parameterised dataset to further analyse the shortcomings of SGC when dealing with graph structure.
-%\error{This is still not complete but I am undertaking this task.}
+\input{sections/introduction}
 
-\section*{Special Difficulties}
+\bibliography{reference}
 
-None
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Chapters
-
-\pagestyle{headings}
-
-\tableofcontents
-\clearpage
-\pagenumbering{arabic}
-
-\input{chapters/introduction}
-\input{chapters/preparation}
-\input{chapters/implementation}
-\input{chapters/evaluation}
-\input{chapters/conclusion}
-
-\bibliography{references}
-
-\appendix
-\input{appendices/abbreviations}
-\input{appendices/hyperparameters}
-\input{appendices/concepts}
-\input{appendices/proof}
-\input{appendices/gcn}
-\input{appendices/datasets}
-\input{appendices/phase2}
 
 \end{document}
